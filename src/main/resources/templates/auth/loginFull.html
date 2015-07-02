@@ -1,0 +1,42 @@
+					<h3>Login in</h3>
+					<form id="loginForm" role="form" name="form" action="/login" method="post">
+					<input type="hidden" th:name="${_csrf.parameterName}"
+						th:value="${_csrf.token}" />
+
+					<div class="form-group"
+						th:class="${errors.get('email') != null ? 'form-group has-error has-feedback' : 'form-group'}">
+						<label for="email">Email address</label> <input
+							class="form-control" type="email"
+							th:value="${form != null ? form.email : ''}" name="email"
+							id="email"  autofocus="autofocus" required="required" /> <span
+							class="glyphicon glyphicon-remove form-control-feedback"
+							th:if="${errors.get('email') != null}" aria-hidden="true"></span>
+						<span id="inputError2Status" class=""
+							th:if="${errors.get('email') != null}"
+							th:text="${errors.get('email')}"></span>
+
+					</div>
+					<div class="form-control"
+						th:class="${errors.get('password') != null ? 'form-group has-error has-feedback' : 'form-group'}">
+						<label for="password">Password</label> 
+						<input class="form-control"
+							type="password" th:name="password" id="password" required="required"
+							 /> 
+							<span
+							class="glyphicon glyphicon-remove form-control-feedback"
+							th:if="${errors.get('password') != null}" aria-hidden="true"></span>
+						<span id="inputError2Status" class=""
+							th:if="${errors.get('password') != null}"
+							th:text="${errors.get('password')}"></span>
+
+					</div>
+					<button class="btn btn-default" type="submit">Save</button>
+				</form>
+				<script>	
+				$("#registerForm .form-group input").click(function(){
+						$(this).parent().find("span").remove();
+						$(this).parent().removeClass("has-error");
+						$(this).parent().removeClass("has-feedback");
+					})
+				</script>
+

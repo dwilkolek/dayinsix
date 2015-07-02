@@ -1,0 +1,36 @@
+<!doctype html >
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="" xmlns:th="http://www.thymeleaf.org"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="" xmlns:th="http://www.thymeleaf.org"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="" xmlns:th="http://www.thymeleaf.org"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="" xmlns:th="http://www.thymeleaf.org">
+<!--<![endif]-->
+<head th:replace="fragments/head"></head>
+<body>
+	<!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+	<div th:replace="fragments/nav"></div>
+	<div th:replace="fragments/jumbo"></div>
+	<div class="container">
+		<h1>User details</h1>
+
+		<p>
+			E-mail: <span th:text="${currentUser.email}"></span>
+		</p>
+
+		<p>
+			Roles: 
+				<table>
+					<tr th:each="role : ${currentUser.roles}" >
+						<td><span th:text="${role.roleName}"></span></td>
+					</tr>
+				</table>
+				
+		</p>
+		<div th:replace="fragments/footer"></div>
+	</div>
+
+
+</body>
+</html>
