@@ -1,6 +1,7 @@
 package eu.wilkolek.diary.model;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.springframework.security.core.authority.AuthorityUtils;
 
@@ -32,7 +33,15 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
     public Collection<String> getRoles() {
         return user.getRoles();
     }
+    
+    public HashMap<String, String> getOptions(){
+    	return user.getOptions();
+    }
 
+    public void setOptions(HashMap<String, String> options){
+    	user.setOptions(options);
+    }
+    
     @Override
     public String toString() {
         return "CurrentUser{" +

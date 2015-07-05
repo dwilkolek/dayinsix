@@ -18,6 +18,9 @@ public class UserCreateForm {
 
     @NotEmpty
     private String passwordRepeated = "";
+    
+    @NotEmpty
+    private String inputType = "";
 
 //    @NotNull
 //    private Role role = Role.USER;
@@ -54,14 +57,13 @@ public class UserCreateForm {
 		return errors;
 	}
 
-//	public Role getRole() {
-//		return role;
-//	}
-//
-//	public void setRole(Role role) {
-//		this.role = role;
-//	}
-    
+	public String getInputType() {
+		return this.inputType;
+	}
+
+	public void setInputType(String inputType) {
+		this.inputType = inputType;
+	}
     
 
 }

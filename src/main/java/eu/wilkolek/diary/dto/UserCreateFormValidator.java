@@ -1,6 +1,8 @@
 package eu.wilkolek.diary.dto;
 
 
+import java.util.EnumSet;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.EmailValidator;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
 
+import eu.wilkolek.diary.model.InputTypeEnum;
 import eu.wilkolek.diary.repository.UserRepository;
 
 @Component
@@ -35,9 +38,19 @@ public class UserCreateFormValidator implements Validator {
         UserCreateForm form = (UserCreateForm) target;
         validatePasswords(errors, form);
         validateEmail(errors, form);      
+        validateInputType(errors, form);
     }
 
-    private void validatePasswords(Errors errors, UserCreateForm form) {
+    private void validateInputType(Errors errors, UserCreateForm form) {
+		for (InputTypeEnum type : InputTypeEnum.values()){
+			if (type.name().equals(form.getInputType())){
+				return;
+			}
+		}
+		errors.reject("inputType.not_provided", "Wrong input type");
+	}
+
+	private void validatePasswords(Errors errors, UserCreateForm form) {
         if (!form.getPassword().equals(form.getPasswordRepeated())) {
             errors.reject("password.no_match", "Passwords do not match");
         }

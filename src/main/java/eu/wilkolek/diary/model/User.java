@@ -2,6 +2,7 @@ package eu.wilkolek.diary.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,10 +22,8 @@ public class User {
 
     private Collection<String> roles;
 
-//    
-//    private Collection<Day> days;
-//    
-//    
+    private HashMap<String, String> options;
+    
     
     public User(){
     	
@@ -39,6 +38,8 @@ public class User {
     	this.roles = new ArrayList<String>();
     	this.roles.add(RoleEnum.USER.name());
     	
+    	this.options = new HashMap<String, String>();
+    	this.options.put("inputType", form.getInputType());
     }
     
 	public String[] rolesToArray() {
@@ -81,6 +82,14 @@ public class User {
 
 	public void setRoles(Collection<String> roles) {
 		this.roles = roles;
+	}
+
+	public HashMap<String, String> getOptions() {
+		return options;
+	}
+
+	public void setOptions(HashMap<String, String> options) {
+		this.options = options;
 	}
 
 //	public Collection<Day> getDays() {

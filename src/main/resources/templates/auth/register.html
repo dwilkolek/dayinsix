@@ -44,14 +44,20 @@
 						<input class="form-control" type="password" th:name="passwordRepeated" id="passwordRepeated" required="required" /> 
 					</div>
 
+					<div class="form-group">
+						<label for="inputType">InputAs</label> 
+						<select th:name="inputType" id="inputType">
+							<option value="SENTENCE">6word sentence</option>
+							<option value="WORDS">6 coma[,] separated words</option>
+						</select>
+					</div>
+
 					<button class="btn btn-default" type="submit">Save</button>
 				</form>
 				<script>
-				$()	
-				$("#registerForm .form-group input").click(function(){
-						$(this).parent().find("span").remove();
-						$(this).parent().removeClass("has-error");
-						$(this).parent().removeClass("has-feedback");
+
+				$(".alert").click(function(){					
+						$(this).remove();
 					})
 				</script>
 			</div>
