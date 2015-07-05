@@ -3,8 +3,6 @@ package eu.wilkolek.diary.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,12 +16,6 @@ public class HomeController {
     	ModelAndView model = new ModelAndView("home");
         LOGGER.debug("Getting home page");
         return model;
-    }
-    @RequestMapping("/home")
-    public String getHomePageHome() {
-    	ModelAndView model = new ModelAndView("home");
-        LOGGER.debug("Getting home page");
-        return "home2";
     }
 
 }

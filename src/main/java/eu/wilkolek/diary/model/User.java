@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import eu.wilkolek.diary.dto.UserCreateForm;
-import eu.wilkolek.diary.dto.UserCreateFormValidator;
 
 @Document(collection = "users")
 public class User {
@@ -22,10 +21,10 @@ public class User {
 
     private Collection<String> roles;
 
-    
-    private Collection<Day> days;
-    
-    
+//    
+//    private Collection<Day> days;
+//    
+//    
     
     public User(){
     	
@@ -84,13 +83,13 @@ public class User {
 		this.roles = roles;
 	}
 
-	public Collection<Day> getDays() {
-		return days;
-	}
-
-	public void setDays(Collection<Day> days) {
-		this.days = days;
-	}
+//	public Collection<Day> getDays() {
+//		return days;
+//	}
+//
+//	public void setDays(Collection<Day> days) {
+//		this.days = days;
+//	}
 
 
     

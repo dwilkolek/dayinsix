@@ -1,7 +1,6 @@
 package eu.wilkolek.diary.dto;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import eu.wilkolek.diary.model.DictionaryWord;
 

@@ -11,6 +11,12 @@
 <div th:if="${currentUser != null}" id="navbar"
 	class="navbar-collapse collapse">
 
+
+	<div class="navbar-form navbar-right">
+		<a class="btn btn-success" href="/user/day/add">Add Day</a> 
+		<a class="btn btn-success" href="/user/day/list">Day List</a>
+	</div>
+
 	<form class="navbar-form navbar-right" role="form" action="/logout"
 		method="post">
 		<input type="hidden" th:name="${_csrf.parameterName}"

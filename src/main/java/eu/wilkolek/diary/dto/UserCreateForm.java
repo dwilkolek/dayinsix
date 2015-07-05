@@ -3,8 +3,6 @@ package eu.wilkolek.diary.dto;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.validator.EmailValidator;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.validation.BindingResult;
@@ -48,26 +46,10 @@ public class UserCreateForm {
 		this.passwordRepeated = passwordRepeated;
 	}
 
-	public void validate(BindingResult bindingResult) {
-		if (this.getPassword() == null || "".equals(this.getPassword())){
-			bindingResult.addError(new ObjectError("password","Password can not be empty"));
-		}
-		if (!this.getPassword().equals(this.getPasswordRepeated())){
-			bindingResult.addError(new ObjectError("passwordRepeated","Password missmatch"));
-		}
-
-		if (!EmailValidator.getInstance().isValid(this.email)){
-			bindingResult.addError(new ObjectError("email","It's not and email address"));
-		}
-		
-		
-	}
-
 	public HashMap<String,String> createMessages(List<ObjectError> allErrors) {
-		// TODO Auto-generated method stub
 		HashMap<String,String> errors = new HashMap<String,String>();
 		for(ObjectError e : allErrors){
-			errors.put(e.getObjectName(), e.getDefaultMessage());
+			errors.put(e.getCode(), e.getDefaultMessage());
 		}
 		return errors;
 	}

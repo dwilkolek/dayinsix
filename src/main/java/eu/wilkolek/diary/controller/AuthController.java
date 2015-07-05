@@ -7,6 +7,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,11 +32,17 @@ public class AuthController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     private final UserRepository userRepository;
-	private final UserCreateFormValidator userCreateFormValidator;
+
+	private UserCreateFormValidator userCreateFormValidator;
+	
+	@InitBinder("form")
+	public void initBinder(WebDataBinder binder) {
+		binder.addValidators(userCreateFormValidator);	
+	}
     
-	@Autowired
-    public AuthController(UserRepository userRepository,
-			UserCreateFormValidator userCreateFormValidator) {
+    
+    @Autowired
+    public AuthController(UserRepository userRepository, UserCreateFormValidator userCreateFormValidator) {
 		this.userRepository = userRepository;
 		this.userCreateFormValidator = userCreateFormValidator;
 	}
@@ -62,8 +71,7 @@ public class AuthController {
 				bindingResult);
 			
 		ModelAndView model = new ModelAndView("/auth/register");
-		form.validate(bindingResult);
-		
+				
 		if (bindingResult.hasErrors()) {
 			// failed validation
 			

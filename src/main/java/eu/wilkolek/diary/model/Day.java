@@ -2,16 +2,14 @@ package eu.wilkolek.diary.model;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import eu.wilkolek.diary.dto.DayForm;
-import eu.wilkolek.diary.repository.WordRepository;
+
 
 @Document(collection = "days")
 public class Day {
