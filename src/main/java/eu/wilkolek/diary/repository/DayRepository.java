@@ -9,8 +9,9 @@ import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.User;
 
 @Component
-public interface DayRepository extends MongoRepository<Day, String>{
+public interface DayRepository extends MongoRepository<Day, String>,DayRepositoryCustom{
 
 	public Day findByCreationDate(String date);
+	
 	
 }

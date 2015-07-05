@@ -19,8 +19,28 @@
 		<div class="row">
 			<div class="col-md-4">
 				<form th:object="${form}" method="post">
+					<input type="hidden" th:name="${_csrf.parameterName}"
+						th:value="${_csrf.token}" />
 					<input th:field="*{sentence}" type="text"></input> <input
-						th:field="*{sentenceStatus}" type="text" value="POSITIVE"></input>
+						th:field="*{sentenceStatus}" type="text" value="${'POSITIVE'}"></input><br /><hr /><br />
+						<input th:field="*{words[0]}" type="text"></input> <input
+						th:field="*{wordsStatuses[0]}" type="text" th:value="${'POSITIVE'}"></input><br /><hr /><br />
+
+						<input th:field="*{words[1]}" type="text"></input> <input
+						th:field="*{wordsStatuses[1]}" type="text" th:value="${'POSITIVE'}"></input><br /><hr /><br />
+
+						<input th:field="*{words[2]}" type="text"></input> <input
+						th:field="*{wordsStatuses[2]}" type="text" th:value="${'POSITIVE'}"></input><br /><hr /><br />
+
+						<input th:field="*{words[3]}" type="text"></input> <input
+						th:field="*{wordsStatuses[3]}" type="text" th:value="${'NEGATIVE'}"></input><br /><hr /><br />
+
+						<input th:field="*{words[4]}" type="text"></input> <input
+						th:field="*{wordsStatuses[4]}" type="text" th:value="${'NEGATIVE'}"></input><br /><hr /><br />
+
+
+						<input th:field="*{words[5]}" type="text"></input> <input
+						th:field="*{wordsStatuses[5]}" type="text" th:value="${'NEGATIVE'}"></input><br /><hr /><br />
 						<input type="submit" value="Submit" />
 				</form>
 			</div>

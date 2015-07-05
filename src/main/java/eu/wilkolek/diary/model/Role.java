@@ -7,5 +7,10 @@ public class Role {
     public String getRole(){
     	return roleName.name();
     }
+    
+    public void setRole(RoleEnum roleEnum){
+    	this.roleName = roleEnum;
+    	
+    }
 
 }

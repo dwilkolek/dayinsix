@@ -17,14 +17,19 @@
 
 		<!-- Example row of columns -->
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-12">
 				<table>
 					<tr th:each="day : ${days}">
-						<td th:text="${day.sentence.value + ' - ' + day.sentence.status + ' by ' + day.user.email}"></td>
+						<td th:text="${day.creationDate}"></td>
+						<td th:if="${day.sentence != null}"
+							th:text="${day.sentence.value + ' - ' + day.sentence.status + ' by ' + day.user.email}"></td>
+						<td th:if="${day.sentence == null}">
+							<span th:each="word : ${day.words}"
+								th:text="${word.value.value + ' - ' + word.status + ', '}"></span>
+						</td>
 					</tr>
 				</table>
 			</div>
-
 		</div>
 		<div th:replace="fragments/footer"></div>
 	</div>

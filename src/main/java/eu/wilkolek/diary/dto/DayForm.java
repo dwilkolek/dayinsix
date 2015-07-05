@@ -42,9 +42,6 @@ public class DayForm {
 	}
 
 	public ArrayList<String> getWords() {
-		if (words == null) {
-			return new ArrayList<String>();
-		}
 		return words;
 	}
 

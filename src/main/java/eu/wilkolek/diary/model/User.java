@@ -1,8 +1,13 @@
 package eu.wilkolek.diary.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import eu.wilkolek.diary.dto.UserCreateForm;
+import eu.wilkolek.diary.dto.UserCreateFormValidator;
 
 @Document(collection = "users")
 public class User {
@@ -19,6 +24,23 @@ public class User {
 
     
     private Collection<Day> days;
+    
+    
+    
+    public User(){
+    	
+    }
+    
+    public User(UserCreateForm form){
+    	
+    	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    	
+    	this.email = form.getEmail();
+    	this.passwordHash = encoder.encode(form.getPassword());
+    	this.roles = new ArrayList<String>();
+    	this.roles.add(RoleEnum.USER.name());
+    	
+    }
     
 	public String[] rolesToArray() {
 		String[] roles = new String[this.roles.size()];

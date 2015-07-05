@@ -10,7 +10,6 @@ public class DictionaryWord {
 	@Id
 	private String id;
 
-	@DBRef
 	private String value;
 
 	public String getId() {

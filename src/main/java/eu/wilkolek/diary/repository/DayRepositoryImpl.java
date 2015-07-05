@@ -1,112 +1,43 @@
-//package eu.wilkolek.diary.repository;
-//
-//import java.util.List;
-//
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.data.domain.Sort;
-//
-//import eu.wilkolek.diary.model.Day;
-//
-//public class DayRepositoryImpl implements DayRepository {
-//
-//	
-//	
-//	
-////	@Override
-////	public <S extends Day> List<S> save(Iterable<S> entites) {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-////
-////	@Override
-////	public List<Day> findAll() {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-////
-////	@Override
-////	public List<Day> findAll(Sort sort) {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-////
-////	@Override
-////	public <S extends Day> S insert(S entity) {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-////
-////	@Override
-////	public <S extends Day> List<S> insert(Iterable<S> entities) {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-////
-////	@Override
-////	public Page<Day> findAll(Pageable pageable) {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-////
-////	@Override
-////	public <S extends Day> S save(S entity) {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-////
-////	@Override
-////	public Day findOne(String id) {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-////
-////	@Override
-////	public boolean exists(String id) {
-////		// TODO Auto-generated method stub
-////		return false;
-////	}
-////
-////	@Override
-////	public Iterable<Day> findAll(Iterable<String> ids) {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-////
-////	@Override
-////	public long count() {
-////		// TODO Auto-generated method stub
-////		return 0;
-////	}
-////
-////	@Override
-////	public void delete(String id) {
-////		// TODO Auto-generated method stub
-////
-////	}
-////
-////	@Override
-////	public void delete(Day entity) {
-////		// TODO Auto-generated method stub
-////
-////	}
-////
-////	@Override
-////	public void delete(Iterable<? extends Day> entities) {
-////		// TODO Auto-generated method stub
-////
-////	}
-////
-////	@Override
-////	public void deleteAll() {
-////		// TODO Auto-generated method stub
-////
-////	}
-////
-////	@Override
-////	public Day findByCreationDate(String date) {
-////		// TODO Auto-generated method stub
-////		return null;
-////	}
-//
-//}
+package eu.wilkolek.diary.repository;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
+import eu.wilkolek.diary.model.Day;
+import eu.wilkolek.diary.model.User;
+
+public class DayRepositoryImpl implements DayRepositoryCustom {
+
+	
+private MongoOperations operation;
+	
+	@Autowired
+	public DayRepositoryImpl(MongoOperations operation){
+		this.operation = operation;
+	}
+	
+	@Override
+	public ArrayList<Day> get7DaysFromDate(User user, Date date) {
+		
+		Date firstDay = new Date(date.getTime() - 7 * 24*60*60*1000); 
+		
+		Query query = new Query(Criteria.where("user").is(user).andOperator(Criteria.where("creationDate").gt(firstDay)));
+		ArrayList<Day> result = new ArrayList<Day>(operation.find(query, Day.class));
+		return result;
+
+	}
+
+	
+
+}
