@@ -106,6 +106,7 @@ public class UserController {
 				} else {
 					DictionaryWord dw = new DictionaryWord();
 					dw.setValue(value);
+					dw.setUser(user);
 					DictionaryWord dwSaved = dictionaryWordRepository.save(dw);
 					resultList.add(dwSaved);
 				}
