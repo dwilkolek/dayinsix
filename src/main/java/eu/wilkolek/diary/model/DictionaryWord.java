@@ -2,6 +2,7 @@ package eu.wilkolek.diary.model;
 
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "dictionary")
@@ -10,6 +11,9 @@ public class DictionaryWord {
 	private String id;
 
 	private String value;
+	
+	@DBRef
+	private User user;
 
 	public String getId() {
 		return id;
@@ -26,6 +30,14 @@ public class DictionaryWord {
 	public void setValue(String value) {
 		this.value = value;
 	}
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 	
 	
 	

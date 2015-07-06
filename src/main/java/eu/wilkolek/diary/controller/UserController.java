@@ -100,7 +100,7 @@ public class UserController {
 				String value = dayForm.getWords().get(i);
 
 				Optional<DictionaryWord> dictWordO = dictionaryWordRepository
-						.findByValue(value);
+						.findByValueAndUser(value, user);
 				if (dictWordO.isPresent()) {
 					resultList.add(dictWordO.get());
 				} else {

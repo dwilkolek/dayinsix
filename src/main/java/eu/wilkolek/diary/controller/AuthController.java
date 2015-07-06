@@ -18,8 +18,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import eu.wilkolek.diary.dto.UserCreateForm;
 import eu.wilkolek.diary.dto.UserCreateFormValidator;
+import eu.wilkolek.diary.model.InputTypeEnum;
+import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.util.TimezoneUtils;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -59,6 +62,9 @@ public class AuthController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView register() {
 		ModelAndView model = new ModelAndView("auth/register");
+        model.getModelMap().addAttribute("timezones", TimezoneUtils.getTimeZones());
+        model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
+        model.getModelMap().addAttribute("inputTypes", InputTypeEnum.asMap());
 		model.getModelMap().addAttribute("errors", new HashMap<String,String>());
 		return model;
 	}
@@ -76,6 +82,9 @@ public class AuthController {
 			// failed validation
 			
 			model.getModelMap().addAttribute("form", form);
+			model.getModelMap().addAttribute("timezones", TimezoneUtils.getTimeZones());
+	        model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
+	        model.getModelMap().addAttribute("inputTypes", InputTypeEnum.asMap());
 			model.getModelMap().addAttribute("errors", form.createMessages(bindingResult.getAllErrors()));
 			return model;
 		}

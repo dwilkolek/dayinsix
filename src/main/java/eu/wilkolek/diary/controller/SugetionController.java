@@ -12,7 +12,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 
+import eu.wilkolek.diary.model.CurrentUser;
 import eu.wilkolek.diary.model.DictionaryWord;
+import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.DictionaryWordRepository;
 
 @Controller
@@ -23,11 +25,11 @@ public class SugetionController {
     
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/sugestions")
-    public ModelAndView getSuggestion(@RequestParam("letters") String letters){
+    public ModelAndView getSuggestion(@RequestParam("letters") String letters, CurrentUser currentUser){
         
         ModelAndView model = new ModelAndView("sugestion/plainText");
-       
-        ArrayList<DictionaryWord> sugestions = dictionaryWordRepository.findWords(letters, 10);
+        User user = currentUser.getUser();
+        ArrayList<DictionaryWord> sugestions = dictionaryWordRepository.findWords(letters, 10, user);
         ArrayList<String> sugestionsInString = new ArrayList<String>();
         for (DictionaryWord word : sugestions){
             sugestionsInString.add(word.getValue());

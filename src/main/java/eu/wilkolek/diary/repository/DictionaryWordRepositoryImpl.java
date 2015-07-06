@@ -24,9 +24,9 @@ public class DictionaryWordRepositoryImpl implements DictionaryWordCustom{
 	
 	
     @Override
-    public ArrayList<DictionaryWord> findWords(String letters, Integer limit){
+    public ArrayList<DictionaryWord> findWords(String letters, Integer limit, User user){
         
-        Query query = new Query(Criteria.where("value").regex("^"+letters+"(.*)$"));
+        Query query = new Query(Criteria.where("user").is(user).and("value").regex("^"+letters+"(.*)$"));
         
         return new ArrayList<DictionaryWord>(operation.find(query.limit(limit), DictionaryWord.class));
 

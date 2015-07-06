@@ -11,6 +11,9 @@ import org.springframework.validation.ObjectError;
 public class UserCreateForm {
 
     @NotEmpty
+    private String username = "";
+    
+    @NotEmpty
     private String email = "";
 
     @NotEmpty
@@ -21,6 +24,12 @@ public class UserCreateForm {
     
     @NotEmpty
     private String inputType = "";
+    
+    @NotEmpty
+    private String timezone = "";
+    
+    @NotEmpty
+    private String shareStyle = "";
 
 //    @NotNull
 //    private Role role = Role.USER;
@@ -64,6 +73,32 @@ public class UserCreateForm {
 	public void setInputType(String inputType) {
 		this.inputType = inputType;
 	}
-    
 
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
+
+    public String getShareStyle() {
+        return shareStyle;
+    }
+
+    public void setShareStyle(String shareStyle) {
+        this.shareStyle = shareStyle;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    
+	
+	
 }

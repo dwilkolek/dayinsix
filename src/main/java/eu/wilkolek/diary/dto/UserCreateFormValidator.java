@@ -2,6 +2,7 @@ package eu.wilkolek.diary.dto;
 
 
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.EmailValidator;
@@ -14,7 +15,9 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
 
 import eu.wilkolek.diary.model.InputTypeEnum;
+import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.util.TimezoneUtils;
 
 @Component
 public class UserCreateFormValidator implements Validator {
@@ -39,6 +42,9 @@ public class UserCreateFormValidator implements Validator {
         validatePasswords(errors, form);
         validateEmail(errors, form);      
         validateInputType(errors, form);
+        validateUsername(errors, form);
+        validateShareStyle(errors, form);
+        validateTimezone(errors, form);
     }
 
     private void validateInputType(Errors errors, UserCreateForm form) {
@@ -56,7 +62,13 @@ public class UserCreateFormValidator implements Validator {
         }
         if (StringUtils.isEmpty(form.getPassword())){
         	errors.reject("password.is_empty", "Password is empty");
+        }else{
+            if (form.getPassword().length() < 6){
+                errors.reject("password.too_weak", "Password must be at least 6 characters");
+            }
         }
+        
+        
     }
 
     private void validateEmail(Errors errors, UserCreateForm form) {
@@ -67,4 +79,35 @@ public class UserCreateFormValidator implements Validator {
         	errors.reject("email.wrong", "This is not an email address");
         }
     }
+    
+    private void validateShareStyle(Errors errors, UserCreateForm form) {
+        for (ShareStyleEnum type : ShareStyleEnum.values()){
+            if (type.name().equals(form.getShareStyle())){
+                return;
+            }
+        }
+        errors.reject("sharestyle.not_provided", "Wrong share style");
+    }
+    
+    private void validateTimezone(Errors errors, UserCreateForm form) {
+        LinkedHashMap<String,String> map = TimezoneUtils.getTimeZones();
+        if (!map.containsKey(form.getTimezone())){
+            errors.reject("timezone.not_provided", "Wrong timezone");
+        }
+    }
+
+    
+    private void validateUsername(Errors errors, UserCreateForm form) {
+        if (userRepository.findByUsername(form.getUsername()).isPresent()) {
+            errors.reject("username.exists", "User with this username already exists");
+        }
+        if (StringUtils.isEmpty(form.getUsername())){
+            errors.reject("username.is_empty", "Username is empty");
+        }else{
+            if (form.getPassword().length() < 3){
+                errors.reject("username.too_weak", "Username must be at least 3 characters");
+            }
+        }
+    }
+    
 }

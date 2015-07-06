@@ -2,13 +2,12 @@ package eu.wilkolek.diary.model;
 
 import java.util.HashMap;
 
-public enum InputTypeEnum {
-	SENTENCE("Use full 6-word sentence"), WORDS("Use 6 words as come separated");
-
+public enum ShareStyleEnum {
+    PRIVATE("Only for you"), PROTECTED("Only logged in users can view it"), PUBLIC("Anyone can see it");
     
     private String description;
     
-    private InputTypeEnum(String description){
+    private ShareStyleEnum(String description){
         this.description = description;
     }
     
@@ -18,9 +17,10 @@ public enum InputTypeEnum {
     
     public static HashMap<String, String> asMap(){
         HashMap<String, String> values = new HashMap<String,String>();
-        for (InputTypeEnum e : InputTypeEnum.values()){
+        for (ShareStyleEnum e : ShareStyleEnum.values()){
             values.put(e.name(), e.getDescription());
         }
         return values;
     }
+    
 }

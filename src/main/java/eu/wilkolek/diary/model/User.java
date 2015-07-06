@@ -15,7 +15,8 @@ public class User {
 
     private String id;
 
-
+    private String username;
+    
     private String email;
 
     private String passwordHash;
@@ -33,6 +34,7 @@ public class User {
     	
     	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     	
+    	this.username= form.getUsername();
     	this.email = form.getEmail();
     	this.passwordHash = encoder.encode(form.getPassword());
     	this.roles = new ArrayList<String>();
@@ -40,6 +42,9 @@ public class User {
     	
     	this.options = new HashMap<String, String>();
     	this.options.put("inputType", form.getInputType());
+    	this.options.put("shareStyle", form.getShareStyle());
+    	this.options.put("timezone", form.getTimezone());
+    	this.options.put("notification", "604480");
     }
     
 	public String[] rolesToArray() {
