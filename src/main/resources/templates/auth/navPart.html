@@ -2,12 +2,19 @@
 
 
 <div th:if="${currentUser == null}" id="navbar"
-	class="navbar-collapse collapse">
-	<div class="navbar-form navbar-right">
-		<a class="btn btn-success" href="/login">Sign in</a> <a
-			class="btn btn-success" href="/register">Register</a>
-	</div>
-</div>
+	class="navbar-collapse collapse navbar-right">
+	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>   
+    </div>
+  </div>
+
+
+
+
+
 <div th:if="${currentUser != null}" id="navbar"
 	class="navbar-collapse collapse">
 

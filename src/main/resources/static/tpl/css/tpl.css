@@ -1,0 +1,35 @@
+body{
+	font-family: 'Roboto', sans-serif;
+}
+
+.navbar-default{
+	background: #ffffff;
+	border:0px;
+	box-shadow: none !important;
+}
+
+.navbar-form .menu-elem{
+	font-size:1.4em;
+	padding:20px;
+}
+.words-head{
+	margin-bottom:-20px;
+}
+.words-nav-left{
+	margin-left:200px;
+}
+.words-title{
+	float:left;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+.words-head a{
+	font-size:1.2em;
+	font-variant: small-caps;
+}
+a{
+	color:#c10000;
+}
+a:hover{
+	color:#b50000;
+}

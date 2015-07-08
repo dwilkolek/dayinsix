@@ -113,5 +113,7 @@ public class AuthController {
 	public ModelAndView thankyou() {
 		return new ModelAndView("auth/thankyou");
 	}
+	
+
     
 }
