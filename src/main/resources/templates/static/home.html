@@ -15,21 +15,7 @@
                     <!-- Content -->
                     <div id="content" class="8u 12u(mobile)">
 
-
-
-
-
-
-                        <table th:if="${days.size() > 0}">
-                            <tr th:each="day : ${days}">
-                                <td th:text="${day.creationDate}"></td>
-                                <td th:if="${day.sentence != null}" th:text="${day.sentence.value + ' - ' + day.sentence.status + ' by ' + day.user.email}"></td>
-                                <td th:if="${day.sentence == null}"><span th:each="word : ${day.words}"
-                                    th:text="${word.value.value + ' - ' + word.status + ', '}"></span></td>
-                            </tr>
-                        </table>
-                        <h3 th:if="${days.size() == 0}">You have to save at least one day to see it here.</h3>
-
+<!--                         <div th:replace="fragments/customContent" /> -->
 
                     </div>
 

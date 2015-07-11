@@ -1,6 +1,6 @@
 
-<div class="row">
-    <div class="col-md-12" th:if="${currentUser == null}">
+
+    <div class="" th:if="${currentUser == null}">
         <h3>Log in</h3>
         <form id="loginForm" role="form" name="form" method="post" action="/login">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -16,7 +16,7 @@
                 <label for="password">Password</label> 
                 <input class="form-control" type="password" name="password" id="password" required="required" />
 
-            </div>
+            </div><br />
             <button class="btn btn-default" type="submit">Save</button>
         </form>
         <script>	
@@ -29,7 +29,7 @@
     </div>
     
     
-    <div class="col-md-12" th:if="${currentUser != null}">
+    <div class="" th:if="${currentUser != null}">
         <span th:text="${currentUser.email}"/>
         <ul>
             <li><a href="/user/day/add" >Add Day</a></li>
@@ -39,4 +39,3 @@
         </ul>
     </div>
     
-</div>

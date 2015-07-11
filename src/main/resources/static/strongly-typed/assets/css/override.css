@@ -1,0 +1,17 @@
+input[type='button'],input[type='submit'],button{
+	cursor: pointer;
+}
+a.button, .button{
+	font-family: "MS Shell Dlg";
+	line-height: 1em;
+	font-size: 0.7em;
+	padding-left:1em;
+	padding-right:1em;
+}
+a.button:hover {
+	color:#ffffff;
+}
+
+#logo-img{
+	width:15%;
+}
