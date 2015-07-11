@@ -51,14 +51,28 @@ public class AuthController {
 	}
 	
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView getLoginPage(@RequestParam Optional<String> error) {
+    public ModelAndView login(@RequestParam Optional<String> error) {
         LOGGER.debug("Getting login page, error={}", error);
-        ModelAndView model = new ModelAndView("login");
+        ModelAndView model = new ModelAndView("loginSuccess");
         model.getModelMap().addAttribute("errors", new HashMap<String,String>());
         return model;
     }
 
     
+    @RequestMapping(value = "/loginError", method = RequestMethod.GET)
+    public ModelAndView loginError(@RequestParam Optional<String> error) {
+        LOGGER.debug("Getting login page, error={}", error);
+        ModelAndView model = new ModelAndView("loginError");
+        model.getModelMap().addAttribute("errors", new HashMap<String,String>());
+        return model;
+    }
+    @RequestMapping(value = "/loginSuccess", method = RequestMethod.GET)
+    public ModelAndView loginSuccess(@RequestParam Optional<String> error) {
+        LOGGER.debug("Getting login page, error={}", error);
+        ModelAndView model = new ModelAndView("loginSuccess");
+        model.getModelMap().addAttribute("errors", new HashMap<String,String>());
+        return model;
+    }
     @RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView register() {
 		ModelAndView model = new ModelAndView("auth/register");

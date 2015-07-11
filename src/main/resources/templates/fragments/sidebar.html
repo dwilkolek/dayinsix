@@ -6,11 +6,16 @@
 
         <div class="col-md-12" th:if="${currentUser == null}">
 <!--             <h3>Log in</h3> -->
+
+            <span id="error" style="display:none; color:#f00;">
+                    Email or password is wrong.
+            </span>
+
             <form id="loginForm" role="form" name="form" method="post" action="/login">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" id="csrf" />
 
                 <div class="form-group" th:class="${'form-group'}">
-                    <label for="email">Email address</label> <input class="form-control" type="email" th:value="${form != null ? form.email : ''}" name="email"
+                    <label for="email">Email address</label> <input  class="form-control" type="email" th:value="${form != null ? form.email : ''}" name="email"
                         id="email" autofocus="autofocus" required="required" />
 
 
@@ -20,7 +25,49 @@
 
                 </div>
                 <br />
-                <button class="btn btn-default button " style="" type="submit">Login</button><br /><br />
+                <button class="btn btn-default button "  id="sbmbtn" style="display:inline-block;" type="submit">Login</button>
+                <label for="remember" style="margin-left:10px;display:inline-block;line-height:2em;margin-top:0px;"><input type="checkbox" name="remember-me"/>Rememeber me </label>   
+                <script>
+             	// <![CDATA[
+             	            $(document).ready(function(){
+             	            	$("#sbmbtn").click(function(event){
+             	            		event.preventDefault();
+             	            		console.log("click")
+             	            		$.ajax({
+             	                 	  method: "POST",
+             	                 	  url: "/login",
+             	                 	  data: { email: $("#email").val(), password: $("#password").val(), _csrf : $("#csrf").val()}
+             	                 	})
+             	                 	  .done(function( msg ) {
+             	                 	    var text = $(msg, "p").text();
+             	                 	    console.log(text)
+             	                 	    vars = text.split("|");
+             	                 	    if (vars[0] == 'false'){
+             	                 	      	$("#error").show();
+             	                 	        $("#csrf").val(vars[2])
+             	                 	    }
+             	                 	    else {
+             	                 	      location.reload();
+             	                 	    }
+             	                 	  })
+             	            		
+             	            		return false;
+             	            	})
+             	            	
+             	            	$("#email").on("input focus change", function(){
+             	            		$("#error").hide();
+             	            	})
+             	            	$("#password").on("input focus change", function(){
+             	            		$("#error").hide();
+             	            	})
+             	            
+             	            })
+                
+             	// ]]>
+                </script>
+                
+                  
+                <br /><br />
                 <h3>Don't have an account yet? Register!</h3>
                 <a href="/register" class="btn btn-default button " style="">Register</a>
             </form>

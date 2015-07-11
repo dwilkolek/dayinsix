@@ -326,7 +326,7 @@ body {
     padding: 50px 0 0 50px; }
 
   .row {
-    margin: -80px 0 -1px -50px; }
+    margin: -30px 0 -1px -50px; }
 
   .row.uniform > * {
     padding: 50px 0 0 50px; }
@@ -1382,7 +1382,7 @@ button,
     padding: 3em 0 3em 0; }
 
   #main-wrapper {
-    padding: 6em 0 6em 0; }
+    padding: 3em 0 3em 0; }
 
   #footer-wrapper {
     padding: 6em 0 8em 0; }
