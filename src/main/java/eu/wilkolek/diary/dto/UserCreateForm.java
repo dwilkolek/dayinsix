@@ -3,9 +3,7 @@ package eu.wilkolek.diary.dto;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.validator.EmailValidator;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
 public class UserCreateForm {

@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import org.springframework.security.core.authority.AuthorityUtils;
 
+import eu.wilkolek.diary.util.DateTimeUtils;
+
 public class CurrentUser extends org.springframework.security.core.userdetails.User {
 
     /**
@@ -21,7 +23,9 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
     public User getUser() {
         return user;
     }
-    
+    public void setUser(User user) {
+        this.user = user;
+    }
     public String getEmail(){
     	return user.getEmail();
     }
@@ -40,6 +44,14 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
 
     public void setOptions(HashMap<String, String> options){
     	user.setOptions(options);
+    }
+    
+    public String getUsername(){
+        return user.getUsername();
+    }
+    
+    public String getLastLogInString(){
+        return DateTimeUtils.format(user.getLastLogIn());
     }
     
     @Override

@@ -1,5 +1,10 @@
 package eu.wilkolek.diary.controller;
 
+import java.util.HashMap;
+import java.util.Optional;
+
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +12,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,11 +27,6 @@ import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.util.TimezoneUtils;
-
-import java.util.HashMap;
-import java.util.Optional;
-
-import javax.validation.Valid;
 
 @Controller
 public class AuthController {
@@ -53,7 +52,8 @@ public class AuthController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(@RequestParam Optional<String> error) {
         LOGGER.debug("Getting login page, error={}", error);
-        ModelAndView model = new ModelAndView("loginSuccess");
+        ModelAndView model = new ModelAndView("login");
+        model.getModelMap().addAttribute("sidebarNoLogin", true);
         model.getModelMap().addAttribute("errors", new HashMap<String,String>());
         return model;
     }

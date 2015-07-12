@@ -1,7 +1,6 @@
 package eu.wilkolek.diary.dto;
 
 
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
 
 import eu.wilkolek.diary.model.InputTypeEnum;

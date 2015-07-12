@@ -14,22 +14,25 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import eu.wilkolek.diary.dto.DayForm;
-import eu.wilkolek.diary.dto.DayFormValidator;
-import eu.wilkolek.diary.dto.UserCreateFormValidator;
+import eu.wilkolek.diary.dto.ProfileForm;
+import eu.wilkolek.diary.dto.ProfileFormCustomValidator;
+import eu.wilkolek.diary.dto.ProfileFormValidator;
 import eu.wilkolek.diary.model.CurrentUser;
 import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.DictionaryWord;
+import eu.wilkolek.diary.model.InputTypeEnum;
+import eu.wilkolek.diary.model.NotificationTypesEnum;
+import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.DictionaryWordRepository;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.util.TimezoneUtils;
 
 @Controller
 public class UserController {
@@ -39,6 +42,8 @@ public class UserController {
 	private final UserRepository userRepository;
 	private final DayRepository dayRepository;
 	private final DictionaryWordRepository dictionaryWordRepository;
+
+    private CurrentUser currentUser;
 	
 //	private final CurrentUser currentUser;
 	
@@ -52,7 +57,6 @@ public class UserController {
 		this.dayRepository  = dayRepository;
 		this.dictionaryWordRepository = dictionaryWordRepository;
 		
-//		this.currentUser = currentUser;
 //		this.dayFormValidator = dayFormValidator;
 //		this.userCreateFormValidator = userCreateFormValidator;
 	}
@@ -127,5 +131,60 @@ public class UserController {
 		model.addAttribute("form", new DayForm());
 		return "user/day/add";
 	}
+	
+	
+	
+	
+	@PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/profile", method = RequestMethod.GET)
+    public String profile(CurrentUser currentUser, Model model) {
+	    
+	    User user = currentUser.getUser();
+	    user = userRepository.findOne(user.getId());
+	    ProfileForm profileForm = new ProfileForm(user);    
+	    
+        prepareDataForModel(model);
+        
+        model.addAttribute("form", profileForm);
+        
+        return "user/profile";
+    }
+	
+	private void prepareDataForModel(Model model) {
+	    model.addAttribute("timezones", TimezoneUtils.getTimeZones());
+        model.addAttribute("shareStyles", ShareStyleEnum.asMap());
+        model.addAttribute("inputTypes", InputTypeEnum.asMap());    
+        model.addAttribute("notificationFrequencyTypes", NotificationTypesEnum.asMap());  
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/profile", method = RequestMethod.POST)
+    public String profileSave(CurrentUser currentUser, Model model, @Valid ProfileForm profileForm, BindingResult result) {
+        
+	    User user = userRepository.findOne(currentUser.getId());
+	    
+	    ProfileFormValidator validator = new ProfileFormValidator(userRepository);
+	    validator.validate(profileForm, result);
+	    
+	    ProfileFormCustomValidator.validate(user, userRepository, profileForm, result);
+	    
+	    if (!result.hasErrors()){
+	        user.updateUser(profileForm);
+	        user = userRepository.save(user);
+	    }else{
+	        model.addAttribute("errors",profileForm.createMessages(result.getAllErrors()));
+	    }
+	    
+	   ProfileForm profileFormClean = new ProfileForm(user);
+        
+        
+	   prepareDataForModel(model);
+        
+        
+        model.addAttribute("form", profileFormClean);
+	    
+	    return "user/profile";
+        
+    }
 	
 }
