@@ -1,6 +1,7 @@
 package eu.wilkolek.diary.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import eu.wilkolek.diary.model.DictionaryWord;
 
@@ -13,6 +14,7 @@ public class DayForm {
 	private String sentence;
 	private String sentenceStatus;
 
+	private Date dayDate;
 
 	public DayForm() {
 	    words = new ArrayList<String>(6);
@@ -62,6 +64,14 @@ public class DayForm {
 	public void setDictionaryWords(ArrayList<DictionaryWord> dictionaryWords) {
 		this.dictionaryWords = dictionaryWords;
 	}
+
+    public void setDayDate(Date date) {
+        this.dayDate = date;    
+    }
+
+    public Date getDayDate() {
+        return this.dayDate;
+    }
 	
 	
 	

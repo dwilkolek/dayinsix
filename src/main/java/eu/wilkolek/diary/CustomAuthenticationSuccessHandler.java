@@ -1,6 +1,8 @@
 package eu.wilkolek.diary;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,24 +27,22 @@ public class CustomAuthenticationSuccessHandler implements
     private UserRepository userRepository;
 
     @Autowired
-    public CustomAuthenticationSuccessHandler(UserRepository userRepository){
+    public CustomAuthenticationSuccessHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
             HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
-        System.out.println("auth is happening");
-        
-        CurrentUser currentUser = (CurrentUser)authentication.getPrincipal();
+
+        CurrentUser currentUser = (CurrentUser) authentication.getPrincipal();
         User user = userRepository.findOne(currentUser.getId());
-        user.setLastLogIn(DateTimeUtils.getCurrentUTCTime());
+        Date date = DateTimeUtils.getCurrentUTCTime();
+        user.setLastLogIn(date);
+
         currentUser.setUser(userRepository.save(user));
-        
-        
-        System.out.println("auth is happened");
-        
+
     }
 
 }

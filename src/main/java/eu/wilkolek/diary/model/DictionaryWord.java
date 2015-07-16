@@ -7,6 +7,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "dictionary")
 public class DictionaryWord {
+    
+    public DictionaryWord(){}
+    public DictionaryWord(User user,String value){
+        this.value = value;
+        this.user = user;
+    }
+    
 	@Id
 	private String id;
 

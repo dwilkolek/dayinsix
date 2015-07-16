@@ -51,7 +51,12 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
     }
     
     public String getLastLogInString(){
+        try {
         return DateTimeUtils.format(user.getLastLogIn());
+        } catch (Exception e){
+            e.printStackTrace();
+            return "unknown";
+        }
     }
     
     @Override

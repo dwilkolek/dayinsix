@@ -39,7 +39,7 @@ public class Day {
 			}
 			
 		}
-		this.creationDate = new Date();
+		this.creationDate = dayForm.getDayDate();
 	}
 
 	@Id
@@ -69,6 +69,21 @@ public class Day {
 	public Date getCreationDate() {
 		return creationDate;
 	}
+    public void setId(String id) {
+        this.id = id;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
+    public void setSentence(Sentence sentence) {
+        this.sentence = sentence;
+    }
+    public void setWords(ArrayList<Word> words) {
+        this.words = words;
+    }
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 	
 	
 	

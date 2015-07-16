@@ -2,8 +2,10 @@ package eu.wilkolek.diary.repository;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,11 +24,10 @@ private MongoOperations operation;
 	}
 	
 	@Override
-	public ArrayList<Day> get7DaysFromDate(User user, Date date) {
+	public ArrayList<Day> getDaysFromDateToDate(User user, Date dateStart, Date dateEnd) {
+		Query query = new Query(Criteria.where("user").is(user).andOperator(Criteria.where("creationDate").gte(dateStart).andOperator(Criteria.where("creationDate").lte(dateEnd))));
+		query.with(new Sort(Sort.Direction.DESC, "creationDate"));
 		
-		Date firstDay = new Date(date.getTime() - 7 * 24*60*60*1000); 
-		
-		Query query = new Query(Criteria.where("user").is(user).andOperator(Criteria.where("creationDate").gt(firstDay)));
 		ArrayList<Day> result = new ArrayList<Day>(operation.find(query, Day.class));
 		return result;
 

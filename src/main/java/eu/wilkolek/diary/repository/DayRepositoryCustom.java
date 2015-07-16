@@ -9,7 +9,7 @@ import eu.wilkolek.diary.model.User;
 
 public interface DayRepositoryCustom{
 
-	public ArrayList<Day> get7DaysFromDate(User user, Date date);
+	public ArrayList<Day> getDaysFromDateToDate(User user, Date dateStart, Date dateEnd);
 	
 	
 }

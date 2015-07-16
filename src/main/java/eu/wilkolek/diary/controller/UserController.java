@@ -1,12 +1,14 @@
 package eu.wilkolek.diary.controller;
 
-
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +18,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.gs.collections.impl.list.Interval;
 
 import eu.wilkolek.diary.dto.DayForm;
 import eu.wilkolek.diary.dto.ProfileForm;
 import eu.wilkolek.diary.dto.ProfileFormCustomValidator;
 import eu.wilkolek.diary.dto.ProfileFormValidator;
+import eu.wilkolek.diary.exception.OutOfDateException;
 import eu.wilkolek.diary.model.CurrentUser;
 import eu.wilkolek.diary.model.Day;
+import eu.wilkolek.diary.model.DayView;
 import eu.wilkolek.diary.model.DictionaryWord;
 import eu.wilkolek.diary.model.InputTypeEnum;
 import eu.wilkolek.diary.model.NotificationTypesEnum;
@@ -32,159 +39,224 @@ import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.DictionaryWordRepository;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.TimezoneUtils;
 
 @Controller
 public class UserController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-	
-	private final UserRepository userRepository;
-	private final DayRepository dayRepository;
-	private final DictionaryWordRepository dictionaryWordRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
+    private final UserRepository userRepository;
+    private final DayRepository dayRepository;
+    private final DictionaryWordRepository dictionaryWordRepository;
 
     private CurrentUser currentUser;
-	
-//	private final CurrentUser currentUser;
-	
-//	private final UserCreateFormValidator userCreateFormValidator;
-//
-//	private DayFormValidator dayFormValidator;
 
-	@Autowired
-	public UserController(UserRepository userRepository, DayRepository dayRepository, DictionaryWordRepository dictionaryWordRepository) {
-		this.userRepository = userRepository;
-		this.dayRepository  = dayRepository;
-		this.dictionaryWordRepository = dictionaryWordRepository;
-		
-//		this.dayFormValidator = dayFormValidator;
-//		this.userCreateFormValidator = userCreateFormValidator;
-	}
+    // private final CurrentUser currentUser;
 
-//	@InitBinder("userForm")
-//	public void initBinder(WebDataBinder binder) {
-//		binder.addValidators(userCreateFormValidator);	
-//	}
-//
-//	
-//	
-	
-	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/user/details")
-	public ModelAndView details() {
-		return new ModelAndView("/user/details");
-	}
+    // private final UserCreateFormValidator userCreateFormValidator;
+    //
+    // private DayFormValidator dayFormValidator;
 
-	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/user/day/list")
-	public ModelAndView days(CurrentUser currentUser) throws Exception {
-		Optional<User> user = userRepository.findById(currentUser.getId());
-		if (!user.isPresent()){
-			throw new Exception("CurrentUser not found id="+currentUser.getId());
-		}
-		ArrayList<Day> days = dayRepository.get7DaysFromDate(user.get(), new Date());
-		ModelAndView model = new ModelAndView("user/day/list");
-		model.getModelMap().put("days", days);
-		
-		return model;
-	}
-	
-	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/user/day/add", method = RequestMethod.POST)
-	public String saveDay(CurrentUser currentUser, @Valid DayForm dayForm, BindingResult result) {
-		if (result.hasErrors()) {
-			return "user/day/add";
-		}
+    @Autowired
+    public UserController(UserRepository userRepository, DayRepository dayRepository, DictionaryWordRepository dictionaryWordRepository) {
+        this.userRepository = userRepository;
+        this.dayRepository = dayRepository;
+        this.dictionaryWordRepository = dictionaryWordRepository;
 
-		User user = currentUser.getUser();
-		System.out.println("User id:" + user.getId());
-		if (dayForm.getWords().size() > 0) {
-			ArrayList<DictionaryWord> resultList = new ArrayList<DictionaryWord>();
-			for (int i = 0; i < dayForm.getWords().size(); i++) {
-				String value = dayForm.getWords().get(i);
+        // this.dayFormValidator = dayFormValidator;
+        // this.userCreateFormValidator = userCreateFormValidator;
+    }
 
-				Optional<DictionaryWord> dictWordO = dictionaryWordRepository
-						.findByValueAndUser(value, user);
-				if (dictWordO.isPresent()) {
-					resultList.add(dictWordO.get());
-				} else {
-					DictionaryWord dw = new DictionaryWord();
-					dw.setValue(value);
-					dw.setUser(user);
-					DictionaryWord dwSaved = dictionaryWordRepository.save(dw);
-					resultList.add(dwSaved);
-				}
-			}
-			dayForm.setDictionaryWords(resultList);
-		}
+    // @InitBinder("userForm")
+    // public void initBinder(WebDataBinder binder) {
+    // binder.addValidators(userCreateFormValidator);
+    // }
+    //
+    //
+    //
 
-		dayRepository.save(new Day(dayForm, user));
-		LOGGER.debug("User "+user.getEmail()+" added new day");
-	//	userRepository.addDayRef(user, day);
-		
-		return "redirect:/user/day/list";
-	}
-	
-	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/user/day/add", method = RequestMethod.GET)
-	public String add(Model model) {
-		model.addAttribute("form", new DayForm());
-		return "user/day/add";
-	}
-	
-	
-	
-	
-	@PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/details")
+    public ModelAndView details() {
+        return new ModelAndView("/user/details");
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/day/list")
+    public ModelAndView days(CurrentUser currentUser, Integer page) throws Exception {
+
+        int DAYS_PER_PAGE = 7;
+
+        Optional<User> user = userRepository.findById(currentUser.getId());
+        if (!user.isPresent()) {
+            throw new Exception("CurrentUser not found id=" + currentUser.getId());
+        }
+        Date now = DateTimeUtils.getCurrentUTCTime();
+        if (!(page != null && page > -1)) {
+            page = 0;
+        }
+
+        Date chosenThen = new Date(now.getTime() - TimeUnit.DAYS.toMillis(DAYS_PER_PAGE * page));
+        Date chosenEarlier = new Date(chosenThen.getTime() - TimeUnit.DAYS.toMillis(DAYS_PER_PAGE - 1));
+        ArrayList<Day> days = dayRepository.getDaysFromDateToDate(user.get(), chosenEarlier, chosenThen);
+        ModelAndView model = new ModelAndView("user/day/list");
+
+        ArrayList<DayView> daysView = fillDates(days, chosenEarlier, chosenThen);
+
+        model.getModelMap().put("days", daysView);
+
+        return model;
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/day/add", method = RequestMethod.POST)
+    public String saveDay(CurrentUser currentUser, @Valid DayForm dayForm, BindingResult result, @RequestParam(value = "date", required = false) String dateStr)
+            throws ParseException, OutOfDateException {
+        if (result.hasErrors()) {
+            return "user/day/add";
+        }
+
+        Date date = DateTimeUtils.getCurrentUTCTime();
+
+        if (!StringUtils.isEmpty(dateStr)) {
+            date = DateTimeUtils.StringDateToDate(dateStr);
+        }
+
+        checkDate(date);
+
+        dayForm.setDayDate(date);
+
+        User user = currentUser.getUser();
+        System.out.println("User id:" + user.getId());
+        if (dayForm.getWords().size() > 0) {
+            ArrayList<DictionaryWord> resultList = new ArrayList<DictionaryWord>();
+            for (int i = 0; i < dayForm.getWords().size(); i++) {
+                String value = dayForm.getWords().get(i);
+
+                Optional<DictionaryWord> dictWordO = dictionaryWordRepository.findByValueAndUser(value, user);
+                if (dictWordO.isPresent()) {
+                    resultList.add(dictWordO.get());
+                } else {
+                    DictionaryWord dw = new DictionaryWord();
+                    dw.setValue(value);
+                    dw.setUser(user);
+                    DictionaryWord dwSaved = dictionaryWordRepository.save(dw);
+                    resultList.add(dwSaved);
+                }
+            }
+            dayForm.setDictionaryWords(resultList);
+        }
+
+        dayRepository.save(new Day(dayForm, user));
+        LOGGER.debug("User " + user.getEmail() + " added new day");
+
+        return "redirect:/user/day/list";
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/day/add", method = RequestMethod.GET)
+    public String add(Model model, @RequestParam(value = "date", required = false) String dateStr) {
+        model.addAttribute("form", new DayForm());
+        return "user/day/add";
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/profile", method = RequestMethod.GET)
     public String profile(CurrentUser currentUser, Model model) {
-	    
-	    User user = currentUser.getUser();
-	    user = userRepository.findOne(user.getId());
-	    ProfileForm profileForm = new ProfileForm(user);    
-	    
+
+        User user = currentUser.getUser();
+        user = userRepository.findOne(user.getId());
+        ProfileForm profileForm = new ProfileForm(user);
+
         prepareDataForModel(model);
-        
+
         model.addAttribute("form", profileForm);
-        
+
         return "user/profile";
     }
-	
-	private void prepareDataForModel(Model model) {
-	    model.addAttribute("timezones", TimezoneUtils.getTimeZones());
+
+    private void prepareDataForModel(Model model) {
+        model.addAttribute("timezones", TimezoneUtils.getTimeZones());
         model.addAttribute("shareStyles", ShareStyleEnum.asMap());
-        model.addAttribute("inputTypes", InputTypeEnum.asMap());    
-        model.addAttribute("notificationFrequencyTypes", NotificationTypesEnum.asMap());  
+        model.addAttribute("inputTypes", InputTypeEnum.asMap());
+        model.addAttribute("notificationFrequencyTypes", NotificationTypesEnum.asMap());
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/profile", method = RequestMethod.POST)
     public String profileSave(CurrentUser currentUser, Model model, @Valid ProfileForm profileForm, BindingResult result) {
-        
-	    User user = userRepository.findOne(currentUser.getId());
-	    
-	    ProfileFormValidator validator = new ProfileFormValidator(userRepository);
-	    validator.validate(profileForm, result);
-	    
-	    ProfileFormCustomValidator.validate(user, userRepository, profileForm, result);
-	    
-	    if (!result.hasErrors()){
-	        user.updateUser(profileForm);
-	        user = userRepository.save(user);
-	    }else{
-	        model.addAttribute("errors",profileForm.createMessages(result.getAllErrors()));
-	    }
-	    
-	   ProfileForm profileFormClean = new ProfileForm(user);
-        
-        
-	   prepareDataForModel(model);
-        
-        
+
+        User user = userRepository.findOne(currentUser.getId());
+
+        ProfileFormValidator validator = new ProfileFormValidator(userRepository);
+        validator.validate(profileForm, result);
+
+        ProfileFormCustomValidator.validate(user, userRepository, profileForm, result);
+
+        if (!result.hasErrors()) {
+            user.updateUser(profileForm);
+            user = userRepository.save(user);
+            currentUser.setUser(user);
+        } else {
+            model.addAttribute("errors", profileForm.createMessages(result.getAllErrors()));
+        }
+
+        ProfileForm profileFormClean = new ProfileForm(user);
+
+        prepareDataForModel(model);
+
         model.addAttribute("form", profileFormClean);
-	    
-	    return "user/profile";
-        
+
+        return "user/profile";
+
     }
-	
+
+    private Date checkDate(Date date) throws OutOfDateException {
+
+        Optional<Day> day = dayRepository.findByCreationDate(date);
+        Long diffInDays = DateTimeUtils.diffInDays(date, DateTimeUtils.getCurrentUTCTime());
+        if (!day.isPresent() && diffInDays < 3L && diffInDays > -2L) {
+            return date;
+        } else {
+            throw new OutOfDateException("You can't save data for this day " + DateTimeUtils.format(date));
+        }
+
+    }
+
+    private ArrayList<DayView> fillDates(ArrayList<Day> days, Date dayStart, Date dayFinish) {
+        Integer diff = (int) TimeUnit.MILLISECONDS.toDays(dayFinish.getTime() - dayStart.getTime());
+        diff = Math.abs(diff) + 1;
+        Integer count = 0;
+        Integer dayProcessed = 0;
+        ArrayList<DayView> resultDays = new ArrayList<DayView>(diff + 1);
+
+        while (diff != resultDays.size()) {
+            Date nowProcessed = new Date(dayFinish.getTime() - TimeUnit.DAYS.toMillis(dayProcessed));
+            DayView d;
+            if (days.size() > 0 && days.size() > count && days.get(count) != null && nowProcessed.equals(days.get(count).getCreationDate())) {
+                Day h = days.get(count);
+                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate());
+                count++;
+            } else {
+                d = new DayView(null, null, nowProcessed);
+                d.setEmpty(true);
+            }
+
+            try {
+                checkDate(d.getCreationDate());
+                d.setCanAdd(true && d.getSentence() == null && d.getWords() == null);
+            } catch (OutOfDateException e) {
+                d.setCanAdd(false);
+            }
+
+            resultDays.add(d);
+            dayProcessed++;
+        }
+
+        return resultDays;
+
+    }
+
 }

@@ -13,13 +13,31 @@
                 <div class="row">
 
                     <!-- Content -->
-                    <div id="content" class="8u 12u(mobile)">
-                        <table th:if="${days.size() > 0}">
-                            <tr th:each="day : ${days}">
-                                <td th:text="${day.creationDate}"></td>
-                                <td th:if="${day.sentence != null}" th:text="${day.sentence.value + ' - ' + day.sentence.status + ' by ' + day.user.email}"></td>
-                                <td th:if="${day.sentence == null}"><span th:each="word : ${day.words}"
-                                    th:text="${word.value.value + ' - ' + word.status + ', '}"></span></td>
+                    <div id="content" class="table-striped">
+                        <table class="table">
+                            <tr>
+                                <th>
+                                    Date
+                                </th>
+                                <th colspan="6">
+                                    Sentence/Words
+                                </th>
+                            </tr>
+                            <tr  th:if="${days.size() > 0}" th:each="day : ${days}"  th:with="df=${@environment.getProperty('date.format.display')}">
+                                <td th:text="${#calendars.format(day.creationDate,df)}"></td>
+                                <td  colspan="6" th:if="${day.sentence != null}" >
+                                    <span th:text="${day.sentence.value}" ></span>
+                                    <span th:class="${'ico ico'+day.sentence.status}"><i></i></span>
+                                </td>
+                                <td th:if="${day.words != null}" th:each="word : ${day.words}">
+                                    
+                                    <span th:text="${word.value.value}" ></span>
+                                    <span th:class="${'ico ico'+word.status}"><i></i></span>
+                                </td>
+                                <td th:if="${day.CanAdd}" th:with="dfx=${@environment.getProperty('date.format.add')}">
+                                    <a th:href="${'/user/day/add?date='+#calendars.format(day.creationDate,dfx)}" >Save THE day</a>
+                                    
+                                </td>
                             </tr>
                         </table>
                         <h3 th:if="${days.size() == 0}">You have to save at least one day to see it here.</h3>

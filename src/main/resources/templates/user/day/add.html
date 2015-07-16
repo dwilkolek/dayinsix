@@ -11,7 +11,7 @@
         <div id="main-wrapper">
             <div id="main" class="container">
                 <div class="row">
-
+    <h1 th:text="${currentUser.options.get('inputType')}"></h1>
                     <!-- Content -->
                     <div id="content" class="8u 12u(mobile)">
 
@@ -73,7 +73,7 @@
                     $(document).ready(function() {
                         $(".sugesstionAutocomplete").on("keyup", function(e) {
                             if (e.keyCode >= 46 && e.keyCode <= 90 || e.keyCode == 8) {
-                            	value = $(this).val().toLowerCase();
+                            	value = $(this).val();
                             	$(this).val(value);
                                 $.get("/sugestions?letters=" + value , function(data) {
                                     var text = $(data, "p").text();

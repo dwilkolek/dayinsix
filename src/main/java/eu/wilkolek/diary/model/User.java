@@ -33,6 +33,8 @@ public class User {
     
     private Date lastLogIn;
     
+    private Date created;
+    
     public User(){
     	
     }
@@ -181,6 +183,17 @@ public class User {
         this.lastLogIn = lastLogIn;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    
+    
+    
 //	public Collection<Day> getDays() {
 //		return days;
 //	}
