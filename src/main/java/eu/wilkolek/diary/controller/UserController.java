@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -85,9 +86,9 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/day/list")
-    public ModelAndView days(CurrentUser currentUser, Integer page) throws Exception {
+    public ModelAndView days(CurrentUser currentUser, @RequestParam(value="page",required=false, defaultValue="1")Integer page) throws Exception {
 
-        int DAYS_PER_PAGE = 7;
+        int DAYS_PER_PAGE = 10;
 
         Optional<User> user = userRepository.findById(currentUser.getId());
         if (!user.isPresent()) {
@@ -95,24 +96,55 @@ public class UserController {
         }
         Date now = DateTimeUtils.getCurrentUTCTime();
         if (!(page != null && page > -1)) {
-            page = 0;
+            page = 1;
         }
-
+        page--;
         Date chosenThen = new Date(now.getTime() - TimeUnit.DAYS.toMillis(DAYS_PER_PAGE * page));
         Date chosenEarlier = new Date(chosenThen.getTime() - TimeUnit.DAYS.toMillis(DAYS_PER_PAGE - 1));
         ArrayList<Day> days = dayRepository.getDaysFromDateToDate(user.get(), chosenEarlier, chosenThen);
         ModelAndView model = new ModelAndView("user/day/list");
-
+        
+        int allDays = dayRepository.countByUser(user.get());
+        
         ArrayList<DayView> daysView = fillDates(days, chosenEarlier, chosenThen);
-
+        int mPages= (int)Math.ceil(allDays/DAYS_PER_PAGE);
+        
+        int sPages = page -4;
+        int tPages = page +5;
+        
+        if (sPages <1){
+            tPages += Math.abs(1 - sPages);
+            sPages = 1;
+            
+        }
+        
+        if (tPages > mPages){
+            sPages -= (tPages - mPages);
+            tPages = mPages;
+        }
+        
+       // int tPages = mPages > 8 ? sPage+8 : mPages;
+        
+        
+        model.getModelMap().put("cPage", page+1);
         model.getModelMap().put("days", daysView);
-
+        model.getModelMap().put("pages", mPages);
+        model.getModelMap().put("tPage", tPages);
+        model.getModelMap().put("sPage", sPages);
         return model;
     }
 
+    
     @PreAuthorize("hasAuthority('USER')")
-    @RequestMapping(value = "/user/day/add", method = RequestMethod.POST)
-    public String saveDay(CurrentUser currentUser, @Valid DayForm dayForm, BindingResult result, @RequestParam(value = "date", required = false) String dateStr)
+    @RequestMapping(value = "/user/")
+    public String defaultPage(CurrentUser currentUser) throws Exception {
+        return "redirect:/user/day/list";
+    }
+    
+   
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/day/add/{dateStr}", method = RequestMethod.POST)
+    public String saveDay(CurrentUser currentUser, @Valid DayForm dayForm, BindingResult result,@PathVariable(value = "dateStr") String dateStr)
             throws ParseException, OutOfDateException {
         if (result.hasErrors()) {
             return "user/day/add";
@@ -124,7 +156,9 @@ public class UserController {
             date = DateTimeUtils.StringDateToDate(dateStr);
         }
 
-        checkDate(date);
+        if (date.getTime() > DateTimeUtils.getCurrentUTCTime().getTime()){
+            throw new OutOfDateException("Your date is newer than UTC+0");
+        }
 
         dayForm.setDayDate(date);
 
@@ -156,9 +190,10 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @RequestMapping(value = "/user/day/add", method = RequestMethod.GET)
-    public String add(Model model, @RequestParam(value = "date", required = false) String dateStr) {
+    @RequestMapping(value = "/user/day/add/{date}", method = RequestMethod.GET)
+    public String add(Model model,  @PathVariable(value = "date") String date) {
         model.addAttribute("form", new DayForm());
+        model.addAttribute("date", date);
         return "user/day/add";
     }
 
@@ -213,15 +248,25 @@ public class UserController {
 
     }
 
-    private Date checkDate(Date date) throws OutOfDateException {
-
-        Optional<Day> day = dayRepository.findByCreationDate(date);
-        Long diffInDays = DateTimeUtils.diffInDays(date, DateTimeUtils.getCurrentUTCTime());
-        if (!day.isPresent() && diffInDays < 3L && diffInDays > -2L) {
-            return date;
-        } else {
-            throw new OutOfDateException("You can't save data for this day " + DateTimeUtils.format(date));
+    private Date checkDate(Date date, Boolean checkIfExists) throws OutOfDateException {
+        Boolean dayExists;
+        if (checkIfExists){
+            Optional<Day> day = dayRepository.findByCreationDate(date);
+            dayExists = day.isPresent();
+        }else {
+            dayExists = true;
         }
+        Long diffInDays = DateTimeUtils.diffInDays(date, DateTimeUtils.getCurrentUTCTime());
+        
+        if (diffInDays < 3L && diffInDays > -2L) {
+            if (checkIfExists && !dayExists || !checkIfExists){
+                return date;
+            }
+        }
+            
+        
+        throw new OutOfDateException("You can't save data for this day " + DateTimeUtils.format(date));
+        
 
     }
 
@@ -230,7 +275,7 @@ public class UserController {
         diff = Math.abs(diff) + 1;
         Integer count = 0;
         Integer dayProcessed = 0;
-        ArrayList<DayView> resultDays = new ArrayList<DayView>(diff + 1);
+        ArrayList<DayView> resultDays = new ArrayList<DayView>(diff);
 
         while (diff != resultDays.size()) {
             Date nowProcessed = new Date(dayFinish.getTime() - TimeUnit.DAYS.toMillis(dayProcessed));
@@ -245,10 +290,13 @@ public class UserController {
             }
 
             try {
-                checkDate(d.getCreationDate());
-                d.setCanAdd(true && d.getSentence() == null && d.getWords() == null);
+                
+                d.setCanAdd(true);
+                checkDate(d.getCreationDate(), false);
+                d.setCanEdit(true);
             } catch (OutOfDateException e) {
-                d.setCanAdd(false);
+                d.setCanEdit(false);
+                
             }
 
             resultDays.add(d);

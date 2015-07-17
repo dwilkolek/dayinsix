@@ -33,6 +33,13 @@ private MongoOperations operation;
 
 	}
 
+    @Override
+    public Integer countByUser(User user) {
+        Query query = new Query(Criteria.where("user").is(user));
+        Integer result = (int)operation.count(query, Day.class);
+        return result;
+    }
+
 	
 
 }

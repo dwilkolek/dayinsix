@@ -85,8 +85,8 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         User user = new User();
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        user.setCreated(new Date(DateTimeUtils.getCurrentUTCTime().getTime() - 30 * 24 * 60 * 1000));
+        user.setUsername("words");
+        user.setCreated(new Date(DateTimeUtils.getCurrentUTCTime().getTime() - 750 * 24 * 60 * 1000));
         user.setEmail("word@word.it");
         user.setPasswordHash(encoder.encode("wordit"));
         user.setLastLogIn(DateTimeUtils.getCurrentUTCTime());
@@ -121,7 +121,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         words.add(new DictionaryWord(user, "Dobrre"));
         words = (ArrayList<DictionaryWord>) dictionaryWordRepository.save(words);
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 750; i++) {
             Day day = new Day();
             day.setCreationDate(new Date(DateTimeUtils.getCurrentUTCTime().getTime() - TimeUnit.DAYS.toMillis(i)));
             ArrayList<Word> w = new ArrayList<Word>();

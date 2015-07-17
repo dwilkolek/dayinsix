@@ -1,39 +1,41 @@
-<div id="header-wrapper">
-                    <div id="header" class="container">
+<div id="top" class="no-body">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
 
-                        <!-- Logo -->
-                      
-                            <h1 id="logo"><a href="/"><img id="logo-img" th:src="@{/strongly-typed/assets/css/images/logo.png}"/></a></h1>
-<!--                             <p>Save your day in six words and make it your diary</p> -->
+                <h1 id="logo">
+                    <img th:src="@{/img/logo.png}" />
+                </h1>
 
-                        <!-- Nav -->
-                            <nav id="nav-diary">
-                                <ul>
-                                    <li><a href="/about"><span>About</span></a></li>
-                                    <li><a href="/contact"><span>Contact</span></a></li>
-<!--                                     <li><a class="icon fa-home" href="index.html"><span>Introduction</span></a></li> -->
-<!--                                     <li> -->
-<!--                                         <a href="#" class="icon fa-bar-chart-o"><span>Dropdown</span></a> -->
-<!--                                         <ul> -->
-<!--                                             <li><a href="#">Lorem ipsum dolor</a></li> -->
-<!--                                             <li><a href="#">Magna phasellus</a></li> -->
-<!--                                             <li><a href="#">Etiam dolore nisl</a></li> -->
-<!--                                             <li> -->
-<!--                                                 <a href="#">Phasellus consequat</a> -->
-<!--                                                 <ul> -->
-<!--                                                     <li><a href="#">Magna phasellus</a></li> -->
-<!--                                                     <li><a href="#">Etiam dolore nisl</a></li> -->
-<!--                                                     <li><a href="#">Phasellus consequat</a></li> -->
-<!--                                                 </ul> -->
-<!--                                             </li> -->
-<!--                                             <li><a href="#">Veroeros feugiat</a></li> -->
-<!--                                         </ul> -->
-<!--                                     </li> -->
-<!--                                     <li><a class="icon fa-cog" href="left-sidebar.html"><span>Left Sidebar</span></a></li> -->
-<!--                                     <li><a class="icon fa-retweet" href="right-sidebar.html"><span>Right Sidebar</span></a></li> -->
-<!--                                     <li><a class="icon fa-sitemap" href="no-sidebar.html"><span>No Sidebar</span></a></li> -->
-                                </ul>
-                            </nav>
+            </div>
+        
+            <div class="col-md-3" id="menu">
+                <div class="" th:if="${currentUser != null}">
+                    <span>Hi, <a href="user/profile"><th:block th:text="${currentUser.username}"></th:block></a></span>
 
-                    </div>
+                    <form method="post" action="/logout" style="display: none;">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> <input type="submit" value="Logout" />
+                    </form>
                 </div>
+<!--                 <nav class="navbar" role="navigation"> -->
+<!--                     <div class="" id="bs-example-navbar-collapse-1"> -->
+<!--                         <ul class="nav navbar-nav navbar-right"> -->
+<!--                             <li><a href="#">Link</a></li> -->
+<!--                             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown<strong class="caret"></strong></a> -->
+<!--                                 <ul class="dropdown-menu"> -->
+<!--                                     <li><a href="#">Action</a></li> -->
+<!--                                     <li><a href="#">Another action</a></li> -->
+<!--                                     <li><a href="#">Something else here</a></li> -->
+<!--                                     <li class="divider"></li> -->
+<!--                                     <li><a href="#">Separated link</a></li> -->
+<!--                                 </ul></li> -->
+<!--                         </ul> -->
+<!--                     </div> -->
+
+<!--                 </nav> -->
+
+            </div>
+        </div>
+
+    </div>
+</div>

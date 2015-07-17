@@ -1,27 +1,23 @@
-
-<!DOCTYPE HTML>
-<!--
-    Strongly Typed by HTML5 UP
-    html5up.net | @n33co
-    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head" />
-<body class="right-sidebar">
+<body class="">
     <div id="page-wrapper">
 
         <!-- Header -->
         <div id="header-wrapper" th:replace="fragments/header" />
 
-        <!-- Main -->
-        <div id="main-wrapper">
-            <div id="main" class="container">
+
+
+        <div id="content" class="full-body">
+            <div class="container">
+                <div th:replace="fragments/topbar" />
+
                 <div class="row">
-                    <div class="2u"></div>
-                    <!-- Content -->
-                    <div id="content" class="8u 12u(mobile)">
 
-
+                    <div class="col-md-12">
+                        <!-- Content -->
+                        <div id="content">
 
                         <h2>Register</h2>
                        
@@ -102,14 +98,18 @@
 																																	})
 																												</script>
                         </div>
+              </div>
                     </div>
-
                     <!-- Sidebar -->
-<!--                     <div id="sidebar" class="4u 12u(mobile)" th:replace="fragments/sidebar " /> -->
+
 
                 </div>
             </div>
         </div>
+
+
+
+
 
         <!-- Footer -->
         <div id="footer-wrapper" th:replace="fragments/footer" />

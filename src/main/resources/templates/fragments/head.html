@@ -1,14 +1,17 @@
 	<head>
-		<title>Right Sidebar - Strongly Typed by HTML5 UP</title>
-		<meta charset="utf-8" />
-        <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-        
-        
-<!--         <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}" /> -->
-		<!--[if lte IE 8]><script th:src="@{/strongly-typed/assets/js/ie/html5shiv.js}"></script><![endif]-->
-		<link rel="stylesheet" th:href="@{/strongly-typed/assets/css/main.css}" />
-                <link rel="stylesheet" th:href="@{/strongly-typed/assets/css/override.css}" />
-		<!--[if lte IE 8]><link rel="stylesheet" th:href="@{/strongly-typed/assets/css/ie8.css}" /><![endif]-->
-                <script th:src="@{/strongly-typed/assets/js/jquery.min.js}"></script>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title th:text="${title}" />
+
+        <meta name="description" th:content="${description}" />
+        <meta name="author" content="Julia Wnuk, Damian Wilkołek" />
+
+        <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+        <link th:href="@{/css/style.css}" rel="stylesheet" />
+        <script th:src="@{/js/jquery.min.js}"></script>
+        <style>
+            body {padding-top:50px;}
+        </style>
 	</head>

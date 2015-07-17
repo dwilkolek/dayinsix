@@ -10,6 +10,7 @@ import eu.wilkolek.diary.model.User;
 public interface DayRepositoryCustom{
 
 	public ArrayList<Day> getDaysFromDateToDate(User user, Date dateStart, Date dateEnd);
+	public Integer countByUser(User user);
 	
 	
 }

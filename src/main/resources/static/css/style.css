@@ -1,0 +1,119 @@
+@font-face {
+font-family: AlwaysTogether;
+src: url("../fonts/AlwaysTogether.otf") format("opentype");
+}
+body{
+    background: #fff;
+    color: #181868;
+    font-family: 'AlwaysTogether', cursive;
+    font-size:24px;
+}
+input.form-control{
+    color:#4c4c97;
+}
+.btn-default{
+    background:#fffdb9;
+    color:#ed796c;
+    font-weight: bold;
+    border: 1px solid #d6b46b; 
+}
+.full-body{
+    background: #edfaff;//url(../img/crossword.png) repeat;  
+    padding-top:2em;
+    padding-bottom:2em;
+}
+
+.full-body .card{
+    margin:2em !important;
+}
+
+.card{
+       -webkit-box-shadow: 3px 3px 3px 0px rgba(117,117,117,1);
+         -moz-box-shadow: 3px 3px 3px 0px rgba(117,117,117,1); 
+         box-shadow: 3px 3px 3px 0px rgba(117,117,117,1); 
+    padding:0.5em 2em;
+    margin:1em;
+    border:1px solid #eeeeee;
+    background: #fffffe;
+    clear:both;
+    position:relative;
+}
+#logo{
+    text-align: center; 
+
+    display:inline-block;
+
+}
+#logo img{
+    height: 3em;
+
+}
+#top{
+    background: #fffffe;
+}
+
+#footer{
+    min-height: 150px;
+}
+#menu{
+    vertical-align: bottom;
+
+    line-height: 3em;
+
+
+}
+#menu ul{
+    /*bottom:20px;*/
+}
+#menu ul>li>a{
+    font-size: 1.5em;
+}
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover{
+    background: #fff;
+}
+#menu ul>li>a{
+    background:#fff;
+    color: #8888A5;
+}
+#menu ul>li>a:hover,#menu ul>li>a.active {
+    background:#fff;
+    color: #ed796c;
+
+}
+
+.form-control{
+    font-size:20px;
+}
+
+.ico{
+
+	height:25px;
+	display:inline-block;
+/* 	float:left; */
+	margin:5px;
+}
+
+.ico i{
+	display:inline-block;
+	width:25px;
+
+}
+.icoPOSITIVE i{
+	background: url("../img/positiveIco.png") no-repeat center center;
+}
+.icoNEUTRAL i{
+	background: url("../img/neutralIco.png") no-repeat center center;
+}
+.icoNEGATIVE i{
+	background: url("../img/negativeIco.png") no-repeat center center;
+}
+
+.edit-list-element{
+	position:absolute;
+	right:10px;
+	top:10px;
+}
+.item-navias{
+	color:#eeeeee;
+
+}

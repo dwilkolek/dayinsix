@@ -1,56 +1,78 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head" />
-<body class="right-sidebar">
+<body class="">
     <div id="page-wrapper">
 
         <!-- Header -->
         <div id="header-wrapper" th:replace="fragments/header" />
 
-        <!-- Main -->
-        <div id="main-wrapper">
-            <div id="main" class="container">
+
+
+        <div id="content" class="full-body">
+            <div class="container">
+
+                <div id="sidebar" class="col-md-3" th:replace="fragments/topbar " />
+
                 <div class="row">
 
-                    <!-- Content -->
-                    <div id="content" class="table-striped">
-                        <table class="table">
-                            <tr>
-                                <th>
-                                    Date
-                                </th>
-                                <th colspan="6">
-                                    Sentence/Words
-                                </th>
-                            </tr>
-                            <tr  th:if="${days.size() > 0}" th:each="day : ${days}"  th:with="df=${@environment.getProperty('date.format.display')}">
-                                <td th:text="${#calendars.format(day.creationDate,df)}"></td>
-                                <td  colspan="6" th:if="${day.sentence != null}" >
-                                    <span th:text="${day.sentence.value}" ></span>
-                                    <span th:class="${'ico ico'+day.sentence.status}"><i></i></span>
-                                </td>
-                                <td th:if="${day.words != null}" th:each="word : ${day.words}">
-                                    
-                                    <span th:text="${word.value.value}" ></span>
-                                    <span th:class="${'ico ico'+word.status}"><i></i></span>
-                                </td>
-                                <td th:if="${day.CanAdd}" th:with="dfx=${@environment.getProperty('date.format.add')}">
-                                    <a th:href="${'/user/day/add?date='+#calendars.format(day.creationDate,dfx)}" >Save THE day</a>
-                                    
-                                </td>
-                            </tr>
-                        </table>
-                        <h3 th:if="${days.size() == 0}">You have to save at least one day to see it here.</h3>
+                    <div class="col-md-12">
+                        <!-- Content -->
+                        <div id="content">
 
+                            <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.display')}" >
+                                <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4>
+                                <div th:if="${day.sentence != null}">
+                                    <th:block>
+                                        <span th:class="${'ico ico'+day.sentence.status}"></span>
+                                        <span th:text="${day.sentence.value}"></span>
 
+                                    </th:block>
+                                </div>
+                                <div th:if="${day.words != null}">
+                                    <th:block th:each="word : ${day.words}">
+                                        <span th:class="${'ico ico'+word.status}"><span class="item-navias"> | </span><i>&nbsp;</i> <th:block th:text="${word.value.value}"></th:block><span class="item-navias"> | </span></span>
+                                        
+                                    </th:block>
+                                </div>
+                                <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}" th:with="dfx=${@environment.getProperty('date.format.add')}">
+                                    <a th:href="${'/user/day/add/'+#calendars.format(day.creationDate,dfx)}">Save THE day</a>
+
+                                </div>
+  
+                                <a class="edit-list-element" th:if="${day.canEdit}" th:href="${'/user/day/edit/'+#calendars.format(day.creationDate,dfx)}" th:with="dfx=${@environment.getProperty('date.format.add')}"
+                                    ><i class="glyphicon glyphicon-edit"></i> </a>
+
+                            </div>
+
+                            <div th:if="${days.size() == 0}" class="card">
+                                <h4>You have to save at least one day to see it here.</h4>
+                            </div>
+
+                            <div th:if="${days.size() > 1}" class="text-center">
+                                <ul class="pagination">
+                                    <li><a href="/user/day/list/">&laquo;</a></li>
+<!--                                     <th:block th:with="sPage =${param.page != null ? param.page-4 : 1}"> -->
+                                            <li class="disabled"  th:if="${6 lt cPage}"><a href="#">...</a></li>
+                                            <li  th:class="${cPage == i ? 'active' : ''}" th:each="i : ${#numbers.sequence( sPage, tPage)}"><a  th:href="${'/user/day/list/?page='+i}"  th:text="${i}">1</a></li>
+                                            <li class="disabled"  th:if="${pages gt tPage}"><a href="#">...</a></li>
+<!--                                     </th:block> -->
+                                    <li><a th:href="${'/user/day/list/?page='+(pages)}">&raquo;</a></li>
+                                </ul>
+
+                            </div>
+                        </div>
                     </div>
-
                     <!-- Sidebar -->
-                    <div id="sidebar" class="4u 12u(mobile)" th:replace="fragments/sidebar " />
+
 
                 </div>
             </div>
         </div>
+
+
+
+
 
         <!-- Footer -->
         <div id="footer-wrapper" th:replace="fragments/footer" />
