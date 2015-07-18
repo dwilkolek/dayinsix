@@ -3,6 +3,7 @@ package eu.wilkolek.diary.dto;
 import java.util.ArrayList;
 import java.util.Date;
 
+import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.DictionaryWord;
 
 public class DayForm {
@@ -71,6 +72,23 @@ public class DayForm {
 
     public Date getDayDate() {
         return this.dayDate;
+    }
+
+    public void assignDay(Day day) {
+        this.dayDate = day.getCreationDate();
+        if (day.getSentence() != null){
+            this.sentence = day.getSentence().getValue();
+            this.words = null;
+        }
+        if (day.getWords() != null){
+            this.words = new ArrayList<String>();
+            this.wordsStatuses = new ArrayList<String>();
+            for (int i = 0; i<day.getWords().size(); i++){
+                this.words.add(day.getWords().get(i).getValue().getValue());
+                this.wordsStatuses.add(day.getWords().get(i).getStatus());
+            }
+        }
+       
     }
 	
 	

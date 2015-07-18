@@ -26,7 +26,7 @@ import eu.wilkolek.diary.model.InputTypeEnum;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.UserRepository;
-import eu.wilkolek.diary.util.TimezoneUtils;
+//import eu.wilkolek.diary.util.TimezoneUtils;
 
 @Controller
 public class AuthController {
@@ -76,7 +76,7 @@ public class AuthController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView register() {
 		ModelAndView model = new ModelAndView("auth/register");
-        model.getModelMap().addAttribute("timezones", TimezoneUtils.getTimeZones());
+//        model.getModelMap().addAttribute("timezones", TimezoneUtils.getTimeZones());
         model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
         model.getModelMap().addAttribute("inputTypes", InputTypeEnum.asMap());
 		model.getModelMap().addAttribute("errors", new HashMap<String,String>());
@@ -96,7 +96,7 @@ public class AuthController {
 			// failed validation
 			
 			model.getModelMap().addAttribute("form", form);
-			model.getModelMap().addAttribute("timezones", TimezoneUtils.getTimeZones());
+//			model.getModelMap().addAttribute("timezones", TimezoneUtils.getTimeZones());
 	        model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
 	        model.getModelMap().addAttribute("inputTypes", InputTypeEnum.asMap());
 			model.getModelMap().addAttribute("errors", form.createMessages(bindingResult.getAllErrors()));

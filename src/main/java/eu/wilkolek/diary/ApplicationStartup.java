@@ -28,6 +28,7 @@ import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.DictionaryWord;
 import eu.wilkolek.diary.model.InputTypeEnum;
 import eu.wilkolek.diary.model.NotificationTypesEnum;
+import eu.wilkolek.diary.model.Sentence;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.StatusEnum;
 import eu.wilkolek.diary.model.User;
@@ -37,7 +38,8 @@ import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.DictionaryWordRepository;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
-import eu.wilkolek.diary.util.TimezoneUtils;
+
+//import eu.wilkolek.diary.util.TimezoneUtils;
 
 @Component
 public class ApplicationStartup implements ApplicationListener<ContextRefreshedEvent> {
@@ -101,8 +103,10 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         user.getOptions().put(UserOptions.SHARE_STYLE, ShareStyleEnum.PUBLIC.name());
         user.getOptionsLastUpdate().put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
 
-        user.getOptions().put(UserOptions.TIMEZONE, TimezoneUtils.getTimeZones().get("Europe/Berlin"));
-        user.getOptionsLastUpdate().put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
+        // user.getOptions().put(UserOptions.TIMEZONE,
+        // TimezoneUtils.getTimeZones().get("Europe/Berlin"));
+        // user.getOptionsLastUpdate().put(UserOptions.TIMEZONE,
+        // DateTimeUtils.getCurrentUTCTime());
 
         user.getOptions().put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.TWO_WEEKS.name()); // in
                                                                                                            // days
@@ -124,14 +128,21 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         for (int i = 0; i < 750; i++) {
             Day day = new Day();
             day.setCreationDate(new Date(DateTimeUtils.getCurrentUTCTime().getTime() - TimeUnit.DAYS.toMillis(i)));
-            ArrayList<Word> w = new ArrayList<Word>();
-            for (int j = 0; j < 7; j++) {
-                Word wo = new Word();
-                wo.setStatus(StatusEnum.values()[i % StatusEnum.values().length].name());
-                wo.setValue(words.get(i % words.size()));
-                w.add(wo);
+            if (Math.random() > 0.5) {
+                ArrayList<Word> w = new ArrayList<Word>();
+                for (int j = 0; j < 7; j++) {
+                    Word wo = new Word();
+                    wo.setStatus(StatusEnum.values()[i % StatusEnum.values().length].name());
+                    wo.setValue(words.get(i % words.size()));
+                    w.add(wo);
+                }
+                day.setWords(w);
+            } else {
+                Sentence sentence = new Sentence();
+                sentence.setStatus("POSITIVE");
+                sentence.setValue("Day of my life is " + i);
+                day.setSentence(sentence);
             }
-            day.setWords(w);
             day.setUser(user);
             day = dayRepository.save(day);
             System.out.println("Day added: " + gson.toJson(day));

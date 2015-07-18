@@ -31,7 +31,7 @@ public class ProfileForm{
         this.setInputType(user.getOptions().get(UserOptions.INPUT_TYPE));
         this.setNotificationFrequency(user.getOptions().get(UserOptions.NOTIFICATION_FREQUENCY));
         this.setShareStyle(user.getOptions().get(UserOptions.SHARE_STYLE));
-        this.setTimezone(user.getOptions().get(UserOptions.TIMEZONE));
+//        this.setTimezone(user.getOptions().get(UserOptions.TIMEZONE));
         
         
     }
@@ -59,8 +59,8 @@ public class ProfileForm{
     @NotEmpty
     private String inputType = "";
     
-    @NotEmpty
-    private String timezone = "";
+//    @NotEmpty
+//    private String timezone = "";
     
     @NotEmpty
     private String shareStyle = "";
@@ -108,13 +108,13 @@ public class ProfileForm{
         this.inputType = inputType;
     }
 
-    public String getTimezone() {
-        return timezone;
-    }
-
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
+//    public String getTimezone() {
+//        return timezone;
+//    }
+//
+//    public void setTimezone(String timezone) {
+//        this.timezone = timezone;
+//    }
 
     public String getShareStyle() {
         return shareStyle;

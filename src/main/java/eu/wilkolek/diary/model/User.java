@@ -52,13 +52,13 @@ public class User {
     	this.options = new HashMap<String, String>();
     	this.options.put(UserOptions.INPUT_TYPE, form.getInputType());
     	this.options.put(UserOptions.SHARE_STYLE, form.getShareStyle());
-    	this.options.put(UserOptions.TIMEZONE, form.getTimezone());
+//    	this.options.put(UserOptions.TIMEZONE, form.getTimezone());
     	this.options.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.WEEK.name()); //in days
     	
     	this.optionsLastUpdate = new HashMap<String, Date>();
         this.optionsLastUpdate.put(UserOptions.INPUT_TYPE, new Date(1));
         this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
-        this.optionsLastUpdate.put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
+//        this.optionsLastUpdate.put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
         this.optionsLastUpdate.put(UserOptions.NOTIFICATION_FREQUENCY,DateTimeUtils.getCurrentUTCTime());
         
         this.lastLogIn = DateTimeUtils.getCurrentUTCTime();
@@ -90,10 +90,10 @@ public class User {
             this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
         }
         
-        if (this.options.get(UserOptions.TIMEZONE) != form.getInputType()){
-            this.options.put(UserOptions.TIMEZONE, form.getTimezone());
-            this.optionsLastUpdate.put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
-        }
+//        if (this.options.get(UserOptions.TIMEZONE) != form.getInputType()){
+//            this.options.put(UserOptions.TIMEZONE, form.getTimezone());
+//            this.optionsLastUpdate.put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
+//        }
         
         if (this.options.get(UserOptions.NOTIFICATION_FREQUENCY) != form.getInputType()){
             this.options.put(UserOptions.NOTIFICATION_FREQUENCY, form.getNotificationFrequencyAsString()); //in days

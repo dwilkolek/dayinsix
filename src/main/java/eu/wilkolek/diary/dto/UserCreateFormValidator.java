@@ -15,7 +15,7 @@ import org.springframework.validation.Validator;
 import eu.wilkolek.diary.model.InputTypeEnum;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.repository.UserRepository;
-import eu.wilkolek.diary.util.TimezoneUtils;
+//import eu.wilkolek.diary.util.TimezoneUtils;
 
 @Component
 public class UserCreateFormValidator implements Validator {
@@ -42,7 +42,7 @@ public class UserCreateFormValidator implements Validator {
         validateInputType(errors, form);
         validateUsername(errors, form);
         validateShareStyle(errors, form);
-        validateTimezone(errors, form);
+//        validateTimezone(errors, form);
     }
 
     private void validateInputType(Errors errors, UserCreateForm form) {
@@ -87,12 +87,12 @@ public class UserCreateFormValidator implements Validator {
         errors.reject("sharestyle.not_provided", "Wrong share style");
     }
     
-    private void validateTimezone(Errors errors, UserCreateForm form) {
-        LinkedHashMap<String,String> map = TimezoneUtils.getTimeZones();
-        if (!map.containsKey(form.getTimezone())){
-            errors.reject("timezone.not_provided", "Wrong timezone");
-        }
-    }
+//    private void validateTimezone(Errors errors, UserCreateForm form) {
+//        LinkedHashMap<String,String> map = TimezoneUtils.getTimeZones();
+//        if (!map.containsKey(form.getTimezone())){
+//            errors.reject("timezone.not_provided", "Wrong timezone");
+//        }
+//    }
 
     
     private void validateUsername(Errors errors, UserCreateForm form) {

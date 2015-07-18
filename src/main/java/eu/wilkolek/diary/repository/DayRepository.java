@@ -1,6 +1,5 @@
 package eu.wilkolek.diary.repository;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
@@ -14,5 +13,7 @@ import eu.wilkolek.diary.model.User;
 public interface DayRepository extends MongoRepository<Day, String>,DayRepositoryCustom{
 
 	public Optional<Day> findByCreationDate(Date date);
+
+    public Optional<Day> findByCreationDateAndUser(Date date, User user);
 	
 }

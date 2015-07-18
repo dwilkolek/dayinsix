@@ -20,28 +20,33 @@
                         <!-- Content -->
                         <div id="content">
 
-                            <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.display')}" >
+                            <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.display')}">
                                 <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4>
                                 <div th:if="${day.sentence != null}">
                                     <th:block>
-                                        <span th:class="${'ico ico'+day.sentence.status}"></span>
-                                        <span th:text="${day.sentence.value}"></span>
+                                        <span th:class="${'sentence ico ico'+day.sentence.status}"> <i>&nbsp;</i><span
+                                            th:text="${day.sentence.value}"></span> 
+                                        </span>
+
 
                                     </th:block>
                                 </div>
                                 <div th:if="${day.words != null}">
                                     <th:block th:each="word : ${day.words}">
-                                        <span th:class="${'ico ico'+word.status}"><span class="item-navias"> | </span><i>&nbsp;</i> <th:block th:text="${word.value.value}"></th:block><span class="item-navias"> | </span></span>
-                                        
+                                        <span th:class="${'ico ico'+word.status}"><span class="item-navias"> | </span><i>&nbsp;</i> <th:block
+                                                th:text="${word.value.value}"></th:block><span class="item-navias"> | </span></span>
+
                                     </th:block>
                                 </div>
-                                <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}" th:with="dfx=${@environment.getProperty('date.format.add')}">
+                                <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}"
+                                    th:with="dfx=${@environment.getProperty('date.format.add')}">
                                     <a th:href="${'/user/day/add/'+#calendars.format(day.creationDate,dfx)}">Save THE day</a>
 
                                 </div>
-  
-                                <a class="edit-list-element" th:if="${day.canEdit}" th:href="${'/user/day/edit/'+#calendars.format(day.creationDate,dfx)}" th:with="dfx=${@environment.getProperty('date.format.add')}"
-                                    ><i class="glyphicon glyphicon-edit"></i> </a>
+
+                                <a class="edit-list-element" th:if="${day.canEdit}" th:href="${'/user/day/edit/'+#calendars.format(day.creationDate,dfx)}"
+                                    th:with="dfx=${@environment.getProperty('date.format.add')}"><i
+                                    class="glyphicon glyphicon-edit"></i> </a>
 
                             </div>
 
@@ -52,11 +57,12 @@
                             <div th:if="${days.size() > 1}" class="text-center">
                                 <ul class="pagination">
                                     <li><a href="/user/day/list/">&laquo;</a></li>
-<!--                                     <th:block th:with="sPage =${param.page != null ? param.page-4 : 1}"> -->
-                                            <li class="disabled"  th:if="${6 lt cPage}"><a href="#">...</a></li>
-                                            <li  th:class="${cPage == i ? 'active' : ''}" th:each="i : ${#numbers.sequence( sPage, tPage)}"><a  th:href="${'/user/day/list/?page='+i}"  th:text="${i}">1</a></li>
-                                            <li class="disabled"  th:if="${pages gt tPage}"><a href="#">...</a></li>
-<!--                                     </th:block> -->
+                                    <!--                                     <th:block th:with="sPage =${param.page != null ? param.page-4 : 1}"> -->
+                                    <li class="disabled" th:if="${6 lt cPage}"><a href="#">...</a></li>
+                                    <li th:class="${cPage == i ? 'active' : ''}" th:each="i : ${#numbers.sequence( sPage, tPage)}"><a
+                                        th:href="${'/user/day/list/?page='+i}" th:text="${i}">1</a></li>
+                                    <li class="disabled" th:if="${pages gt tPage}"><a href="#">...</a></li>
+                                    <!--                                     </th:block> -->
                                     <li><a th:href="${'/user/day/list/?page='+(pages)}">&raquo;</a></li>
                                 </ul>
 

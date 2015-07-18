@@ -13,9 +13,12 @@
                 <div class="" th:if="${currentUser != null}">
                     <span>Hi, <a href="user/profile"><th:block th:text="${currentUser.username}"></th:block></a></span>
 
-                    <form method="post" action="/logout" style="display: none;">
+                    <form method="post" action="/logout">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> <input type="submit" value="Logout" />
                     </form>
+                </div>
+                <div class="" th:if="${currentUser == null}">
+                   Not logged in
                 </div>
 <!--                 <nav class="navbar" role="navigation"> -->
 <!--                     <div class="" id="bs-example-navbar-collapse-1"> -->
