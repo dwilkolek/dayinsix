@@ -58,19 +58,26 @@ public class UserController {
     private final DayRepository dayRepository;
     private final DictionaryWordRepository dictionaryWordRepository;
     private final DayFormValidator dayFormValidator;
+    private final ProfileFormValidator profileFormValidator;
     private CurrentUser currentUser;
     
     @InitBinder("form")
-    public void initBinder(WebDataBinder binder) {
-        binder.addValidators(dayFormValidator);  
+    public void initBinderProfile(WebDataBinder binder) {
+        binder.addValidators(profileFormValidator);  
     }
 
+    @InitBinder("dayForm")
+    public void initBinderDay(WebDataBinder binder) {
+        binder.addValidators(dayFormValidator);  
+    }
+    
     @Autowired
     public UserController(UserRepository userRepository, DayRepository dayRepository, DictionaryWordRepository dictionaryWordRepository) {
         this.userRepository = userRepository;
         this.dayRepository = dayRepository;
         this.dictionaryWordRepository = dictionaryWordRepository;
         this.dayFormValidator = new DayFormValidator(userRepository);
+        this.profileFormValidator = new ProfileFormValidator(userRepository);
     }
 
 
@@ -305,7 +312,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/day/add/{date}", method = RequestMethod.GET)
     public String add(Model model,  @PathVariable(value = "date") String date, CurrentUser currentUser) throws ParseException, OutOfDateException {
-        model.addAttribute("form", new DayForm());
+        model.addAttribute("dayForm", new DayForm());
         model.addAttribute("date", date);
         
         Optional<Day> isDay = dayRepository.findByCreationDateAndUser(DateTimeUtils.StringDateToDate(date), currentUser.getUser());
