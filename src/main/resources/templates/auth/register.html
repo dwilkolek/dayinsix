@@ -11,7 +11,7 @@
 
         <div id="content" class="full-body">
             <div class="container">
-                <div th:replace="fragments/topbar" />
+<!--                 <div th:replace="fragments/topbar" /> -->
 
                 <div class="row">
 
@@ -26,7 +26,7 @@
                                     <!-- <p th:text="${'Error code: '+error.key}" /> -->
 <!--                                     <p th:if="${errors != null}"  role="alert"> -->
                                     <ul th:if="${errors.size() > 0 }" class="alert alert-danger" >
-                                        <li th:each="error : ${errors}" th:text="${error.value}"></li>
+                                        <li th:each="error : ${errors}" th:text="${error}"></li>
                                     </ul>
 <!--                                     </p> -->
                               
@@ -58,13 +58,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="passwordRepeated">Timezone</label> <select class="form-control" th:name="timezone">
-                                            <option th:each="s : ${timezones}" th:value="${s.key}" th:text="${s.value}"
-                                                th:selected="${form != null and s.key == form.timezone}" />
+<!--                                     <div class="form-group"> -->
+<!--                                         <label for="passwordRepeated">Timezone</label> <select class="form-control" th:name="timezone"> -->
+<!--                                             <option th:each="s : ${timezones}" th:value="${s.key}" th:text="${s.value}" -->
+<!--                                                 th:selected="${form != null and s.key == form.timezone}" /> -->
 
-                                        </select>
-                                    </div>
+<!--                                         </select> -->
+<!--                                     </div> -->
 
                                     <div class="form-group">
                                         <label for="passwordRepeated">Sharing</label> <select class="form-control" th:name="shareStyle">

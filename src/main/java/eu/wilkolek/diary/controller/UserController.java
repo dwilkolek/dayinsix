@@ -17,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.gs.collections.impl.list.Interval;
 
 import eu.wilkolek.diary.dto.DayForm;
+import eu.wilkolek.diary.dto.DayFormValidator;
 import eu.wilkolek.diary.dto.ProfileForm;
 import eu.wilkolek.diary.dto.ProfileFormCustomValidator;
 import eu.wilkolek.diary.dto.ProfileFormValidator;
@@ -54,16 +57,20 @@ public class UserController {
     private final UserRepository userRepository;
     private final DayRepository dayRepository;
     private final DictionaryWordRepository dictionaryWordRepository;
-
+    private final DayFormValidator dayFormValidator;
     private CurrentUser currentUser;
-
+    
+    @InitBinder("form")
+    public void initBinder(WebDataBinder binder) {
+        binder.addValidators(dayFormValidator);  
+    }
 
     @Autowired
     public UserController(UserRepository userRepository, DayRepository dayRepository, DictionaryWordRepository dictionaryWordRepository) {
         this.userRepository = userRepository;
         this.dayRepository = dayRepository;
         this.dictionaryWordRepository = dictionaryWordRepository;
-
+        this.dayFormValidator = new DayFormValidator(userRepository);
     }
 
 
@@ -133,10 +140,17 @@ public class UserController {
     
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/day/edit/{dateStr}", method = RequestMethod.POST)
-    public String editDaySave(CurrentUser currentUser, @PathVariable(value = "dateStr") String dateStr, @Valid DayForm dayForm, BindingResult result)
+    public ModelAndView editDaySave(CurrentUser currentUser, @PathVariable(value = "dateStr") String dateStr, @Valid DayForm dayForm, BindingResult result)
             throws ParseException, OutOfDateException {
+        
+        this.dayFormValidator.validate(dayForm, result);
+        
         if (result.hasErrors()) {
-            return "user/day/add";
+            ModelAndView model = new ModelAndView("user/day/edit");
+            model.getModelMap().put("dayForm", dayForm);
+            model.getModelMap().put("status", StatusEnum.asMap());
+            model.getModelMap().put("errors", result.getAllErrors());
+            return model;
         }
         User user = currentUser.getUser();
         Date date = DateTimeUtils.getCurrentUTCTime();
@@ -159,7 +173,7 @@ public class UserController {
 
         
         System.out.println("User id:" + user.getId());
-        if (dayForm.getWords().size() > 0) {
+        if (dayForm.getWords() != null && dayForm.getWords().size() > 0) {
             ArrayList<DictionaryWord> resultList = new ArrayList<DictionaryWord>();
             for (int i = 0; i < dayForm.getWords().size(); i++) {
                 String value = dayForm.getWords().get(i);
@@ -183,7 +197,7 @@ public class UserController {
         dayRepository.save(new Day(dayForm, user));
         LOGGER.debug("User " + user.getEmail() + " added new day");
 
-        return "redirect:/user/day/list";
+        return new ModelAndView("redirect:/user/day/list");
     }
     
     @PreAuthorize("hasAuthority('USER')")
@@ -204,16 +218,19 @@ public class UserController {
         Optional<Day> day = dayRepository.findByCreationDateAndUser(date, user);
         DayForm dayForm = new DayForm();
         dayForm.setDayDate(date);
-        if (dayForm.getSentence() != null || dayForm.getWords() != null){
+        
+        if (!day.isPresent()){
+            throw new OutOfDateException("You can't modify this day.");
+        }
+        
+        if (day.get().getSentence() != null || day.get().getWords() != null){
             dayForm.assignDay(day.get());
         } else {
             throw new OutOfDateException("Propably it's a wrong day...");
         }
 
         
-        if (!day.isPresent()){
-            throw new OutOfDateException("You can't modify this day.");
-        }
+        
         checkDate(day.get().getCreationDate(), false, null, "This day isn't editable.");
         
         
@@ -228,10 +245,17 @@ public class UserController {
    
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/day/add/{dateStr}", method = RequestMethod.POST)
-    public String saveDay(CurrentUser currentUser, @Valid DayForm dayForm, BindingResult result,@PathVariable(value = "dateStr") String dateStr)
+    public ModelAndView saveDay(CurrentUser currentUser, @Valid DayForm dayForm, BindingResult result,@PathVariable(value = "dateStr") String dateStr)
             throws ParseException, OutOfDateException {
+        
+        this.dayFormValidator.validate(dayForm, result);
+        
         if (result.hasErrors()) {
-            return "user/day/add";
+            ModelAndView model = new ModelAndView("user/day/add");
+            model.getModelMap().put("dayForm", dayForm);
+            model.getModelMap().put("status", StatusEnum.asMap());
+            model.getModelMap().put("errors", result.getAllErrors());
+            return model;
         }
         User user = currentUser.getUser();
         Date date = DateTimeUtils.getCurrentUTCTime();
@@ -242,7 +266,7 @@ public class UserController {
         
         Optional<Day> isDay = dayRepository.findByCreationDateAndUser(date, user);
         
-        if (!isDay.isPresent()){
+        if (isDay.isPresent()){
             throw new OutOfDateException("This day is already saved.");
         }
 
@@ -253,7 +277,7 @@ public class UserController {
         dayForm.setDayDate(date);
 
         System.out.println("User id:" + user.getId());
-        if (dayForm.getWords().size() > 0) {
+        if (dayForm.getWords() != null && dayForm.getWords().size() > 0) {
             ArrayList<DictionaryWord> resultList = new ArrayList<DictionaryWord>();
             for (int i = 0; i < dayForm.getWords().size(); i++) {
                 String value = dayForm.getWords().get(i);
@@ -275,7 +299,7 @@ public class UserController {
         dayRepository.save(new Day(dayForm, user));
         LOGGER.debug("User " + user.getEmail() + " added new day");
 
-        return "redirect:/user/day/list";
+        return new ModelAndView("redirect:/user/day/list");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -293,6 +317,9 @@ public class UserController {
         if (DateTimeUtils.StringDateToDate(date).getTime() > DateTimeUtils.getCurrentUTCTime().getTime()){
             throw new OutOfDateException("Your date is newer than UTC+0");
         }
+        
+        model.asMap().put("status", StatusEnum.asMap());
+        model.asMap().put("dayForm", new DayForm());
         
         return "user/day/add";
     }

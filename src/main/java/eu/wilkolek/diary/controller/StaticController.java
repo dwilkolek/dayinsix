@@ -14,6 +14,7 @@ public class StaticController {
     @RequestMapping("/")
     public ModelAndView home() {
     	ModelAndView model = new ModelAndView("static/home");
+    	model.addObject("title", "Welcome on Dayinsix");
         LOGGER.debug("Getting home page");
         return model;
     }
@@ -21,14 +22,16 @@ public class StaticController {
     @RequestMapping("/about")
     public ModelAndView about() {
         ModelAndView model = new ModelAndView("static/about");
-        LOGGER.debug("Getting home page");
+        model.addObject("title", "It's all about us & project");
+        LOGGER.debug("Getting about page");
         return model;
     }
     
-    @RequestMapping("/contact")
+    @RequestMapping("/feedback")
     public ModelAndView contact() {
-        ModelAndView model = new ModelAndView("static/contact");
-        LOGGER.debug("Getting home page");
+        ModelAndView model = new ModelAndView("static/feedback");
+        model.addObject("title", "Send us feedback!");
+        LOGGER.debug("Getting feedback page");
         return model;
     }
 

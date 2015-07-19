@@ -12,8 +12,14 @@
 
         <div id="content" class="full-body">
             <div class="container">
-                <div th:replace="fragments/topbar" />
-
+<!--                 <div th:replace="fragments/topbar" /> -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul>
+                            <li th:each="error : ${errors}" th:text="${error.codes[1]}" />
+                        </ul>
+                    </div>
+                </div>
                 <div class="row">
 
                     <div class="col-md-12">
@@ -29,11 +35,10 @@
                                             type="text"></input>
                                     </div>
                                     <div class="col-md-3">
-                                        <select th:field="*{sentenceStatus}">
-                                            <option value="POSITIVE">POSITIVE</option>
-                                            <option value="NEUTRAL">NEUTRAL</option>
-                                            <option value="NEGATIVE">NEGATIVE</option>
-                                        </select><br /> <br />
+                                        <select th:name="${'sentenceStatus'}">
+                                            <option th:value="${s.key}" th:each="s : ${status}" th:text="${s.value}"
+                                                th:selected="${s.key == dayForm.sentenceStatus}" />
+                                        </select>
                                     </div>
                                 </div>
                                 <input type="submit" class="btn btn-success" value="Submit" />
@@ -52,17 +57,19 @@
                                     <div class="row">
                                         <div class="col-md-9">
                                             <div style="position: relative;">
-                                                <input type="text" th:id="${'word'+i}" class="form-control sugesstionAutocomplete" th:name="${'words['+i+']'}"
-                                                    autocomplete="off" />
+                                                <input th:if="${dayForm.words == null }" type="text" th:id="${'word'+i}" class="form-control sugesstionAutocomplete" th:name="${'words['+i+']'}"
+                                                    th:value="${''}" autocomplete="off" />
+                                                <input th:if="${dayForm.words != null }" type="text" th:id="${'word'+i}" class="form-control sugesstionAutocomplete" th:name="${'words['+i+']'}"
+                                                    th:value="${dayForm.words.get(i)}" autocomplete="off" />
                                                 <div class="list-group wordList" th:id="${'word'+i+'_list'}"
                                                     style="display: none; position: absolute; z-index: 10000;"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <select th:name="${'wordsStatuses['+i+']'}">
-                                                <option value="POSITIVE">POSITIVE</option>
-                                                <option value="NEUTRAL">NEUTRAL</option>
-                                                <option value="NEGATIVE">NEGATIVE</option>
+                                                <option th:if="${dayForm.wordsStatuses == null}" th:value="${s.key}" th:each="s: ${status}" th:text="${s.value}" />
+                                                <option th:if="${dayForm.wordsStatuses != null}" th:selected="${s.key == dayForm.wordsStatuses[i]}" th:value="${s.key}" th:each="s: ${status}" th:text="${s.value}" />
+                                            
                                             </select>
                                         </div>
                                     </div>

@@ -18,10 +18,7 @@ public class DayForm {
 	private Date dayDate;
 
 	public DayForm() {
-	    words = new ArrayList<String>(6);
-	    for(int i=0;i<6;i++){
-	        words.add(new String());
-	    }
+	   	    
     }
 	
 	public String getSentence() {

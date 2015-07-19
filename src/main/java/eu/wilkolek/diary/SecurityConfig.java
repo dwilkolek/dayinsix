@@ -22,40 +22,27 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationSuccessHandler successHandler;
-    
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        
-        
-        
-        http.authorizeRequests()//.anyRequest().permitAll();
-              
-                .antMatchers("/users/**").hasAuthority("USER")
-                .antMatchers("/**").permitAll()
-                .anyRequest().fullyAuthenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .failureUrl("/loginError")
-                .defaultSuccessUrl("/loginSuccess").successHandler(successHandler)
-                .usernameParameter("email")
+
+        http.authorizeRequests()
+                // .anyRequest().permitAll();
+                .antMatchers("/users/**")
+                .hasAuthority("USER")
+                .antMatchers("/**")
                 .permitAll()
-                .and()
-                .logout()
-                .logoutUrl("/logout")
-                .deleteCookies("remember-me")
-                .logoutSuccessUrl("/")
-                .permitAll()
-                .and()
+                .anyRequest().fullyAuthenticated().and().formLogin()
+                .loginPage("/login").failureUrl("/loginError").defaultSuccessUrl("/loginSuccess").successHandler(successHandler).usernameParameter("email")
+                .permitAll().and().logout().logoutUrl("/logout").deleteCookies("remember-me").logoutSuccessUrl("/").permitAll().and()
+
                 .rememberMe();
+
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
-    
 
 }

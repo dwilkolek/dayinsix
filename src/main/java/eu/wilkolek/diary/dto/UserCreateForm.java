@@ -23,8 +23,8 @@ public class UserCreateForm {
     @NotEmpty
     private String inputType = "";
     
-    @NotEmpty
-    private String timezone = "";
+//    @NotEmpty
+//    private String timezone = "";
     
     @NotEmpty
     private String shareStyle = "";
@@ -72,13 +72,13 @@ public class UserCreateForm {
 		this.inputType = inputType;
 	}
 
-    public String getTimezone() {
-        return timezone;
-    }
-
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
+//    public String getTimezone() {
+//        return timezone;
+//    }
+//
+//    public void setTimezone(String timezone) {
+//        this.timezone = timezone;
+//    }
 
     public String getShareStyle() {
         return shareStyle;

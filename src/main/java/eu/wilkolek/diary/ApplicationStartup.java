@@ -146,6 +146,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
             day.setUser(user);
             day = dayRepository.save(day);
             System.out.println("Day added: " + gson.toJson(day));
+            i++;
         }
 
     }
