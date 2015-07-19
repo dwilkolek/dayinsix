@@ -30,7 +30,9 @@ public class ProfileFormCustomValidator {
         Date inputTypeDate = user.getOptionsLastUpdate()
                 .get(UserOptions.INPUT_TYPE);
         String inputTypeValue = user.getOptions().get(UserOptions.INPUT_TYPE);
-        if (!DateTimeUtils.canChange(inputTypeDate, new Date(), 30L) && !inputTypeValue.equals(user.getOptions().get(UserOptions.INPUT_TYPE))) {
+        Boolean equalsType = !inputTypeValue.equals(form.getInputType());
+        Boolean canChange = !DateTimeUtils.canChange(inputTypeDate, new Date(), 30L);
+        if (equalsType && canChange) {
             errors.reject("inputType.change_to_often",
                     "Input type can be changed only once per month");
         }
