@@ -24,10 +24,10 @@ public class DayHelper {
             DayView d;
             if (days.size() > 0 && days.size() > count && days.get(count) != null && nowProcessed.equals(days.get(count).getCreationDate())) {
                 Day h = days.get(count);
-                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate());
+                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate(),h.getNote());
                 count++;
             } else {
-                d = new DayView(null, null, nowProcessed);
+                d = new DayView(null, null, nowProcessed, null);
                 d.setEmpty(true);
             }
 

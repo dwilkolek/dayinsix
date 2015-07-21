@@ -15,13 +15,16 @@ public class DayView {
     private Boolean canAdd;
     
     private Boolean canEdit;
+    
+    private String note;
 
-    public DayView(Sentence sentence, ArrayList<Word> words, Date creationDate) {
+    public DayView(Sentence sentence, ArrayList<Word> words, Date creationDate, String note) {
         super();
         this.sentence = sentence;
         this.words = words;
         this.creationDate = creationDate;
         this.empty = false;
+        this.setNote(note);
     }
 
     public Sentence getSentence() {
@@ -74,6 +77,14 @@ public class DayView {
 
     public void setCanEdit(Boolean canEdit) {
         this.canEdit = canEdit;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     

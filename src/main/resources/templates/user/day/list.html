@@ -38,6 +38,14 @@
 
                                     </th:block>
                                 </div>
+                                <div th:if="${day.note != null}">
+                                    <th:block th:if="${day.note != ''}">
+                                        <div class="note" th:text="${day.note}">
+                                        
+                                        </div>
+
+                                    </th:block>
+                                </div>
                                 <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}"
                                     th:with="dfx=${@environment.getProperty('date.format.add')}">
                                     <a th:href="${'/user/day/add/'+#calendars.format(day.creationDate,dfx)}">Save THE day</a>

@@ -39,6 +39,9 @@ public class Day {
 			}
 			
 		}
+		
+		this.note = dayForm.getNote();
+		
 		this.creationDate = dayForm.getDayDate();
 	}
 
@@ -53,6 +56,9 @@ public class Day {
 	private ArrayList<Word> words;
 		
 	private Date creationDate;
+	
+	private String note;
+	
 
 	public String getId() {
 		return id;
@@ -83,6 +89,12 @@ public class Day {
     }
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+    public String getNote() {
+        return note;
+    }
+    public void setNote(String note) {
+        this.note = note;
     }
 	
 	

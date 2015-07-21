@@ -60,7 +60,7 @@ public class ShareController {
         if (user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.PRIVATE.name())){
             return "sharePage/private";
         }
-        if (user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.PROTECTED.name()) || user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.FOR_SELECTED.name()) && currentUser == null){
+        if ((user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.PROTECTED.name()) || user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.FOR_SELECTED.name())) && currentUser == null){
             return "sharePage/notLoggedIn";
         }
         if (user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.FOR_SELECTED.name())){

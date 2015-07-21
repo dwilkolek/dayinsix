@@ -41,6 +41,10 @@
                                         </select>
                                     </div>
                                 </div>
+                                 <div class="form-group">
+                                        <label>You can add additional note to share with others</label>
+                                        <textarea class="form-control" name="note"></textarea>
+                                </div>
                                 <input type="submit" class="btn btn-success" value="Submit" />
                             </form>
 
@@ -69,13 +73,17 @@
                                                 <option th:value="${s.key}" th:each="s: ${status}" th:text="${s.value}" />
                                             </select>
                                         </div>
-                                    </div>
+                                      </div>
+                                      
+                                      </div>
 
 
 
 
-
-                                </div>
+                                <div class="form-group">
+                                            <label>You can add additional note to share with others</label>
+                                            <textarea class="form-control" name="note" th:text="${dayForm.note}"></textarea>
+                                        </div>
                                 <script type="text/javascript">
 																																	// <![CDATA[
 																																	$(

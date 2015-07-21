@@ -14,7 +14,8 @@ public class DayForm {
 	
 	private String sentence;
 	private String sentenceStatus;
-
+	private String note;
+	
 	private Date dayDate;
 
 	public DayForm() {
@@ -85,7 +86,16 @@ public class DayForm {
                 this.wordsStatuses.add(day.getWords().get(i).getStatus());
             }
         }
+        this.note = day.getNote();
        
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 	
 	
