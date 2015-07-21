@@ -2,8 +2,6 @@ package eu.wilkolek.diary.repository;
 
 import java.util.List;
 
-import net.wimpi.telnetd.io.terminal.ansi;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;

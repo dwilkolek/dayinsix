@@ -129,8 +129,17 @@ public class ShareController {
         model.asMap().put("tPage", tPages);
         model.asMap().put("sPage", sPages);
        
-        model.asMap().put("follows", currentUser.getUser().getFollowingBy().contains(user.get().getId()));
+        if (currentUser != null){
         
+            ArrayList<String> following = currentUser.getUser().getFollowingBy();
+            if (following == null){
+                following = new ArrayList<String>();
+            }
+            
+            model.asMap().put("follows", following.contains(user.get().getId()));
+        } else {
+            model.asMap().put("follows", false);
+        }
         return "sharePage/sharePage";
     }
     
