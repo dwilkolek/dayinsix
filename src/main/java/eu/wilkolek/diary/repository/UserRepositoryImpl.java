@@ -1,5 +1,9 @@
 package eu.wilkolek.diary.repository;
 
+import java.util.List;
+
+import net.wimpi.telnetd.io.terminal.ansi;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,5 +33,22 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
 		
 		return user;
 	}
+
+    @Override
+    public boolean canShareWith(User user, User user2) {
+        Criteria shareCrit = Criteria.where("_id").is(user2.getId());
+        Criteria eS = Criteria.where("shareWith").elemMatch(shareCrit);       
+        Criteria c = Criteria.where("_id").is(user.getId());
+//        c.elemMatch((Criteria.where("shareWith").elemMatch(shareCrit)));
+        Query query = new Query(c);
+        List<User> list = operation.find(query, User.class);
+        boolean canShare = false;
+        for (String u : list.get(0).getSharingWith()){
+            if (u.equals(user2.getId())){
+                canShare = true;
+            }
+        }
+        return canShare;
+    }
 	
 }

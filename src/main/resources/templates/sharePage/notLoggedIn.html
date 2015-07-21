@@ -1,0 +1,49 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head" />
+<body class="">
+    <div id="page-wrapper">
+
+        <!-- Header -->
+        <div id="header-wrapper" th:replace="fragments/header" />
+
+
+
+        <div id="content" class="full-body">
+            <div class="container">
+
+<!--                 <div id="sidebar" class="col-md-3" th:replace="fragments/topbar " /> -->
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <!-- Content -->
+                        <div id="content">
+
+                            
+                            <div class="card">
+                                <h4>To see user share page You need to log in.</h4>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- Footer -->
+        <div id="footer-wrapper" th:replace="fragments/footer" />
+
+    </div>
+
+    <!-- Scripts -->
+    <script th:replace="fragments/scripts" />
+
+</body>
+</html>

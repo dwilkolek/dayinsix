@@ -1,0 +1,37 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head" />
+<body class="">
+    <div id="page-wrapper">
+
+        <!-- Header -->
+        <div id="header-wrapper" th:replace="fragments/exceptionHeader" />
+
+        <div id="content" class="full-body">
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <!-- Content -->
+                        <div id="content">
+
+                            <h2>Something went wrong</h2>
+                            <p>We don't know anything about this user</p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="footer-wrapper" th:replace="fragments/footer" />
+
+    </div>
+
+    <!-- Scripts -->
+    <script th:replace="fragments/scripts" />
+
+</body>
+</html>

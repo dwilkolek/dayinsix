@@ -3,7 +3,7 @@ package eu.wilkolek.diary.model;
 import java.util.HashMap;
 
 public enum ShareStyleEnum {
-    PRIVATE("Only for you"), PROTECTED("Only logged in users can view it"), PUBLIC("Anyone can see it");
+    PRIVATE("Only for you"), FOR_SELECTED("You share your days only with selected users"), PROTECTED("Only logged in users can view it"), PUBLIC("Anyone can see it");
     
     private String description;
     

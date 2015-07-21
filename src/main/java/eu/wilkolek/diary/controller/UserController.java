@@ -32,6 +32,7 @@ import eu.wilkolek.diary.dto.DayFormValidator;
 import eu.wilkolek.diary.dto.ProfileForm;
 import eu.wilkolek.diary.dto.ProfileFormCustomValidator;
 import eu.wilkolek.diary.dto.ProfileFormValidator;
+import eu.wilkolek.diary.exception.NoSuchUserException;
 import eu.wilkolek.diary.exception.OutOfDateException;
 import eu.wilkolek.diary.model.CurrentUser;
 import eu.wilkolek.diary.model.Day;
@@ -48,6 +49,7 @@ import eu.wilkolek.diary.repository.DictionaryWordRepository;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
 //import eu.wilkolek.diary.util.TimezoneUtils;
+import eu.wilkolek.diary.util.DayHelper;
 
 @Controller
 public class UserController {
@@ -108,8 +110,14 @@ public class UserController {
         ModelAndView model = new ModelAndView("user/day/list");
         
         int allDays = dayRepository.countByUser(user.get());
+        chosenEarlier = chosenEarlier.getTime() > currentUser.getUser().getCreated().getTime() ? chosenEarlier : currentUser.getUser().getCreated();
+        ArrayList<DayView> daysView = DayHelper.fillDates( days,chosenEarlier , chosenThen, "Error while getting list");
         
-        ArrayList<DayView> daysView = fillDates(days, chosenEarlier, chosenThen, "Error while getting list");
+        if (TimeUnit.MILLISECONDS.toDays(chosenThen.getTime() - chosenEarlier.getTime()) < DAYS_PER_PAGE){
+            DAYS_PER_PAGE = (int)TimeUnit.MILLISECONDS.toDays(chosenThen.getTime() - chosenEarlier.getTime());
+            DAYS_PER_PAGE = DAYS_PER_PAGE==0 ? 1: DAYS_PER_PAGE;
+        }
+        
         int mPages= (int)Math.ceil(allDays/DAYS_PER_PAGE);
         
         int sPages = page -4;
@@ -238,7 +246,7 @@ public class UserController {
 
         
         
-        checkDate(day.get().getCreationDate(), false, null, "This day isn't editable.");
+        DayHelper.checkDate(null, day.get().getCreationDate(), false, null, "This day isn't editable.");
         
         
         ModelAndView model = new ModelAndView("user/day/edit");
@@ -382,63 +390,132 @@ public class UserController {
 
     }
 
-    private Date checkDate(Date date, Boolean checkIfExists, User user, String errMessage) throws OutOfDateException {
-        Boolean dayExists;
-        if (checkIfExists){
-            Optional<Day> day = dayRepository.findByCreationDateAndUser(date, user);
-            dayExists = day.isPresent();
-        }else {
-            dayExists = true;
+    
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/follow/{username}")
+    public String followBy(CurrentUser currentUser, Model model, @PathVariable(value = "username") String username) {
+        Boolean isFollowing = false;
+        
+        Optional<User> user = userRepository.findByUsername(username);
+        
+        if (!user.isPresent()){
+            return "exception/noSuchUserException";
         }
-        Long diffInDays = DateTimeUtils.diffInDays(date, DateTimeUtils.getCurrentUTCTime());
         
-        if (diffInDays < 3L && diffInDays > -2L) {
-            if (checkIfExists && !dayExists || !checkIfExists){
-                return date;
-            }
+        User cu = userRepository.findById(currentUser.getUser().getId()).get();
+        
+        if (cu.getFollowingBy() == null){
+            cu.setFollowingBy(new ArrayList<String>());
         }
-            
         
-        throw new OutOfDateException(errMessage + " " + DateTimeUtils.format(date));
-        
-
-    }
-
-    private ArrayList<DayView> fillDates(ArrayList<Day> days, Date dayStart, Date dayFinish, String errMessage) {
-        Integer diff = (int) TimeUnit.MILLISECONDS.toDays(dayFinish.getTime() - dayStart.getTime());
-        diff = Math.abs(diff) + 1;
-        Integer count = 0;
-        Integer dayProcessed = 0;
-        ArrayList<DayView> resultDays = new ArrayList<DayView>(diff);
-
-        while (diff != resultDays.size()) {
-            Date nowProcessed = new Date(dayFinish.getTime() - TimeUnit.DAYS.toMillis(dayProcessed));
-            DayView d;
-            if (days.size() > 0 && days.size() > count && days.get(count) != null && nowProcessed.equals(days.get(count).getCreationDate())) {
-                Day h = days.get(count);
-                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate());
-                count++;
-            } else {
-                d = new DayView(null, null, nowProcessed);
-                d.setEmpty(true);
-            }
-
-            try {
-                
-                d.setCanAdd(true);
-                checkDate(d.getCreationDate(), false, null, errMessage);
-                d.setCanEdit(true);
-            } catch (OutOfDateException e) {
-                d.setCanEdit(false);
+        for (String u : cu.getFollowingBy()){
+            if (u.equals(user.get().getId())){
+                isFollowing = true;
                 
             }
-
-            resultDays.add(d);
-            dayProcessed++;
         }
-
-        return resultDays;
-
+        if (!isFollowing){
+            cu.getFollowingBy().add(user.get().getId());
+            currentUser.setUser(userRepository.save(cu));
+        }
+        
+        model.asMap().put("username", user.get().getUsername());
+        model.asMap().put("follows", userRepository.findAll(currentUser.getUser().getFollowingBy()));
+        return "redirect:/user/following";
     }
-
+    
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/share", method = RequestMethod.GET)
+    public String shareWith(CurrentUser currentUser, Model model){
+        ArrayList<String> lookFor = currentUser.getUser().getSharingWith();
+        if (lookFor == null){
+            lookFor = new ArrayList<String>();
+        }
+        model.asMap().put("shares", userRepository.findAll(lookFor));
+        return "user/share";
+    }
+    
+    
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/share", method = RequestMethod.POST)
+    public ModelAndView shareWith(CurrentUser currentUser, @RequestParam(value = "email", required = true) String email) throws NoSuchUserException {
+        Boolean isSharing = false;
+        ModelAndView model = new ModelAndView("user/share");
+        Optional<User> user = userRepository.findByEmail(email);
+        
+        if (!user.isPresent()){
+            throw new NoSuchUserException("You can't share with non existing user");
+        }
+        
+        if (currentUser.getUser().getSharingWith() == null){
+            currentUser.getUser().setSharingWith(new ArrayList<String>());
+        }
+        
+        for (String u : currentUser.getUser().getSharingWith()){
+            if (u.equals(user.get().getId())){
+                isSharing = true;
+                
+            }
+        }
+        if (!isSharing){
+            currentUser.getUser().getSharingWith().add(user.get().getId());
+            currentUser.setUser(userRepository.save(currentUser.getUser()));
+        }
+        
+        model.getModelMap().put("username", user.get().getUsername());
+        model.getModelMap().put("shares", userRepository.findAll(currentUser.getUser().getSharingWith()));
+        return model;
+    }
+    
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/following", method = RequestMethod.GET)
+    public String following(CurrentUser currentUser, Model model){
+        ArrayList<String> lookFor = currentUser.getUser().getFollowingBy();
+        if (lookFor == null){
+            lookFor = new ArrayList<String>();
+        }
+        model.asMap().put("follows", userRepository.findAll(lookFor));
+        return "user/following";
+    }
+    
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/unfollow/{username}")
+    public String unfollow(CurrentUser currentUser, @PathVariable(value = "username") String username) throws NoSuchUserException{
+        User u = userRepository.findById(currentUser.getUser().getId()).get();
+        Optional<User> op = userRepository.findByUsername(username);
+        ArrayList<String> toRemove = new ArrayList<String>();
+        if (u.getFollowingBy() != null) {
+            for (String uop : u.getFollowingBy()){
+                if (uop.equals(op.get().getId())){
+                    toRemove.add(uop);
+                }
+            }
+            u.getFollowingBy().removeAll(toRemove);
+            currentUser.setUser(userRepository.save(u));
+        }
+        
+        
+        return "redirect:/user/following";
+    }
+    
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/unshare/{username}", method = RequestMethod.GET)
+    public String unshare(Model model, CurrentUser currentUser, @PathVariable(value = "username") String username){
+        User u = userRepository.findById(currentUser.getUser().getId()).get();
+        Optional<User> op = userRepository.findByUsername(username);
+        
+        ArrayList<String> toRemove = new ArrayList<String>();
+        
+        if (u.getSharingWith() != null) {
+            for (String uop : u.getSharingWith()){
+                if (uop.equals(op.get().getId())){
+                    toRemove.add(uop);
+                }
+            }
+            u.getSharingWith().removeAll(toRemove);
+            currentUser.setUser(userRepository.save(u));
+        }
+        return "redirect:/user/share";
+    }
+    
 }

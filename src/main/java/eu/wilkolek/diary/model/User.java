@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -35,6 +36,10 @@ public class User {
     
     private Date created;
     
+    private ArrayList<String> followingBy;
+    
+    private ArrayList<String> sharingWith;
+    
     public User(){
     	
     }
@@ -62,6 +67,9 @@ public class User {
         this.optionsLastUpdate.put(UserOptions.NOTIFICATION_FREQUENCY,DateTimeUtils.getCurrentUTCTime());
         
         this.lastLogIn = DateTimeUtils.getCurrentUTCTime();
+        this.followingBy = new ArrayList<String>();
+        this.sharingWith = new ArrayList<String>();
+        this.created = DateTimeUtils.getCurrentUTCTime();
 
     }
     
@@ -189,6 +197,23 @@ public class User {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+
+    public ArrayList<String> getFollowingBy() {
+        return followingBy;
+    }
+
+    public void setFollowingBy(ArrayList<String> followingBy) {
+        this.followingBy = followingBy;
+    }
+
+    public ArrayList<String> getSharingWith() {
+        return sharingWith;
+    }
+
+    public void setSharingWith(ArrayList<String> sharingWith) {
+        this.sharingWith = sharingWith;
     }
 
     

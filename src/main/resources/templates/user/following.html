@@ -1,0 +1,67 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head" />
+<body class="">
+    <div id="page-wrapper">
+
+        <!-- Header -->
+        <div id="header-wrapper" th:replace="fragments/header" />
+
+
+
+        <div id="content" class="full-body">
+            <div class="container">
+
+                <!--                 <div id="sidebar" class="col-md-3" th:replace="fragments/topbar " /> -->
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <!-- Content -->
+                        <div id="content">
+
+
+                            <div class="card" th:if="${username != null}">
+                                <h4>
+                                    You are now following user with username: <span th:text="${username}"></span>
+                                </h4>
+                            </div>
+                        
+                            <th:block th:if="${follows != null}">
+                                <th:block th:if="${follows.size() > 0}">
+                                    <h2>You're following those users:</h2>
+                                    <div class="card" th:each="u : ${follows}">
+                            <a th:href="${'/s/'+u.username}" th:text="${u.username}"> </a>
+
+ <a th:href="${'/user/unfollow/'+u.username}" >X </a>
+                                    </div>
+                                </th:block>
+                                <th:block th:if="${follows.size() == 0}">
+                                    <h2>You're not following anyone. Find interesing users share page and follow it.</h2>
+                                </th:block>
+                            </th:block>
+                            <th:block th:if="${follows == null}">
+                                <h2>You're not following anyone. Find interesing users share page and follow it.</h2>
+                            </th:block>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- Footer -->
+        <div id="footer-wrapper" th:replace="fragments/footer" />
+
+    </div>
+
+    <!-- Scripts -->
+    <script th:replace="fragments/scripts" />
+
+</body>
+</html>

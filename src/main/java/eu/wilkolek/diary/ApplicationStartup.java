@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
-import net.wimpi.telnetd.io.terminal.ansi;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -113,7 +111,8 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         user.getOptionsLastUpdate().put(UserOptions.NOTIFICATION_FREQUENCY, DateTimeUtils.getCurrentUTCTime());
 
         user = userRepository.save(user);
-
+        user.setFollowingBy(new ArrayList<String>());
+        user.setSharingWith(new ArrayList<String>());
         System.out.println("User used:" + gson.toJson(user));
 
         ArrayList<DictionaryWord> words = new ArrayList<DictionaryWord>();

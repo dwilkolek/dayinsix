@@ -7,5 +7,5 @@ public interface UserRepositoryCustom {
 
 	User addDayRef(User user, Day day);
 	
-	
+    boolean canShareWith(User user, User user2);
 }
