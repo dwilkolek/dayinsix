@@ -20,8 +20,9 @@
                         <!-- Content -->
                         <div id="content">
 
-                            <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.display')}">
+                            <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.add')}">
                                 <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4>
+                                
                                 <div th:if="${day.sentence != null}">
                                     <th:block>
                                         <span th:class="${'sentence ico ico'+day.sentence.status}"> <i>&nbsp;</i><span
@@ -38,14 +39,15 @@
 
                                     </th:block>
                                 </div>
-                                <div th:if="${day.note != null}">
+                                
+                                <th:block th:if="${day.note != null}">
                                     <th:block th:if="${day.note != ''}">
                                         <div class="note" th:text="${day.note}">
                                         
                                         </div>
-
                                     </th:block>
-                                </div>
+                                </th:block>
+                                
                                 <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}"
                                     th:with="dfx=${@environment.getProperty('date.format.add')}">
                                     <a th:href="${'/user/day/add/'+#calendars.format(day.creationDate,dfx)}">Save THE day</a>

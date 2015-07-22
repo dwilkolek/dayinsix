@@ -20,8 +20,10 @@ public class ProfileFormCustomValidator {
    }
 
     private static void validateUsername(User user, UserRepository userRepository, ProfileForm form, Errors errors) {
-        if (userRepository.findByUsername(form.getUsername()).isPresent() && !user.getUsername().equals(form.getUsername())) {
-            errors.reject("email.exists", "User with this email already exists");
+        if (!user.getUsername().equals(form.getUsername())){
+            if (userRepository.findByUsername(form.getUsername()).isPresent()) {
+                errors.reject("username.exists", "User with this username already exists");
+            }
         }
       
     }
@@ -39,8 +41,10 @@ public class ProfileFormCustomValidator {
     }
 
     private static void validateEmail(User user, UserRepository userRepository, ProfileForm form, Errors errors) {
-        if (userRepository.findByEmail(form.getEmail()).isPresent() && !user.getEmail().equals(form.getEmail())) {
-            errors.reject("email.exists", "User with this email already exists");
+        if (!user.getEmail().equals(form.getEmail())){
+            if (userRepository.findByEmail(form.getEmail()).isPresent()) {
+                errors.reject("email.exists", "User with this email already exists");
+            }
         }
         if (!EmailValidator.getInstance().isValid(form.getEmail())) {
             errors.reject("email.wrong", "This is not an email address");

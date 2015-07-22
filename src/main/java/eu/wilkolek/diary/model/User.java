@@ -38,6 +38,8 @@ public class User {
     
     private ArrayList<String> followingBy;
     
+    private ArrayList<String> followedBy;
+    
     private ArrayList<String> sharingWith;
     
     public User(){
@@ -67,6 +69,7 @@ public class User {
         this.optionsLastUpdate.put(UserOptions.NOTIFICATION_FREQUENCY,DateTimeUtils.getCurrentUTCTime());
         
         this.lastLogIn = DateTimeUtils.getCurrentUTCTime();
+        this.followedBy = new ArrayList<String>();
         this.followingBy = new ArrayList<String>();
         this.sharingWith = new ArrayList<String>();
         this.created = DateTimeUtils.getCurrentUTCTime();
@@ -214,6 +217,14 @@ public class User {
 
     public void setSharingWith(ArrayList<String> sharingWith) {
         this.sharingWith = sharingWith;
+    }
+
+    public ArrayList<String> getFollowedBy() {
+        return followedBy;
+    }
+
+    public void setFollowedBy(ArrayList<String> followedBy) {
+        this.followedBy = followedBy;
     }
 
     

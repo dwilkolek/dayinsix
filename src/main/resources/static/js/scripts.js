@@ -19,7 +19,8 @@ $(document).ready(function() {
 				$("#error").show();
 				$("#csrf").val(vars[2])
 			} else {
-				location.reload();
+				//location.reload();
+				window.location.href = "/user/day/list";
 			}
 		})
 

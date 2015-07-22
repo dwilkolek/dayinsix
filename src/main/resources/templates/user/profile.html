@@ -26,11 +26,18 @@
                              
                                     <!-- <p th:text="${'Error code: '+error.key}" /> -->
 <!--                                     <p th:if="${errors != null}"  role="alert"> -->
-                                    <ul th:if="${errors != null and errors.size() > 0 }" class="alert alert-danger" >
-                                        <li th:each="error : ${errors}" th:text="${error.value}"></li>
-                                    </ul>
-<!--                                     </p> -->
+                                <th:block th:if="${errors != null and errors.size() > 0 }" >
+                                    <p class="alert alert-danger">
+                                        <th:block th:each="error : ${errors}">
+                                            <span  th:text="${error.value}"></span><br />
+                                        </th:block>
+                                    </p>
+                               </th:block>
+                              <th:block th:if="${saveSuccess}">
                               
+                                <p class="alert alert-success"> Settings updated </p>
+                              
+                              </th:block>
 
 
                             <form id="registerForm" role="form" name="form" action="/user/profile" method="post">
