@@ -20,6 +20,7 @@ import eu.wilkolek.diary.exception.OutOfDateException;
 import eu.wilkolek.diary.model.CurrentUser;
 import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.DayView;
+import eu.wilkolek.diary.model.DayViewData;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.StatusEnum;
 import eu.wilkolek.diary.model.User;
@@ -84,50 +85,13 @@ public class ShareController {
         
         int DAYS_PER_PAGE = 10;
 
+        DayViewData helper = DayHelper.createDataForView(dayRepository, page, user.get(), DAYS_PER_PAGE);
         
-        Date now = DateTimeUtils.getCurrentUTCTime();
-        if (!(page != null && page > -1)) {
-            page = 1;
-        }
-        page--;
-        Date chosenThen = new Date(now.getTime() - TimeUnit.DAYS.toMillis(DAYS_PER_PAGE * page));
-        Date chosenEarlier = new Date(chosenThen.getTime() - TimeUnit.DAYS.toMillis(DAYS_PER_PAGE - 1));
-        ArrayList<Day> days = dayRepository.getDaysFromDateToDate(user.get(), chosenEarlier, chosenThen);
-
-        
-        int allDays = dayRepository.countByUser(user.get());
-        chosenEarlier = chosenEarlier.getTime() > user.get().getCreated().getTime() ? chosenEarlier : user.get().getCreated();
-        ArrayList<DayView> daysView = DayHelper.fillDates( days,chosenEarlier , chosenThen, "Error while getting list");
-        
-        if (TimeUnit.MILLISECONDS.toDays(chosenThen.getTime() - chosenEarlier.getTime()) < DAYS_PER_PAGE){
-            DAYS_PER_PAGE = (int)TimeUnit.MILLISECONDS.toDays(chosenThen.getTime() - chosenEarlier.getTime());
-            DAYS_PER_PAGE = DAYS_PER_PAGE==0 ? 1: DAYS_PER_PAGE;
-        }
-        
-        int mPages= (int)Math.ceil(allDays/DAYS_PER_PAGE);
-        
-        int sPages = page -4;
-        int tPages = page +5;
-        
-        if (sPages <1){
-            tPages += Math.abs(1 - sPages);
-            sPages = 1;
-            
-        }
-        
-        if (tPages > mPages){
-            sPages -= (tPages - mPages);
-            tPages = mPages;
-        }
-        
-       // int tPages = mPages > 8 ? sPage+8 : mPages;
-        
-        
-        model.asMap().put("cPage", page+1);
-        model.asMap().put("days", daysView);
-        model.asMap().put("pages", mPages);
-        model.asMap().put("tPage", tPages);
-        model.asMap().put("sPage", sPages);
+        model.asMap().put("cPage", helper.getcPage());
+        model.asMap().put("days", helper.getDays());
+        model.asMap().put("pages", helper.getPages());
+        model.asMap().put("tPage", helper.gettPage());
+        model.asMap().put("sPage", helper.getsPage());
        
         if (currentUser != null){
         
