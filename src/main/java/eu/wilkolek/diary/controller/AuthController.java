@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.mail.Session;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,8 +179,8 @@ public class AuthController {
         mailMessage.setTo(email);
 //        mailMessage.setReplyTo("someone@localhost");
         mailMessage.setFrom(MailUtils.FROM);
-        mailMessage.setSubject("Your password has been reseted. Your new password is : "+password+"." + "Now you can log in and change your password.");
-        mailMessage.setText("Thanks for registering :*");
+        mailMessage.setText("Your password has been reseted. Your new password is : "+password+"." + "Now you can log in and change your password.");
+        mailMessage.setSubject("You've got new password at dayinsix.com");
         javaMailSender.send(mailMessage);
         return mailMessage;
     }
@@ -202,10 +203,10 @@ public class AuthController {
 	    
 	    MessageDigest dig = MessageDigest.getInstance("MD5");
 	    
-	    String token = DateTimeUtils.getCurrentUTCTimeAsString() + email + "somerandomeCodeToSecureDigest";
-	    
-	    token = new String(dig.digest(token.getBytes()));
-	    token = token.substring(0,10);
+	   //String token = DateTimeUtils.getCurrentUTCTimeAsString() + email + "somerandomeCodeToSecureDigest";
+	   
+	    String token = RandomStringUtils.randomAlphanumeric(6).toUpperCase();
+	   
 	    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 	    
 	    user.get().setPasswordHash(encoder.encode(token));
