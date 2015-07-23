@@ -1,0 +1,73 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head" />
+<body class="">
+    <div id="page-wrapper">
+
+        <!-- Header -->
+        <div id="header-wrapper" th:replace="fragments/header" />
+
+
+
+        <div id="content" class="full-body">
+            <div class="container">
+                <!--                 <div th:replace="fragments/topbar" /> -->
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <!-- Content -->
+                        <div id="content">
+
+
+                            <div class="">
+
+
+                                <div class="col-md-6 col-md-offset-3">
+                                    <h2>Reset your password</h2>
+
+                                    <form id="shareForm" role="form" name="form" action="/remind" method="post">
+
+
+
+
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                                        <div class="form-group">
+                                            <label for="email">Email address</label> <input class="form-control" type="email" name="email" id="email"
+                                                required="required" autocomplete="off" />
+                                        </div>
+
+
+                                        <div class="form-group text-right">
+                                            <br />
+                                            <button class="btn btn-default" style="" type="submit">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+                <!-- Sidebar -->
+            </div>
+
+
+            <!-- Footer -->
+
+        </div>
+
+        <div id="footer-wrapper" th:replace="fragments/footer" />
+
+    </div>
+
+    <!-- Scripts -->
+    <script th:replace="fragments/scripts" />
+
+</body>
+</html>

@@ -1,5 +1,7 @@
 package eu.wilkolek.diary.controller;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -23,13 +26,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import scala.util.control.Exception;
 import eu.wilkolek.diary.dto.UserCreateForm;
 import eu.wilkolek.diary.dto.UserCreateFormValidator;
+import eu.wilkolek.diary.exception.NoSuchUserException;
 import eu.wilkolek.diary.model.InputTypeEnum;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.Email;
+import eu.wilkolek.diary.util.MailUtils;
 //import eu.wilkolek.diary.util.TimezoneUtils;
 import eu.wilkolek.diary.util.MetadataHelper;
 
@@ -47,7 +54,7 @@ public class AuthController {
 	public void initBinder(WebDataBinder binder) {
 		binder.addValidators(userCreateFormValidator);	
 	}
-    
+   
     
     @Autowired
     public AuthController(UserRepository userRepository, UserCreateFormValidator userCreateFormValidator,JavaMailSender javaMailSender) {
@@ -159,12 +166,56 @@ public class AuthController {
 	    SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(email);
 //        mailMessage.setReplyTo("someone@localhost");
-        mailMessage.setFrom("dayinsix@wilkolek.eu");
+        mailMessage.setFrom(MailUtils.FROM);
         mailMessage.setSubject("Thanks for registering at dayinsix.com");
         mailMessage.setText("Thanks for registering :*");
         javaMailSender.send(mailMessage);
         return mailMessage;
 	}
 	
+	public SimpleMailMessage sendNewPassowrd(String email, String password){
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(email);
+//        mailMessage.setReplyTo("someone@localhost");
+        mailMessage.setFrom(MailUtils.FROM);
+        mailMessage.setSubject("Your password has been reseted. Your new password is : "+password+"." + "Now you can log in and change your password.");
+        mailMessage.setText("Thanks for registering :*");
+        javaMailSender.send(mailMessage);
+        return mailMessage;
+    }
+	
+	@RequestMapping(value = "/remind", method = RequestMethod.GET)
+    public ModelAndView remind() {
+        ModelAndView model = new ModelAndView("auth/remind");
+        model.getModelMap().addAttribute("title", MetadataHelper.title("Reset your password"));
+        return model;
+    }
+	
+	@RequestMapping(value = "/remind", method = RequestMethod.POST)
+    public ModelAndView remindPost(@RequestParam(value="email") String email ) throws NoSuchUserException, NoSuchAlgorithmException {
+	    ModelAndView model = new ModelAndView("auth/remindSuccess");  
+
+	    Optional<User> user = userRepository.findByEmail(email);
+	    if (!user.isPresent()){
+	        throw new NoSuchUserException("Reset failed for "+email);
+	    }
+	    
+	    MessageDigest dig = MessageDigest.getInstance("MD5");
+	    
+	    String token = DateTimeUtils.getCurrentUTCTimeAsString() + email + "somerandomeCodeToSecureDigest";
+	    
+	    token = new String(dig.digest(token.getBytes()));
+	    token = token.substring(0,10);
+	    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+	    
+	    user.get().setPasswordHash(encoder.encode(token));
+	    
+	    userRepository.save(user.get());
+	    
+        model.getModelMap().addAttribute("title", MetadataHelper.title("Reset successful"));
+        this.sendNewPassowrd(user.get().getEmail(), token);
+        
+        return model;
+    }
     
 }

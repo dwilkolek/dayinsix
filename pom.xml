@@ -100,6 +100,10 @@
 		<!-- </dependency> -->
 		<!-- javax.mail:mail:1.4.1 -->
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-velocity</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
