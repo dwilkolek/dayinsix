@@ -29,6 +29,7 @@ import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.DayHelper;
+import eu.wilkolek.diary.util.MetadataHelper;
 
 
 @Controller
@@ -51,7 +52,7 @@ public class ShareController {
     
     @RequestMapping("/s/{username}/{page}")
     public String sharePage(Model model,  @PathVariable(value = "username") String username, @PathVariable(value = "page") Integer page, CurrentUser currentUser) throws NoSuchUserException {
-        
+        model.asMap().put("title", MetadataHelper.title(username + "'s diary"));
         Optional<User> user = userRepository.findByUsername(username);
         
         if (!user.isPresent()){
@@ -80,7 +81,7 @@ public class ShareController {
         }
         
         model.asMap().put("user", user.get());
-        model.asMap().put("title", "Share page of user "+username);
+        model.asMap().put("title", MetadataHelper.title("Share page of user "+username));
         model.asMap().put("description", "Share page of user");
         
         int DAYS_PER_PAGE = 10;

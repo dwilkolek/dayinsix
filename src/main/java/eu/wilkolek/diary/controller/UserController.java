@@ -51,6 +51,7 @@ import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
 //import eu.wilkolek.diary.util.TimezoneUtils;
 import eu.wilkolek.diary.util.DayHelper;
+import eu.wilkolek.diary.util.MetadataHelper;
 
 @Controller
 public class UserController {
@@ -83,16 +84,16 @@ public class UserController {
         this.profileFormValidator = new ProfileFormValidator(userRepository);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
-    @RequestMapping(value = "/user/details")
-    public ModelAndView details() {
-        return new ModelAndView("/user/details");
-    }
+//    @PreAuthorize("hasAuthority('USER')")
+//    @RequestMapping(value = "/user/details")
+//    public ModelAndView details() {
+//        return new ModelAndView("/user/details");
+//    }
 
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/day/list")
     public ModelAndView days(CurrentUser currentUser, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) throws Exception {
-
+        
         int DAYS_PER_PAGE = 10;
 
         Optional<User> user = userRepository.findById(currentUser.getId());
@@ -109,6 +110,9 @@ public class UserController {
         model.getModelMap().put("pages", helper.getPages());
         model.getModelMap().put("tPage", helper.gettPage());
         model.getModelMap().put("sPage", helper.getsPage());
+        
+        model.getModelMap().addAttribute("title", MetadataHelper.title("Your diary"));
+        
         return model;
     }
 
@@ -130,6 +134,7 @@ public class UserController {
             model.getModelMap().put("dayForm", dayForm);
             model.getModelMap().put("status", StatusEnum.asMap());
             model.getModelMap().put("errors", result.getAllErrors());
+            model.getModelMap().addAttribute("title", MetadataHelper.title("Change your day"));
             return model;
         }
         User user = currentUser.getUser();
@@ -176,6 +181,8 @@ public class UserController {
         dayRepository.save(new Day(dayForm, user));
         LOGGER.debug("User " + user.getEmail() + " added new day");
 
+        
+        
         return new ModelAndView("redirect:/user/day/list");
     }
 
@@ -212,6 +219,7 @@ public class UserController {
         ModelAndView model = new ModelAndView("user/day/edit");
         model.getModelMap().put("status", StatusEnum.asMap());
         model.getModelMap().put("dayForm", dayForm);
+        model.getModelMap().addAttribute("title", MetadataHelper.title("Change your day"));
 
         return model;
     }
@@ -228,6 +236,7 @@ public class UserController {
             model.getModelMap().put("dayForm", dayForm);
             model.getModelMap().put("status", StatusEnum.asMap());
             model.getModelMap().put("errors", result.getAllErrors());
+            model.getModelMap().addAttribute("title", MetadataHelper.title("Save the day"));
             return model;
         }
         User user = currentUser.getUser();
@@ -293,7 +302,7 @@ public class UserController {
 
         model.asMap().put("status", StatusEnum.asMap());
         model.asMap().put("dayForm", new DayForm());
-
+        model.asMap().put("title", MetadataHelper.title("Save the day"));
         return "user/day/add";
     }
 
@@ -308,7 +317,7 @@ public class UserController {
         prepareDataForModel(model);
 
         model.addAttribute("form", profileForm);
-
+        model.asMap().put("title", MetadataHelper.title("Your profile"));
         return "user/profile";
     }
 
@@ -317,6 +326,7 @@ public class UserController {
         model.addAttribute("shareStyles", ShareStyleEnum.asMap());
         model.addAttribute("inputTypes", InputTypeEnum.asMap());
         model.addAttribute("notificationFrequencyTypes", NotificationTypesEnum.asMap());
+        
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -345,6 +355,8 @@ public class UserController {
         model.addAttribute("form", profileFormClean);
         saveSuccess = true;
         model.addAttribute("saveSuccess", !result.hasErrors());
+        model.addAttribute("title", MetadataHelper.title("Your profile"));
+        
         return "user/profile";
 
     }
@@ -384,6 +396,7 @@ public class UserController {
 
         model.asMap().put("username", user.get().getUsername());
         model.asMap().put("follows", userRepository.findAll(currentUser.getUser().getFollowingBy()));
+        model.asMap().put("title", MetadataHelper.title("Followed by you"));
         return "redirect:/user/following";
     }
 
@@ -395,6 +408,7 @@ public class UserController {
             lookFor = new ArrayList<String>();
         }
         model.asMap().put("shares", userRepository.findAll(lookFor));
+        model.asMap().put("title", MetadataHelper.title("Users you share days with"));
         return "user/share";
     }
 
@@ -404,7 +418,7 @@ public class UserController {
         Boolean isSharing = false;
         ModelAndView model = new ModelAndView("user/share");
         Optional<User> user = userRepository.findByEmail(email);
-
+        model.getModelMap().addAttribute("title", MetadataHelper.title("Users you share days with"));
         if (!user.isPresent()) {
             throw new NoSuchUserException("You can't share with non existing user");
         }
@@ -439,6 +453,7 @@ public class UserController {
         }
         currentUser.setUser(userByDb);
         model.asMap().put("follows", userRepository.findAll(lookFor));
+        model.asMap().put("title", MetadataHelper.title("Followed by others"));
         return "user/following";
     }
 
@@ -452,6 +467,7 @@ public class UserController {
         }
         currentUser.setUser(userByDb);
         model.asMap().put("follows", userRepository.findAll(lookFor));
+        model.asMap().put("title", MetadataHelper.title("Followed by others"));
         return "user/followed";
     }
 
@@ -509,5 +525,8 @@ public class UserController {
         }
         return "redirect:/user/share";
     }
+    
+    
+    
 
 }

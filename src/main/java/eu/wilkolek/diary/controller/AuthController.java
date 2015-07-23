@@ -3,12 +3,15 @@ package eu.wilkolek.diary.controller;
 import java.util.HashMap;
 import java.util.Optional;
 
+import javax.mail.Session;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -26,7 +29,9 @@ import eu.wilkolek.diary.model.InputTypeEnum;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.util.Email;
 //import eu.wilkolek.diary.util.TimezoneUtils;
+import eu.wilkolek.diary.util.MetadataHelper;
 
 @Controller
 public class AuthController {
@@ -36,6 +41,7 @@ public class AuthController {
     private final UserRepository userRepository;
 
 	private UserCreateFormValidator userCreateFormValidator;
+	private JavaMailSender javaMailSender;
 	
 	@InitBinder("form")
 	public void initBinder(WebDataBinder binder) {
@@ -44,9 +50,10 @@ public class AuthController {
     
     
     @Autowired
-    public AuthController(UserRepository userRepository, UserCreateFormValidator userCreateFormValidator) {
+    public AuthController(UserRepository userRepository, UserCreateFormValidator userCreateFormValidator,JavaMailSender javaMailSender) {
 		this.userRepository = userRepository;
 		this.userCreateFormValidator = userCreateFormValidator;
+		this.javaMailSender = javaMailSender;
 	}
 	
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -55,6 +62,10 @@ public class AuthController {
         ModelAndView model = new ModelAndView("login");
         model.getModelMap().addAttribute("sidebarNoLogin", true);
         model.getModelMap().addAttribute("errors", new HashMap<String,String>());
+        
+        model.getModelMap().addAttribute("title", MetadataHelper.title("Login"));
+        
+        
         return model;
     }
 
@@ -80,6 +91,9 @@ public class AuthController {
         model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
         model.getModelMap().addAttribute("inputTypes", InputTypeEnum.asMap());
 		model.getModelMap().addAttribute("errors", new HashMap<String,String>());
+		
+		model.getModelMap().addAttribute("title", MetadataHelper.title("Register"));
+		
 		return model;
 	}
 
@@ -92,6 +106,8 @@ public class AuthController {
 			
 		ModelAndView model = new ModelAndView("/auth/register");
 				
+		model.getModelMap().addAttribute("title", MetadataHelper.title("Register"));
+		
 		if (bindingResult.hasErrors()) {
 			// failed validation
 			
@@ -100,11 +116,16 @@ public class AuthController {
 	        model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
 	        model.getModelMap().addAttribute("inputTypes", InputTypeEnum.asMap());
 			model.getModelMap().addAttribute("errors", form.createMessages(bindingResult.getAllErrors()));
+			
+			
+			
 			return model;
 		}
 		try {
 			User user = new User(form);
 			user = userRepository.save(user);
+			SimpleMailMessage msg = this.sendThanks(user.getEmail());
+			if (msg != null) { System.out.println("sent!"); }else { System.out.println("not send");};
 		} catch (DataIntegrityViolationException e) {
 			// probably email already exists - very rare case when multiple
 			// admins are adding same user
@@ -120,14 +141,30 @@ public class AuthController {
 			return model;
 		}
 		// ok, redirect
+		
+		
+		
 		return new ModelAndView("redirect:/thankyou");
 	}
 	
 	@RequestMapping(value = "/thankyou", method = RequestMethod.GET)
 	public ModelAndView thankyou() {
-		return new ModelAndView("auth/thankyou");
+	    ModelAndView model = new ModelAndView("auth/thankyou");;
+	    model.getModelMap().addAttribute("title", MetadataHelper.title("Thank you"));
+		return model;
 	}
 	
 
+	public SimpleMailMessage sendThanks(String email){
+	    SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(email);
+//        mailMessage.setReplyTo("someone@localhost");
+        mailMessage.setFrom("dayinsix@wilkolek.eu");
+        mailMessage.setSubject("Thanks for registering at dayinsix.com");
+        mailMessage.setText("Thanks for registering :*");
+        javaMailSender.send(mailMessage);
+        return mailMessage;
+	}
+	
     
 }

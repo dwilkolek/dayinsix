@@ -31,14 +31,19 @@
                                 <div class="row">
                                     <div class="col-md-9">
 
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> <input th:field="*{sentence}"
-                                            type="text"></input>
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> 
+                                        <div class="form-group">
+                                            <label>Sentence</label>
+                                            <input th:field="*{sentence}" class="form-control" type="text"></input>
+                                        </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <select th:name="${'sentenceStatus'}">
+                                    <div class="form-group">
+                                        <select th:name="${'sentenceStatus'}" class="form-control">
                                             <option th:value="${s.key}" th:each="s : ${status}" th:text="${s.value}"
                                                 th:selected="${s.key == dayForm.sentenceStatus}" />
                                         </select>
+                                        </div>
                                     </div>
                                 </div>
                                  <div class="form-group">
