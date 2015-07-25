@@ -18,7 +18,7 @@
 
                     <div class="col-md-12">
                         <!-- Content -->
-                        <div id="content">
+                        <div class="content">
 
                             <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.add')}">
                                 <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4>

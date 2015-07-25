@@ -24,7 +24,7 @@ public class StaticController {
     @RequestMapping("/faq")
     public ModelAndView about() {
         ModelAndView model = new ModelAndView("static/faq");
-        model.getModelMap().addAttribute("title", MetadataHelper.title("FAQ"));
+        model.getModelMap().addAttribute("title", MetadataHelper.title("How dayinsix works"));
         LOGGER.debug("Getting about page");
         return model;
     }

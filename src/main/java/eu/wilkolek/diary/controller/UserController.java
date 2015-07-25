@@ -127,7 +127,7 @@ public class UserController {
     public ModelAndView editDaySave(CurrentUser currentUser, @PathVariable(value = "dateStr") String dateStr, @Valid DayForm dayForm, BindingResult result)
             throws ParseException, OutOfDateException {
 
-        this.dayFormValidator.validate(dayForm, result);
+       // this.dayFormValidator.validate(dayForm, result);
 
         if (result.hasErrors()) {
             ModelAndView model = new ModelAndView("user/day/edit");

@@ -14,17 +14,15 @@
                 <!--             <div class="container"> -->
                 <!--                 <div th:replace="fragments/topbar" /> -->
                 <div class="row">
-                    <div class="col-md-12">
-                        <ul>
-                            <li th:each="error : ${errors}" th:text="${error.codes[1]}" />
-                        </ul>
-                    </div>
+                    <p class="alert alert-danger">
+                           <th:block th:each="error : ${errors}" > <span  th:text="${error.defaultMessage}" /><br /> </th:block>
+                     </p>
                 </div>
                 <div class="row">
 
                     <div class="col-md-12">
                         <!-- Content -->
-                        <div id="content">
+                        <div class="content">
 
                             <!-- SENTENCE -->
                             <form th:if="${dayForm.sentence != null}" th:object="${dayForm}" method="post">

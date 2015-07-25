@@ -68,13 +68,16 @@ public class ShareController {
         if (user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.FOR_SELECTED.name())){
             
             boolean canShare = false;
-            
-            for (String id : user.get().getSharingWith()){
-                if (id.equals(currentUser.getUser().getId())){
-                    canShare = true;
+            if (user.get().getSharingWith() != null){
+                for (String id : user.get().getSharingWith()){
+                    if (id.equals(currentUser.getUser().getId())){
+                        canShare = true;
+                    }
                 }
             }
-            
+            if (user.get().getId().equals(currentUser.getId())){
+                canShare = true;
+            }
             if (!canShare){
                 return "sharePage/cantShare";
             }
