@@ -14,7 +14,7 @@
                 <!--             <div class="container"> -->
                 <!--                 <div th:replace="fragments/topbar" /> -->
                 <div class="row">
-                    <p class="alert alert-danger">
+                    <p class="alert alert-danger" th:if="${errors != null}">
                            <th:block th:each="error : ${errors}" > <span  th:text="${error.defaultMessage}" /><br /> </th:block>
                      </p>
                 </div>

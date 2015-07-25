@@ -53,7 +53,7 @@ public class DayFormValidator implements Validator {
                 }
             }
             if (emptyWords) {
-                errors.reject("dayform.word_error","Words can't contain ' ', nor be empty.");
+                errors.reject("dayform.word_error","Words can't contain space, nor be empty.");
             }
             for (String wordStatus : dayForm.getWordsStatuses()) {
 

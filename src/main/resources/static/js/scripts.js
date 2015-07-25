@@ -39,4 +39,8 @@ $(document).ready(function() {
 		e.preventDefault();
 		$("#logoutButton").click();
 	})
+	
+	$(document).click(function(){
+		$(".wordList").html("")
+	})
 })
