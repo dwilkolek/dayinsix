@@ -208,7 +208,7 @@ public class AuthController {
 	    helper.setText("<html><body>Welcome to dayinsix, <br />"
                 + "Your diary is almost ready for you to write in it. <br />"
                 + "Finish the registration by opening the link below and enjoy saving your days.<br />"
-                + "<a href='"+link+"'>"+link+"</a><br /><br />Chhers, dayinsix crew</body></html>");
+                + "<a href='"+link+"'>"+link+"</a><br /><br />Chhers, dayinsix crew</body></html>",true);
 	    helper.setSubject("Activate your account at dayinsix.com");
 	    this.javaMailSender.send(message);
 	
