@@ -3,14 +3,14 @@
 <head th:replace="fragments/head" />
 <body class="">
     <div id="page-wrapper">
+        <div class="container">
+            <!-- Header -->
+            <div id="header-wrapper" th:replace="fragments/header" />
 
-        <!-- Header -->
-        <div id="header-wrapper" th:replace="fragments/header" />
 
 
-
-        <div id="content" class="full-body">
-            <div class="container">
+            <div id="content" class="full-body">
+                <!--             <div class="container"> -->
 
                 <!--                 <div id="sidebar" class="col-md-3" th:replace="fragments/topbar " /> -->
 
@@ -27,7 +27,7 @@
                             </div>
                             <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.add')}">
                                 <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4>
-                               
+
                                 <div th:if="${day.sentence != null}">
                                     <th:block>
                                         <span th:class="${'sentence ico ico'+day.sentence.status}"> <i>&nbsp;</i><span th:text="${day.sentence.value}"></span>
@@ -41,20 +41,15 @@
 
                                     </th:block>
                                 </div>
-                                
+
                                 <th:block th:if="${day.note != null}">
                                     <th:block th:if="${day.note != ''}">
-                                        <div class="note" th:text="${day.note}">
-                                        
-                                        </div>
+                                        <div class="note" th:text="${day.note}"></div>
                                     </th:block>
                                 </th:block>
-                                
-                                <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}"
-                                    th:with="dfx=${@environment.getProperty('date.format.add')}">
-                                    User has skipped a day.
 
-                                </div>
+                                <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}"
+                                    th:with="dfx=${@environment.getProperty('date.format.add')}">User has skipped a day.</div>
                             </div>
 
                             <div th:if="${days.size() == 0}" class="card">
@@ -75,21 +70,21 @@
 
                             </div>
                         </div>
+
+                        <!-- Sidebar -->
+
+
                     </div>
-                    <!-- Sidebar -->
-
-
                 </div>
             </div>
+
+
+
+
+
+            <!-- Footer -->
+            <div id="footer-wrapper" th:replace="fragments/footer" />
         </div>
-
-
-
-
-
-        <!-- Footer -->
-        <div id="footer-wrapper" th:replace="fragments/footer" />
-
     </div>
 
     <!-- Scripts -->

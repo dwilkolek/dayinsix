@@ -3,15 +3,15 @@
 <head th:replace="fragments/head" />
 <body class="">
     <div id="page-wrapper">
+        <div class="container">
+            <!-- Header -->
+            <div id="header-wrapper" th:replace="fragments/header" />
 
-        <!-- Header -->
-        <div id="header-wrapper" th:replace="fragments/header" />
 
 
-
-        <div id="content" class="full-body">
-            <div class="container">
-<!--                 <div th:replace="fragments/topbar" /> -->
+            <div id="content" class="full-body">
+                <!--             <div class="container"> -->
+                <!--                 <div th:replace="fragments/topbar" /> -->
 
                 <div class="row">
 
@@ -21,22 +21,22 @@
 
                             <div th:replace="fragments/customContent" />
 
+
                         </div>
+                        <!-- Sidebar -->
+
+
                     </div>
-                    <!-- Sidebar -->
-
-
                 </div>
             </div>
+
+
+
+
+
+            <!-- Footer -->
+            <div id="footer-wrapper" th:replace="fragments/footer" />
         </div>
-
-
-
-
-
-        <!-- Footer -->
-        <div id="footer-wrapper" th:replace="fragments/footer" />
-
     </div>
 
     <!-- Scripts -->

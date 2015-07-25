@@ -98,7 +98,7 @@ public class UserController {
 
         Optional<User> user = userRepository.findById(currentUser.getId());
         if (!user.isPresent()) {
-            throw new Exception("CurrentUser not found id=" + currentUser.getId());
+            throw new NoSuchUserException("CurrentUser not found id=" + currentUser.getId());
         }
 
         ModelAndView model = new ModelAndView("user/day/list");
@@ -229,7 +229,7 @@ public class UserController {
     public ModelAndView saveDay(CurrentUser currentUser, @Valid DayForm dayForm, BindingResult result, @PathVariable(value = "dateStr") String dateStr)
             throws ParseException, OutOfDateException {
 
-        this.dayFormValidator.validate(dayForm, result);
+       // this.dayFormValidator.validate(dayForm, result);
 
         if (result.hasErrors()) {
             ModelAndView model = new ModelAndView("user/day/add");
@@ -334,9 +334,9 @@ public class UserController {
     public String profileSave(CurrentUser currentUser, Model model, ProfileForm profileForm, BindingResult result) {
         boolean saveSuccess = false;
         User user = userRepository.findOne(currentUser.getId());
-
-        ProfileFormCustomValidator validator = new ProfileFormCustomValidator();
-        validator.validate(currentUser.getUser(), userRepository, profileForm, result);
+        profileForm.setEmail(profileForm.getEmail().toLowerCase());
+       // ProfileFormCustomValidator validator = new ProfileFormCustomValidator();
+        //validator.validate(user, userRepository, profileForm, result);
 
         ProfileFormCustomValidator.validate(user, userRepository, profileForm, result);
 
@@ -414,10 +414,10 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/share", method = RequestMethod.POST)
-    public ModelAndView shareWith(CurrentUser currentUser, @RequestParam(value = "email", required = true) String email) throws NoSuchUserException {
+    public ModelAndView shareWith(CurrentUser currentUser, @RequestParam(value = "username", required = true) String username) throws NoSuchUserException {
         Boolean isSharing = false;
         ModelAndView model = new ModelAndView("user/share");
-        Optional<User> user = userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByUsername(username);
         model.getModelMap().addAttribute("title", MetadataHelper.title("Users you share days with"));
         if (!user.isPresent()) {
             throw new NoSuchUserException("You can't share with non existing user");

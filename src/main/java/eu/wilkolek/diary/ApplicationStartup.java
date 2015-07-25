@@ -103,6 +103,8 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         user.getOptions().put(UserOptions.SHARE_STYLE, ShareStyleEnum.PUBLIC.name());
         user.getOptionsLastUpdate().put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
 
+        user.setEnabled(true);
+        
         // user.getOptions().put(UserOptions.TIMEZONE,
         // TimezoneUtils.getTimeZones().get("Europe/Berlin"));
         // user.getOptionsLastUpdate().put(UserOptions.TIMEZONE,

@@ -28,9 +28,12 @@ public class CurrentUserDetailsService implements UserDetailsService {
     @Override
     public CurrentUser loadUserByUsername(String email) throws UsernameNotFoundException {
         LOGGER.debug("Authenticating user with email={}", email.replaceFirst("@.*", "@***"));
-        Optional<User> user = userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmail(email.toLowerCase());
         if (!user.isPresent()){
         	new UsernameNotFoundException(String.format("User with email=%s was not found", email));
+        }
+        if (!user.get().isEnabled()){
+            throw new UsernameNotFoundException(String.format("User with email=%s isn't enabled", email));
         }
         return new CurrentUser(user.get());
     }

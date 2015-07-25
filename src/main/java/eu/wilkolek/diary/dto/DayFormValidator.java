@@ -38,7 +38,7 @@ public class DayFormValidator implements Validator {
 
     private void validateContainingValue(DayForm dayForm, Errors errors) {
         if (dayForm.getSentence() == null && dayForm.getWords() == null) {
-            errors.reject("Looks like form is empty");
+            errors.reject("dayForm.empy_wrds_and_sentence","Looks like form is empty");
         }
     }
 
@@ -53,7 +53,7 @@ public class DayFormValidator implements Validator {
                 }
             }
             if (emptyWords) {
-                errors.reject("Words can't contain ' ', nor be empty.");
+                errors.reject("dayform.word_error","Words can't contain ' ', nor be empty.");
             }
             for (String wordStatus : dayForm.getWordsStatuses()) {
 
@@ -62,7 +62,7 @@ public class DayFormValidator implements Validator {
                 }
             }
             if (emptyStatus) {
-                errors.reject("Words status can't be empty.");
+                errors.reject("dayform.word_status","Words status can't be empty.");
             }
         }
 
@@ -73,11 +73,11 @@ public class DayFormValidator implements Validator {
             String sentence = dayForm.getSentence();
             sentence = sentence.trim();
             if (sentence.split(" ").length != 6) {
-                errors.reject("Sentence has wrong number of words");
+                errors.reject("dayform.sentence_words","Sentence has wrong number of words");
             }
 
             if (StringUtils.isEmpty(dayForm.getSentenceStatus()) || StringUtils.isEmpty(StatusEnum.valueOf(dayForm.getSentenceStatus()).name())) {
-                errors.reject("Sentence status can't be empty.");
+                errors.reject("dayform.sentence_status","Sentence status can't be empty.");
             }
 
         }

@@ -3,12 +3,12 @@
 <head th:replace="fragments/head" />
 <body class="">
     <div id="page-wrapper">
+        <div class="container">
+            <!-- Header -->
+            <div id="header-wrapper" th:replace="fragments/header" />
 
-        <!-- Header -->
-        <div id="header-wrapper" th:replace="fragments/header" />
-
-        <div id="content" class="full-body">
-            <div class="container">
+            <div id="content" class="full-body">
+                <!--             <div class="container"> -->
 
                 <div class="row">
 
@@ -17,17 +17,17 @@
                         <div id="content">
 
                             <h2>Something went wrong</h2>
-                            <p>Maybe you're a bad guy or we're bad programmers? But remember, You can always send us a feedback!</p>
+                            <p class="alert alert-danger">Maybe you're a bad guy or we're bad programmers? But remember, You can always send us a feedback!</p>
 
                         </div>
                     </div>
 
+
                 </div>
             </div>
+
+            <div id="footer-wrapper" th:replace="fragments/footer" />
         </div>
-
-        <div id="footer-wrapper" th:replace="fragments/footer" />
-
     </div>
 
     <!-- Scripts -->

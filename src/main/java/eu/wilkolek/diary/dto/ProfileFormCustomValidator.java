@@ -1,6 +1,8 @@
 package eu.wilkolek.diary.dto;
 
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.validator.EmailValidator;
 import org.springframework.validation.Errors;
@@ -48,6 +50,12 @@ public class ProfileFormCustomValidator {
         }
         if (!EmailValidator.getInstance().isValid(form.getEmail())) {
             errors.reject("email.wrong", "This is not an email address");
+        }
+        
+        Pattern pattern = Pattern.compile("^[0-9a-zA-Z]+$");
+        Matcher matcher = pattern.matcher(form.getUsername());
+        if (!matcher.matches()) {
+            errors.reject("username.alphanumeric", "Username must be aplhanumeric");
         }
     }
 

@@ -2,6 +2,8 @@ package eu.wilkolek.diary.dto;
 
 
 import java.util.LinkedHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.EmailValidator;
@@ -78,6 +80,8 @@ public class UserCreateFormValidator implements Validator {
         }
     }
     
+    
+    
     private void validateShareStyle(Errors errors, UserCreateForm form) {
         for (ShareStyleEnum type : ShareStyleEnum.values()){
             if (type.name().equals(form.getShareStyle())){
@@ -106,6 +110,14 @@ public class UserCreateFormValidator implements Validator {
                 errors.reject("username.too_weak", "Username must be at least 3 characters");
             }
         }
+        
+        Pattern pattern = Pattern.compile("^[0-9a-zA-Z]+$");
+        Matcher matcher = pattern.matcher(form.getUsername());
+        if (!matcher.matches()) {
+            errors.reject("username.alphanumeric", "Username must be aplhanumeric");
+        }
+        
+       
     }
     
 }

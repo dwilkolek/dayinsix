@@ -128,15 +128,16 @@ public class AuthController {
 //			model.getModelMap().addAttribute("timezones", TimezoneUtils.getTimeZones());
 	        model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
 	        model.getModelMap().addAttribute("inputTypes", InputTypeEnum.asMap());
-			model.getModelMap().addAttribute("errors", form.createMessages(bindingResult.getAllErrors()));
+			model.getModelMap().addAttribute("errors", bindingResult.getAllErrors());
 			
 			
 			
 			return model;
 		}
 		try {
+		    form.setEmail(form.getEmail().toLowerCase());
 			User user = new User(form);
-			String token = RandomStringUtils.randomAlphanumeric(6).toUpperCase();
+			String token = RandomStringUtils.randomAlphanumeric(16).toUpperCase();
 			user.setToken(token);
 			user = userRepository.save(user);
 			try {
@@ -168,7 +169,7 @@ public class AuthController {
 	}
 	
 	@RequestMapping(value = "/activate/{username}/{token}", method = RequestMethod.GET)
-    public ModelAndView activate(@PathVariable( value="username") String username, @PathVariable( value="username") String token) {
+    public ModelAndView activate(@PathVariable( value="username") String username, @PathVariable( value="token") String token) {
         ModelAndView model = new ModelAndView("auth/activate");
         model.getModelMap().addAttribute("title", MetadataHelper.title("TYour account is activated"));
         

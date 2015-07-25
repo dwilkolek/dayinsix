@@ -112,12 +112,12 @@ public class User {
             this.passwordHash = encoder.encode(form.getPassword());
         }
         
-        if (this.options.get(UserOptions.INPUT_TYPE) != form.getInputType()){
+        if (!this.options.get(UserOptions.INPUT_TYPE).equalsIgnoreCase(form.getInputType())){
             this.options.put(UserOptions.INPUT_TYPE, form.getInputType());
             this.optionsLastUpdate.put(UserOptions.INPUT_TYPE, DateTimeUtils.getCurrentUTCTime());
         }
 
-        if (this.options.get(UserOptions.SHARE_STYLE) != form.getInputType()){
+        if (!this.options.get(UserOptions.SHARE_STYLE).equalsIgnoreCase(form.getShareStyle())){
             this.options.put(UserOptions.SHARE_STYLE, form.getShareStyle());
             this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
         }
@@ -127,7 +127,7 @@ public class User {
 //            this.optionsLastUpdate.put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
 //        }
         
-        if (this.options.get(UserOptions.NOTIFICATION_FREQUENCY) != form.getInputType()){
+        if (!this.options.get(UserOptions.NOTIFICATION_FREQUENCY).equalsIgnoreCase(form.getNotificationFrequency())){
             this.options.put(UserOptions.NOTIFICATION_FREQUENCY, form.getNotificationFrequencyAsString()); //in days
             this.optionsLastUpdate.put(UserOptions.NOTIFICATION_FREQUENCY,DateTimeUtils.getCurrentUTCTime());
         }

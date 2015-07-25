@@ -34,8 +34,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
 
     @Override
     public boolean canShareWith(User user, User user2) {
-        Criteria shareCrit = Criteria.where("_id").is(user2.getId());
-        Criteria eS = Criteria.where("shareWith").elemMatch(shareCrit);       
+        Criteria shareCrit = Criteria.where("_id").is(user2.getId());  
         Criteria c = Criteria.where("_id").is(user.getId());
 //        c.elemMatch((Criteria.where("shareWith").elemMatch(shareCrit)));
         Query query = new Query(c);

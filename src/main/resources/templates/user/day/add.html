@@ -4,20 +4,23 @@
 <head th:replace="fragments/head" />
 <body class="">
     <div id="page-wrapper">
+        <div class="container">
+            <!-- Header -->
+            <div id="header-wrapper" th:replace="fragments/header" />
 
-        <!-- Header -->
-        <div id="header-wrapper" th:replace="fragments/header" />
 
 
-
-        <div id="content" class="full-body">
-            <div class="container">
-<!--                 <div th:replace="fragments/topbar" /> -->
+            <div id="content" class="full-body">
+                <!--             <div class="container"> -->
+                <!--                 <div th:replace="fragments/topbar" /> -->
                 <div class="row">
                     <div class="col-md-12">
-                        <ul>
-                            <li th:each="error : ${errors}" th:text="${error.codes[1]}" />
-                        </ul>
+                        <p th:if="${errors.size() > 0 }" class="alert alert-danger">
+                            <th:block th:each="error : ${errors}">
+                                            * <span th:text="${error.defaultMessage}"></span>
+                                <br />
+                            </th:block>
+                        </p>
                     </div>
                 </div>
                 <div class="row">
@@ -25,15 +28,15 @@
                     <div class="col-md-12">
                         <!-- Content -->
                         <div id="content">
-                            
+
                             <!-- SENTENCE -->
+                            <h2>Type a six word sentence and choose how do You feel about it</h2>
                             <form th:if="${currentUser.options.get('inputType') eq 'SENTENCE'}" th:object="${dayForm}" method="post">
                                 <div class="row">
                                     <div class="col-md-9">
 
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> 
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                         <div class="form-group">
-                                            <label>Sentence</label>
                                             <input th:field="*{sentence}" class="form-control" type="text"></input>
                                         </div>
                                     </div>
@@ -47,10 +50,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                        <label>You can add additional note to share with others</label>
-                                        <textarea rows="5" cols="3" name="note">
-                                        
-                                        </textarea>
+                                    <label>You can add additional note to share with others</label>
+                                    <textarea rows="5" cols="3" name="note" class="form-control"></textarea>
                                 </div>
                                 <input type="submit" class="btn btn-success" value="Submit" />
                             </form>
@@ -62,25 +63,27 @@
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                 </div>
                                 <h2>Type in six words and choose how do You feel about them</h2>
-       
+
                                 <div class="form-group" th:each="i : ${#numbers.sequence( 0, 5)}">
 
                                     <div class="row">
                                         <div class="col-md-9">
                                             <div style="position: relative;">
-                                                <input th:if="${dayForm.words == null }" type="text" th:id="${'word'+i}" class="form-control sugesstionAutocomplete" th:name="${'words['+i+']'}"
-                                                    th:value="${''}" autocomplete="off" />
-                                                <input th:if="${dayForm.words != null }" type="text" th:id="${'word'+i}" class="form-control sugesstionAutocomplete" th:name="${'words['+i+']'}"
-                                                    th:value="${dayForm.words.get(i)}" autocomplete="off" />
+                                                <input th:if="${dayForm.words == null }" type="text" th:id="${'word'+i}"
+                                                    class="form-control sugesstionAutocomplete" th:name="${'words['+i+']'}" th:value="${''}" autocomplete="off" />
+                                                <input th:if="${dayForm.words != null }" type="text" th:id="${'word'+i}"
+                                                    class="form-control sugesstionAutocomplete" th:name="${'words['+i+']'}" th:value="${dayForm.words.get(i)}"
+                                                    autocomplete="off" />
                                                 <div class="list-group wordList" th:id="${'word'+i+'_list'}"
                                                     style="display: none; position: absolute; z-index: 10000;"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
-                                            <select th:name="${'wordsStatuses['+i+']'}">
+                                            <select th:name="${'wordsStatuses['+i+']'}" class="form-control">
                                                 <option th:if="${dayForm.wordsStatuses == null}" th:value="${s.key}" th:each="s: ${status}" th:text="${s.value}" />
-                                                <option th:if="${dayForm.wordsStatuses != null}" th:selected="${s.key == dayForm.wordsStatuses[i]}" th:value="${s.key}" th:each="s: ${status}" th:text="${s.value}" />
-                                            
+                                                <option th:if="${dayForm.wordsStatuses != null}" th:selected="${s.key == dayForm.wordsStatuses[i]}"
+                                                    th:value="${s.key}" th:each="s: ${status}" th:text="${s.value}" />
+
                                             </select>
                                         </div>
                                     </div>
@@ -91,16 +94,35 @@
 
                                 </div>
                                 <div class="form-group">
-                                        <label>You can add additional note to share with others</label>
-                                        <textarea class="form-control" name="note"></textarea>
+                                    <label>You can add additional note to share with others</label>
+                                    <textarea class="form-control" name="note"></textarea>
                                 </div>
                                 <script type="text/javascript">
-									// <![CDATA[
-										$(document).ready(function() {$(".sugesstionAutocomplete").on("keyup",function(e) {
-																																											if (e.keyCode >= 46 && e.keyCode <= 90 || e.keyCode == 8) {
-																																												value = $(this).val();
-																																												$(this).val(value);
-																																												$.get("/sugestions?letters="+ value,
+																																	// <![CDATA[
+																																	$(
+																																			document)
+																																			.ready(
+																																					function() {
+																																						$(
+																																								".sugesstionAutocomplete")
+																																								.on(
+																																										"keyup",
+																																										function(
+																																												e) {
+																																											if (e.keyCode >= 46
+																																													&& e.keyCode <= 90
+																																													|| e.keyCode == 8) {
+																																												value = $(
+																																														this)
+																																														.val();
+																																												$(
+																																														this)
+																																														.val(
+																																																value);
+																																												$
+																																														.get(
+																																																"/sugestions?letters="
+																																																		+ value,
 																																																function(
 																																																		data) {
 																																																	var text = $(
@@ -132,7 +154,9 @@
 																																																			id)
 																																																			.html(
 																																																					html);
-																																																	$(".wordList").hide();
+																																																	$(
+																																																			".wordList")
+																																																			.hide();
 																																																	$(
 																																																			id)
 																																																			.show()
@@ -175,22 +199,22 @@
                             </form>
 
 
+
                         </div>
+                        <!-- Sidebar -->
+
+
                     </div>
-                    <!-- Sidebar -->
-
-
                 </div>
             </div>
+
+
+
+
+
+            <!-- Footer -->
+            <div id="footer-wrapper" th:replace="fragments/footer" />
         </div>
-
-
-
-
-
-        <!-- Footer -->
-        <div id="footer-wrapper" th:replace="fragments/footer" />
-
     </div>
 
     <!-- Scripts -->

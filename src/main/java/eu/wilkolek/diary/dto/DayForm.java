@@ -76,6 +76,7 @@ public class DayForm {
         this.dayDate = day.getCreationDate();
         if (day.getSentence() != null){
             this.sentence = day.getSentence().getValue();
+            this.sentenceStatus = day.getSentence().getStatus();
             this.words = null;
         }
         if (day.getWords() != null){
