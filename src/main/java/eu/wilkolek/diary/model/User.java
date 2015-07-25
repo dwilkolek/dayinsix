@@ -42,6 +42,26 @@ public class User {
     
     private ArrayList<String> sharingWith;
     
+    private String token;
+    
+    private boolean enabled;
+    
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public User(){
     	
     }
@@ -67,7 +87,8 @@ public class User {
         this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
 //        this.optionsLastUpdate.put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
         this.optionsLastUpdate.put(UserOptions.NOTIFICATION_FREQUENCY,DateTimeUtils.getCurrentUTCTime());
-        
+        this.enabled = false;
+        this.token = "";
         this.lastLogIn = DateTimeUtils.getCurrentUTCTime();
         this.followedBy = new ArrayList<String>();
         this.followingBy = new ArrayList<String>();

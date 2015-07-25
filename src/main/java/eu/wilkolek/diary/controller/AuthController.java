@@ -5,9 +5,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Optional;
 
+import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -22,6 +26,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -131,9 +136,16 @@ public class AuthController {
 		}
 		try {
 			User user = new User(form);
+			String token = RandomStringUtils.randomAlphanumeric(6).toUpperCase();
+			user.setToken(token);
 			user = userRepository.save(user);
-			SimpleMailMessage msg = this.sendThanks(user.getEmail());
-			if (msg != null) { System.out.println("sent!"); }else { System.out.println("not send");};
+			try {
+                this.sendActivation(user.getUsername(), user.getToken(), user.getEmail());
+            } catch (MessagingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
 		} catch (DataIntegrityViolationException e) {
 			// probably email already exists - very rare case when multiple
 			// admins are adding same user
@@ -155,6 +167,27 @@ public class AuthController {
 		return new ModelAndView("redirect:/thankyou");
 	}
 	
+	@RequestMapping(value = "/activate/{username}/{token}", method = RequestMethod.GET)
+    public ModelAndView activate(@PathVariable( value="username") String username, @PathVariable( value="username") String token) {
+        ModelAndView model = new ModelAndView("auth/activate");
+        model.getModelMap().addAttribute("title", MetadataHelper.title("TYour account is activated"));
+        
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()){
+            if (token.equals(user.get().getToken())){
+                user.get().setToken("");
+                user.get().setEnabled(true);
+                userRepository.save(user.get());
+                model.getModelMap().put("success", true);
+                model.getModelMap().put("error", false);
+                return model;
+            }
+        }
+        model.getModelMap().put("success", false);
+        model.getModelMap().put("error", true);
+        return model;
+    }
+	
 	@RequestMapping(value = "/thankyou", method = RequestMethod.GET)
 	public ModelAndView thankyou() {
 	    ModelAndView model = new ModelAndView("auth/thankyou");;
@@ -162,6 +195,23 @@ public class AuthController {
 		return model;
 	}
 	
+	public void sendActivation(String username, String token, String email) throws MessagingException{
+	    
+	    String link = "http://dayinsix.com/activate/"+username+"/"+token;
+	  //  sender.setHost("mail.host.com");
+	    
+	    MimeMessage message = this.javaMailSender.createMimeMessage();
+	 
+	    MimeMessageHelper helper = new MimeMessageHelper(message);
+	    helper.setTo(email);
+	    helper.setText("<html><body>Welcome to dayinsix, <br />"
+                + "Your diary is almost ready for you to write in it. <br />"
+                + "Finish the registration by opening the link below and enjoy saving your days.<br />"
+                + "<a href='"+link+"'>"+link+"</a><br /><br />Chhers, dayinsix crew</body></html>");
+	    helper.setSubject("Activate your account at dayinsix.com");
+	    this.javaMailSender.send(message);
+	
+	}
 
 	public SimpleMailMessage sendThanks(String email){
 	    SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -174,13 +224,17 @@ public class AuthController {
         return mailMessage;
 	}
 	
-	public SimpleMailMessage sendNewPassowrd(String email, String password){
+	public SimpleMailMessage sendNewPassowrd(String email,String username, String password){
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(email);
 //        mailMessage.setReplyTo("someone@localhost");
         mailMessage.setFrom(MailUtils.FROM);
-        mailMessage.setText("Your password has been reseted. Your new password is : "+password+"." + "Now you can log in and change your password.");
+        mailMessage.setText("Hi "+username+",\n"
+                + "Seems like you've got forgotten your password. Here's the new one: "+password+" .\n" 
+                + "Log in with it and remember that you can change it in settings if you'd like to\n\n\n"
+                + "Cheers, dayinsix crew");
         mailMessage.setSubject("You've got new password at dayinsix.com");
+        
         javaMailSender.send(mailMessage);
         return mailMessage;
     }
@@ -200,9 +254,7 @@ public class AuthController {
 	    if (!user.isPresent()){
 	        throw new NoSuchUserException("Reset failed for "+email);
 	    }
-	    
-	    MessageDigest dig = MessageDigest.getInstance("MD5");
-	    
+	    	    
 	   //String token = DateTimeUtils.getCurrentUTCTimeAsString() + email + "somerandomeCodeToSecureDigest";
 	   
 	    String token = RandomStringUtils.randomAlphanumeric(6).toUpperCase();
@@ -214,7 +266,7 @@ public class AuthController {
 	    userRepository.save(user.get());
 	    
         model.getModelMap().addAttribute("title", MetadataHelper.title("Reset successful"));
-        this.sendNewPassowrd(user.get().getEmail(), token);
+        this.sendNewPassowrd(user.get().getEmail(), user.get().getUsername(), token);
         
         return model;
     }
