@@ -12,6 +12,7 @@
             <div th:if="${currentUser==null}" align="right"></div>
         </div>
         <div class="col-md-8 text-right">
+            <br />
             <div th:if="${currentUser!=null}" align="right">
                 <p>
                     Hi, <a href="/user/profile" th:text="${currentUser.username}"></a>

@@ -1,5 +1,6 @@
 package eu.wilkolek.diary.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -117,7 +118,7 @@ public class AuthController {
 		LOGGER.debug("Processing user create form={}, bindingResult={}", form,
 				bindingResult);
 			
-		ModelAndView model = new ModelAndView("/auth/register");
+		ModelAndView model = new ModelAndView("auth/register");
 				
 		model.getModelMap().addAttribute("title", MetadataHelper.title("Register"));
 		
@@ -143,6 +144,9 @@ public class AuthController {
 			try {
                 this.sendActivation(user.getUsername(), user.getToken(), user.getEmail());
             } catch (MessagingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -171,7 +175,7 @@ public class AuthController {
 	@RequestMapping(value = "/activate/{username}/{token}", method = RequestMethod.GET)
     public ModelAndView activate(@PathVariable( value="username") String username, @PathVariable( value="token") String token) {
         ModelAndView model = new ModelAndView("auth/activate");
-        model.getModelMap().addAttribute("title", MetadataHelper.title("TYour account is activated"));
+        model.getModelMap().addAttribute("title", MetadataHelper.title("Your account is activated"));
         
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()){
@@ -196,7 +200,7 @@ public class AuthController {
 		return model;
 	}
 	
-	public void sendActivation(String username, String token, String email) throws MessagingException{
+	public void sendActivation(String username, String token, String email) throws MessagingException, UnsupportedEncodingException{
 	    
 	    String link = "http://dayinsix.com/activate/"+username+"/"+token;
 	  //  sender.setHost("mail.host.com");
@@ -205,16 +209,18 @@ public class AuthController {
 	 
 	    MimeMessageHelper helper = new MimeMessageHelper(message);
 	    helper.setTo(email);
+	    helper.setFrom(MailUtils.FROM, MailUtils.NAME);
 	    helper.setText("<html><body>Welcome to dayinsix, <br />"
                 + "Your diary is almost ready for you to write in it. <br />"
                 + "Finish the registration by opening the link below and enjoy saving your days.<br />"
-                + "<a href='"+link+"'>"+link+"</a><br /><br />Chhers, dayinsix crew</body></html>",true);
+                + "<a href='"+link+"'>"+link+"</a><br /><br />Cheers, dayinsix crew</body></html>",true);
 	    helper.setSubject("Activate your account at dayinsix.com");
 	    this.javaMailSender.send(message);
 	
 	}
 
 	public SimpleMailMessage sendThanks(String email){
+	    //TODO
 	    SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(email);
 //        mailMessage.setReplyTo("someone@localhost");
