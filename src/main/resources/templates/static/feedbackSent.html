@@ -5,8 +5,7 @@
     <div id="page-wrapper">
         <div class="container">
             <!-- Header -->
-            <div th:if="${currentUser == null}" id="header-wrapper" th:replace="fragments/exceptionHeader" />
-            <div th:if="${currentUser != null}" id="header-wrapper" th:replace="fragments/header" />
+            <div id="header-wrapper" th:replace="fragments/header" />
             <div id="content" class="full-body">
                 <!--             <div class="container"> -->
 
