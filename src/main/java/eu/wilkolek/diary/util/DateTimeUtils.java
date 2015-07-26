@@ -51,7 +51,7 @@ public class DateTimeUtils {
         return dateToReturn;
     }
 
-    public static Boolean canChange(Date lastUpdate, Date now, Long minTimeDiff) {
+    public static Boolean isLowerThanMinTimeDiff(Date lastUpdate, Date now, Long minTimeDiff) {
         long diffinDays = diffInDays(lastUpdate, now);
         Boolean resultValue = minTimeDiff < diffinDays;
         return resultValue;
@@ -70,8 +70,11 @@ public class DateTimeUtils {
             lastUpdateInUTC = StringDateToDate(lastUpdateInUTCString);
 
             Date nowInUTC = StringDateToDate(nowInUTCString);
-
-            long diff = nowInUTC.getTime() - lastUpdateInUTC.getTime();
+            
+            long nowInUTCMilis = nowInUTC.getTime();
+            long lastUpdateInUTCMilis = lastUpdateInUTC.getTime();
+            
+            long diff =  nowInUTCMilis - lastUpdateInUTCMilis;
 
             TimeUnit tu = TimeUnit.DAYS;
             long diffinDays = tu.convert(diff, TimeUnit.MILLISECONDS);

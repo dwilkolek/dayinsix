@@ -2,6 +2,7 @@
 font-family: AlwaysTogether;
 src: url("../fonts/AlwaysTogether.otf") format("opentype");
 }
+
 body{
     background: url(../img/background.jpg) top center;
     background-size: 100% auto;
@@ -9,6 +10,7 @@ body{
     background-attachment: fixed;
     color: #181868;
     font-family: 'AlwaysTogether', cursive;
+
     font-size:24px;
       -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -58,6 +60,8 @@ input.form-control{
 }
 #content{
 	padding:20px 15px;
+/* 	font-family: 'Bilbo', cursive; */
+
 }
 #content .alert{
 	margin:0px 15px;
@@ -149,4 +153,8 @@ input.form-control{
 
 .unshare{
 	position:absolute;color:#ed796c;top:25%;right:5px;
+}
+
+input,button,select,option,textarea{
+	font-family: 'Alegreya Sans', sans-serif;
 }

@@ -68,7 +68,7 @@ public class ProfileFormValidator implements Validator {
 	private void validatePasswords(Errors errors, ProfileForm form) {
         if (!StringUtils.isEmpty(form.getPassword())){
             if (!form.getPassword().equals(form.getPasswordRepeated())){
-                errors.reject("password.missmatch", "If you want to change password, You must provide it correctly.");
+                errors.reject("password.missmatch", "If you want to change password, you must provide it correctly.");
             }
         }
     }
