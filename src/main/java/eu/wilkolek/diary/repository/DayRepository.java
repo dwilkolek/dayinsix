@@ -15,5 +15,7 @@ public interface DayRepository extends MongoRepository<Day, String>,DayRepositor
 	public Optional<Day> findByCreationDate(Date date);
 
     public Optional<Day> findByCreationDateAndUser(Date date, User user);
+    
+    
 	
 }

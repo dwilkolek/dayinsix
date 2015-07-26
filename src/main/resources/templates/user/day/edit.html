@@ -15,8 +15,11 @@
                 <!--                 <div th:replace="fragments/topbar" /> -->
                 <div class="row">
                     <p class="alert alert-danger" th:if="${errors != null}">
-                           <th:block th:each="error : ${errors}" > <span  th:text="${error.defaultMessage}" /><br /> </th:block>
-                     </p>
+                        <th:block th:each="error : ${errors}">
+                            <span th:text="${error.defaultMessage}" />
+                            <br />
+                        </th:block>
+                    </p>
                 </div>
                 <div class="row">
 
@@ -54,7 +57,14 @@
                                     <label>You can add additional note to share with others</label>
                                     <textarea class="form-control" name="note" th:text="${dayForm.note}"></textarea>
                                 </div>
-                                <input type="submit" class="btn btn-success" value="Submit" />
+                                <div class="form-group">
+                                    <label for="shareStyle">Sharing</label> <select id="shareStyle" class="form-control" th:name="shareStyle">
+                                        <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}"
+                                            th:selected="${(dayForm != null and dayForm.shareStyle != null and s.key == dayForm.shareStyle) or (dayForm.shareStyle == null and s.key == currentUser.user.options.shareStyle)}"  />
+
+                                    </select>
+                                </div>
+                                <input type="submit" class="btn btn-success" value="Save" />
                             </form>
 
 
@@ -94,8 +104,14 @@
                                     <label>You can add additional note to share with others</label>
                                     <textarea class="form-control" name="note" th:text="${dayForm.note}"></textarea>
                                 </div>
-                            
-                                <input type="submit" class="btn btn-success" value="Submit" />
+                                <div class="form-group">
+                                    <label for="shareStyle">Sharing</label> <select id="shareStyle" class="form-control" th:name="shareStyle">
+                                        <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}"
+                                            th:selected="${(dayForm != null and dayForm.shareStyle != null and s.key == dayForm.shareStyle) or (dayForm.shareStyle == null and s.key == currentUser.user.options.shareStyle)}"  />
+
+                                    </select>
+                                </div>
+                                <input type="submit" class="btn btn-success" value="Save" />
                             </form>
 
 

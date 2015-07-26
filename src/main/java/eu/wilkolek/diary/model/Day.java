@@ -20,6 +20,7 @@ public class Day {
 		
 		this.user = user;
 		
+		this.shareStyle = dayForm.getShareStyle();
 		
 		if (!StringUtils.isEmpty(dayForm.getSentence())){
 			this.sentence = new Sentence();
@@ -33,6 +34,7 @@ public class Day {
 			for (DictionaryWord d : dayForm.getDictionaryWords()){
 				Word w = new Word();
 				w.setValue(d);
+				w.setWord(d.getValue());
 				w.setStatus((StatusEnum.valueOf(dayForm.getWordsStatuses().get(i))).toString());
 				i++;
 				this.words.add(w);
@@ -58,6 +60,10 @@ public class Day {
 	private Date creationDate;
 	
 	private String note;
+	
+	private Date storeDate;
+	
+	private String shareStyle;
 	
 
 	public String getId() {
@@ -95,6 +101,18 @@ public class Day {
     }
     public void setNote(String note) {
         this.note = note;
+    }
+    public Date getStoreDate() {
+        return storeDate;
+    }
+    public void setStoreDate(Date storeDate) {
+        this.storeDate = storeDate;
+    }
+    public String getShareStyle() {
+        return shareStyle;
+    }
+    public void setShareStyle(String shareStyle) {
+        this.shareStyle = shareStyle;
     }
 	
 	

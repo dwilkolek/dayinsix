@@ -7,6 +7,8 @@ public class Word {
     @DBRef
     private DictionaryWord value;
     
+    private String word;
+    
     private String status;
 
 //	public String getId() {
@@ -32,6 +34,14 @@ public class Word {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
     
     
     

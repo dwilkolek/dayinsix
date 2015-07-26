@@ -21,7 +21,10 @@ public class ProfileForm{
     
     @NotNull
     private String notificationFrequency;
-
+    
+    @NotNull
+    private String profileVisibility;
+    
     public ProfileForm(User user) {
         this.setEmail(user.getEmail());
         this.setUsername(user.getUsername());
@@ -32,7 +35,7 @@ public class ProfileForm{
         this.setNotificationFrequency(user.getOptions().get(UserOptions.NOTIFICATION_FREQUENCY));
         this.setShareStyle(user.getOptions().get(UserOptions.SHARE_STYLE));
 //        this.setTimezone(user.getOptions().get(UserOptions.TIMEZONE));
-        
+        this.setProfileVisibility(user.getOptions().get(UserOptions.PROFILE_VISIBILITY));
         
     }
 
@@ -56,6 +59,8 @@ public class ProfileForm{
 
     private String passwordRepeated = "";
     
+    private String about;
+    
     @NotEmpty
     private String inputType = "";
     
@@ -68,6 +73,8 @@ public class ProfileForm{
 //    @NotNull
 //    private Role role = Role.USER;
 
+    
+    
     public String getEmail() {
         return email;
     }
@@ -136,6 +143,23 @@ public class ProfileForm{
     public String getNotificationAsEnumString(String days){
         return NotificationTypesEnum.getInEnum(days).name();
     }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
+    public String getProfileVisibility() {
+        return profileVisibility;
+    }
+
+    public void setProfileVisibility(String profileVisibility) {
+        this.profileVisibility = profileVisibility;
+    }
+    
     
     
 }

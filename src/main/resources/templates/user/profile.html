@@ -75,14 +75,26 @@
                                         <!--                                         </select> -->
                                         <!--                                     </div> -->
 
+
                                         <div class="form-group">
-                                            <label for="passwordRepeated">Sharing</label> <select class="form-control" th:name="shareStyle">
+                                            <label for="about">About you</label>
+                                            <textarea class="form-control" th:name="about" id="about" th:text="${form.about}"></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="passwordRepeated">Default sharing for entries</label> <select class="form-control" th:name="shareStyle">
                                                 <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}"
                                                     th:selected="${form != null and s.key == form.shareStyle}" />
 
                                             </select>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="passwordRepeated">Profile visibility</label> <select class="form-control" th:name="profileVisibility">
+                                                <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}"
+                                                    th:selected="${form != null and s.key == form.profileVisibility}" />
 
+                                            </select>
+                                        </div>
                                         <div class="form-group">
                                             <label for="passwordRepeated">Input type</label> <select class="form-control" th:name="inputType">
                                                 <option th:each="s : ${inputTypes}" th:value="${s.key}" th:text="${s.key + ' - ' +s.value}"

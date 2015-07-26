@@ -13,18 +13,57 @@ public class DayView {
     private boolean empty;
 
     private Boolean canAdd;
-    
+
     private Boolean canEdit;
-    
+
     private String note;
 
-    public DayView(Sentence sentence, ArrayList<Word> words, Date creationDate, String note) {
+    private String shareStyle;
+
+    private boolean canSee;
+
+    public DayView(Sentence sentence, ArrayList<Word> words, Date creationDate, String note, String dayShareStyle, User whosDay, User whoWatches) {
         super();
         this.sentence = sentence;
         this.words = words;
         this.creationDate = creationDate;
         this.empty = false;
+        this.setShareStyle(dayShareStyle != null ? dayShareStyle : whosDay.getOptions().get(UserOptions.SHARE_STYLE));//whosDay.getOptions().get(UserOptions.SHARE_STYLE));
         this.setNote(note);
+
+        // if (this.shareStyle == ShareStyleEnum.PUBLIC.name() || (whoWatches !=
+        // null && this.shareStyle == ShareStyleEnum.PROTECTED.name())) {
+        // this.canSee = true;
+        // }
+        this.canSee = true;
+        if (this.shareStyle.equals(ShareStyleEnum.PRIVATE.name())) {
+            this.canSee = false;
+        }
+        if ((this.shareStyle.equals(ShareStyleEnum.PROTECTED.name()) || this.shareStyle.equals(ShareStyleEnum.FOR_SELECTED.name())) && whoWatches == null) {
+            this.canSee = false;
+        }
+        if (this.shareStyle.equals(ShareStyleEnum.FOR_SELECTED.name())) {
+
+            boolean canShare = false;
+            if (whoWatches != null) {
+                if (this.shareStyle != null) {
+                    for (String id : whosDay.getSharingWith()) {
+                        if (id.equals(whoWatches.getId())) {
+                            canShare = true;
+                        }
+                    }
+                }
+                if (whosDay.getId().equals(whoWatches.getId())) {
+                    canShare = true;
+                }
+                if (!canShare) {
+                    this.canSee = false;
+                }
+            } else {
+                this.canSee = false;
+            }
+        }
+
     }
 
     public Sentence getSentence() {
@@ -62,12 +101,12 @@ public class DayView {
     public void setCanAdd(Boolean canAdd) {
         this.canAdd = canAdd;
     }
-    
-    public Boolean isCanAdd(){
+
+    public Boolean isCanAdd() {
         return this.canAdd;
     }
-    
-    public Boolean getCanAdd(){
+
+    public Boolean getCanAdd() {
         return this.canAdd;
     }
 
@@ -87,7 +126,20 @@ public class DayView {
         this.note = note;
     }
 
-    
-    
+    public String getShareStyle() {
+        return shareStyle;
+    }
+
+    public void setShareStyle(String shareStyle) {
+        this.shareStyle = shareStyle;
+    }
+
+    public boolean isCanSee() {
+        return canSee;
+    }
+
+    public void setCanSee(boolean canSee) {
+        this.canSee = canSee;
+    }
 
 }

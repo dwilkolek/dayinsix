@@ -103,7 +103,7 @@ public class UserController {
 
         ModelAndView model = new ModelAndView("user/day/list");
 
-        DayViewData helper = DayHelper.createDataForView(dayRepository, page, user.get(), DAYS_PER_PAGE);
+        DayViewData helper = DayHelper.createDataForView(dayRepository, page, user.get(), DAYS_PER_PAGE, user.get());
 
         model.getModelMap().put("cPage", helper.getcPage());
         model.getModelMap().put("days", helper.getDays());
@@ -135,6 +135,7 @@ public class UserController {
             model.getModelMap().put("status", StatusEnum.asMap());
             model.getModelMap().put("errors", result.getAllErrors());
             model.getModelMap().addAttribute("title", MetadataHelper.title("Change your day"));
+            model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
             return model;
         }
         User user = currentUser.getUser();
@@ -220,7 +221,7 @@ public class UserController {
         model.getModelMap().put("status", StatusEnum.asMap());
         model.getModelMap().put("dayForm", dayForm);
         model.getModelMap().addAttribute("title", MetadataHelper.title("Change your day"));
-
+        model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
         return model;
     }
 
@@ -237,6 +238,7 @@ public class UserController {
             model.getModelMap().put("status", StatusEnum.asMap());
             model.getModelMap().put("errors", result.getAllErrors());
             model.getModelMap().addAttribute("title", MetadataHelper.title("Save the day"));
+            model.getModelMap().put("shareStyles", ShareStyleEnum.asMap());
             return model;
         }
         User user = currentUser.getUser();
@@ -257,6 +259,7 @@ public class UserController {
         }
 
         dayForm.setDayDate(date);
+        
 
         System.out.println("User id:" + user.getId());
         if (dayForm.getWords() != null && dayForm.getWords().size() > 0) {
@@ -277,8 +280,9 @@ public class UserController {
             }
             dayForm.setDictionaryWords(resultList);
         }
-
-        dayRepository.save(new Day(dayForm, user));
+        Day dayToSave = new Day(dayForm, user);
+        dayToSave.setStoreDate(DateTimeUtils.getCurrentUTCTime());
+        dayRepository.save(dayToSave);
         LOGGER.debug("User " + user.getEmail() + " added new day");
 
         return new ModelAndView("redirect:/user/day/list");
@@ -303,6 +307,7 @@ public class UserController {
         model.asMap().put("status", StatusEnum.asMap());
         model.asMap().put("dayForm", new DayForm());
         model.asMap().put("title", MetadataHelper.title("Save the day"));
+        model.asMap().put("shareStyles", ShareStyleEnum.asMap());
         return "user/day/add";
     }
 

@@ -2,6 +2,9 @@ package eu.wilkolek.diary.util;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -11,11 +14,13 @@ import eu.wilkolek.diary.exception.OutOfDateException;
 import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.DayView;
 import eu.wilkolek.diary.model.DayViewData;
+import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
+import eu.wilkolek.diary.model.UserOptions;
 import eu.wilkolek.diary.repository.DayRepository;
 
 public class DayHelper {
-    public static ArrayList<DayView> fillDates(ArrayList<Day> days, Date dayStart, Date dayFinish, String errMessage) {
+    public static ArrayList<DayView> fillDates(ArrayList<Day> days, Date dayStart, Date dayFinish, String errMessage, User whosDay, User whoWatches) {
         Integer diff = (int) TimeUnit.MILLISECONDS.toDays(dayFinish.getTime() - dayStart.getTime());
         diff = Math.abs(diff) + 1;
         Integer count = 0;
@@ -27,10 +32,10 @@ public class DayHelper {
             DayView d;
             if (days.size() > 0 && days.size() > count && days.get(count) != null && nowProcessed.equals(days.get(count).getCreationDate())) {
                 Day h = days.get(count);
-                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate(), h.getNote());
+                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate(), h.getNote(),h.getShareStyle(),  whosDay, whoWatches);
                 count++;
             } else {
-                d = new DayView(null, null, nowProcessed, null);
+                d = new DayView(null, null, nowProcessed, null, null,  whosDay, whoWatches);
                 d.setEmpty(true);
             }
 
@@ -72,7 +77,7 @@ public class DayHelper {
 
     }
 
-    public static DayViewData createDataForView(DayRepository dayRepository, int pageSelected, User user, int recordsPerPage) {
+    public static DayViewData createDataForView(DayRepository dayRepository, int pageSelected, User whosDay, int recordsPerPage, User whoWatches) {
         DayViewData data = new DayViewData();
         Integer page = pageSelected;
         Date now = DateTimeUtils.getCurrentUTCTime();
@@ -86,7 +91,7 @@ public class DayHelper {
 
         
         Date current = DateTimeUtils.getCurrentUTCTime();
-        Date created = user.getCreated();
+        Date created = whosDay.getCreated();
         long mCurrent = current.getTime();
         long mCreated = created.getTime();
         int allDays = (int) TimeUnit.MILLISECONDS.toDays(mCurrent - mCreated)+1;
@@ -137,8 +142,8 @@ public class DayHelper {
 //            chosenEarlier = new Date(mCreated);
 //        }
 
-        ArrayList<Day> days = dayRepository.getDaysFromDateToDate(user, chosenEarlier, chosenThen);
-        ArrayList<DayView> daysView = DayHelper.fillDates(days, chosenEarlier, chosenThen, "Error while getting list");
+        ArrayList<Day> days = dayRepository.getDaysFromDateToDate(whosDay, chosenEarlier, chosenThen);
+        ArrayList<DayView> daysView = DayHelper.fillDates(days, chosenEarlier, chosenThen, "Error while getting list", whosDay, whoWatches);
 
         data.setcPage(page + 1);
         data.setDays(daysView);
@@ -147,5 +152,20 @@ public class DayHelper {
         data.setsPage(sPages);
 
         return data;
+    }
+    
+    public static LinkedHashSet<DayView> getLastPublicDays(DayRepository dayRepository,ShareStyleEnum level, int limit, String defaultShareStyle, User whosDay, User whoWatches){
+        LinkedHashSet<DayView> dayViews = new LinkedHashSet<DayView>();
+        
+        List<Day> days = dayRepository.getLatestDays(level, limit);
+        
+        for (Day d : days){
+            DayView dv = new DayView(d.getSentence(), d.getWords(), d.getCreationDate(), d.getNote(),d.getShareStyle(), whosDay, whoWatches);
+            dayViews.add(dv);
+        }
+        
+        
+        return dayViews;
+        
     }
 }

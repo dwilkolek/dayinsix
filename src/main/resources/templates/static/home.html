@@ -13,24 +13,63 @@
 
             <div class="row">
 
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <!-- Content -->
                     <div class="content">
-                    
 
-                    <h1>Welcome to our website</h1>
-                    <p>You can easily and quickly save here every day of your life.</p>
-                    <p>
-                        The idea is that you <b>write only six words per day</b>, which doesn't take so much time, and later on you can simply reconstruct any
-                        day you've experienced.
-                    </p>
-                    <p>Belive us, it's a lot of fun while reading this stuff later.</p>
-                    <br />
-                    <h3 class="text-center">
-                        <i><b>DayInSix.com crew</b></i>
-                    </h3>
-</div>
 
+                        <h1>Welcome to our website</h1>
+                        <p>You can easily and quickly save here every day of your life.</p>
+                        <p>
+                            The idea is that you <b>write only six words per day</b>, which doesn't take so much time, and later on you can simply reconstruct
+                            any day you've experienced.
+                        </p>
+                        <p>Belive us, it's a lot of fun while reading this stuff later.</p>
+                        <br />
+                        <h3 class="text-center">
+                            <i><b>DayInSix.com crew</b></i>
+                        </h3>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.add')}">
+                        <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4>
+
+                        <div th:if="${day.sentence != null}">
+                            <th:block>
+                                <span th:class="${'sentence ico ico'+day.sentence.status}"> <i>&nbsp;</i><span th:text="${day.sentence.value}"></span>
+                                </span>
+
+
+                            </th:block>
+                        </div>
+                        <div th:if="${day.words != null}">
+                            <th:block th:each="word : ${day.words}">
+                                <span th:class="${'ico ico'+word.status}"><span class="item-navias"> | </span><i>&nbsp;</i> <th:block
+                                        th:text="${word.value.value}"></th:block><span class="item-navias"> | </span></span>
+
+                            </th:block>
+                        </div>
+
+                        <th:block th:if="${day.note != null}">
+                            <th:block th:if="${day.note != ''}">
+                                <div class="note" th:text="${day.note}"></div>
+                            </th:block>
+                        </th:block>
+
+                        <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}"
+                            th:with="dfx=${@environment.getProperty('date.format.add')}">
+                            <a th:href="${'/user/day/add/'+#calendars.format(day.creationDate,dfx)}">Save THE day</a>
+
+                        </div>
+
+                        <a class="edit-list-element"
+                            th:if="${day.canEdit and !(day.canAdd != null and day.canAdd and day.words == null and day.sentence == null)}"
+                            th:href="${'/user/day/edit/'+#calendars.format(day.creationDate,dfx)}" th:with="dfx=${@environment.getProperty('date.format.add')}"><i
+                            class="glyphicon glyphicon-edit"></i> </a>
+
+                    </div>
                 </div>
 
 

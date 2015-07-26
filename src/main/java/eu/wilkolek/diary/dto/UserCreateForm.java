@@ -23,6 +23,9 @@ public class UserCreateForm {
     @NotEmpty
     private String inputType = "";
     
+    @NotEmpty
+    private String profileVisibility = "";
+    
 //    @NotEmpty
 //    private String timezone = "";
     
@@ -94,6 +97,14 @@ public class UserCreateForm {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getProfileVisibility() {
+        return profileVisibility;
+    }
+
+    public void setProfileVisibility(String profileVisibility) {
+        this.profileVisibility = profileVisibility;
     }
     
     

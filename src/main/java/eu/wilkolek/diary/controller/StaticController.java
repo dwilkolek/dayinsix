@@ -1,6 +1,7 @@
 package eu.wilkolek.diary.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.util.LinkedHashSet;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -17,10 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import eu.wilkolek.diary.model.CurrentUser;
+import eu.wilkolek.diary.model.DayView;
 import eu.wilkolek.diary.model.Mail;
+import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
+import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.MailRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
+import eu.wilkolek.diary.util.DayHelper;
 import eu.wilkolek.diary.util.MailUtils;
 import eu.wilkolek.diary.util.MetadataHelper;
 
@@ -35,10 +40,21 @@ public class StaticController {
     @Autowired
     private MailRepository mailRepository;
 
+    @Autowired
+    private DayRepository dayRepository;
+    
     @RequestMapping("/")
-    public ModelAndView home() {
+    public ModelAndView home(CurrentUser currentUser) {
         ModelAndView model = new ModelAndView("static/home");
         model.getModelMap().addAttribute("title", MetadataHelper.title("Welcome"));
+//        if (currentUser == null){
+//            LinkedHashSet<DayView> dayViews = DayHelper.getLastPublicDays(dayRepository, ShareStyleEnum.PUBLIC, 10);
+//            model.getModelMap().addAttribute("days", dayViews);
+//        } else {
+//            LinkedHashSet<DayView> dayViews = DayHelper.getLastPublicDays(dayRepository, ShareStyleEnum.PROTECTED, 10);
+//            model.getModelMap().addAttribute("days", dayViews);
+//        }
+        
         LOGGER.debug("Getting home page");
         return model;
     }
@@ -96,7 +112,7 @@ public class StaticController {
 
             MimeMessage message = this.javaMailSender.createMimeMessage();
 
-            MimeMessageHelper helper = new MimeMessageHelper(message);
+            MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
 
             helper.setTo(MailUtils.FEEDBACK);
 

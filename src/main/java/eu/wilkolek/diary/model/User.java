@@ -45,6 +45,8 @@ public class User {
     
     private String token;
     
+    private String about;
+    
     private boolean enabled;
     
     public String getToken() {
@@ -83,9 +85,12 @@ public class User {
 //    	this.options.put(UserOptions.TIMEZONE, form.getTimezone());
     	this.options.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.DAY.name()); //in days
     	
+    	this.options.put(UserOptions.PROFILE_VISIBILITY, form.getProfileVisibility());
+    	
     	this.optionsLastUpdate = new HashMap<String, Date>();
         this.optionsLastUpdate.put(UserOptions.INPUT_TYPE, new Date(1));
         this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
+        this.optionsLastUpdate.put(UserOptions.PROFILE_VISIBILITY, DateTimeUtils.getCurrentUTCTime());
 //        this.optionsLastUpdate.put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
         this.optionsLastUpdate.put(UserOptions.NOTIFICATION_FREQUENCY,DateTimeUtils.getCurrentUTCTime());
         this.enabled = false;
@@ -123,6 +128,11 @@ public class User {
             this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
         }
         
+        if (!this.options.get(UserOptions.PROFILE_VISIBILITY).equalsIgnoreCase(form.getProfileVisibility())){
+            this.options.put(UserOptions.PROFILE_VISIBILITY, form.getProfileVisibility());
+            this.optionsLastUpdate.put(UserOptions.PROFILE_VISIBILITY, DateTimeUtils.getCurrentUTCTime());
+        }
+        
 //        if (this.options.get(UserOptions.TIMEZONE) != form.getInputType()){
 //            this.options.put(UserOptions.TIMEZONE, form.getTimezone());
 //            this.optionsLastUpdate.put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
@@ -134,7 +144,9 @@ public class User {
         }
         
         
-        
+        if (!StringUtils.isEmpty(form.getAbout())){
+            this.setAbout(form.getAbout());
+        }
         
         
         
@@ -247,6 +259,14 @@ public class User {
 
     public void setFollowedBy(ArrayList<String> followedBy) {
         this.followedBy = followedBy;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
     }
 
 

@@ -28,28 +28,34 @@
                             <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.add')}">
                                 <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4>
 
-                                <div th:if="${day.sentence != null}">
-                                    <th:block>
-                                        <span th:class="${'sentence ico ico'+day.sentence.status}"> <i>&nbsp;</i><span th:text="${day.sentence.value}"></span>
-                                        </span>
-                                    </th:block>
-                                </div>
-                                <div th:if="${day.words != null}">
-                                    <th:block th:each="word : ${day.words}">
-                                        <span th:class="${'ico ico'+word.status}"><span class="item-navias"> | </span><i>&nbsp;</i> <th:block
-                                                th:text="${word.value.value}"></th:block><span class="item-navias"> | </span></span>
+                                <th:block th:if="${day.canSee}">
+                                    <div th:if="${day.sentence != null}">
+                                        <th:block>
+                                            <span th:class="${'sentence ico ico'+day.sentence.status}"> <i>&nbsp;</i><span
+                                                th:text="${day.sentence.value}"></span>
+                                            </span>
+                                        </th:block>
+                                    </div>
+                                    <div th:if="${day.words != null}">
+                                        <th:block th:each="word : ${day.words}">
+                                            <span th:class="${'ico ico'+word.status}"><span class="item-navias"> | </span><i>&nbsp;</i> <th:block
+                                                    th:text="${word.value.value}"></th:block><span class="item-navias"> | </span></span>
 
-                                    </th:block>
-                                </div>
+                                        </th:block>
+                                    </div>
 
-                                <th:block th:if="${day.note != null}">
-                                    <th:block th:if="${day.note != ''}">
-                                        <div class="note" th:text="${day.note}"></div>
+                                    <th:block th:if="${day.note != null}">
+                                        <th:block th:if="${day.note != ''}">
+                                            <div class="note" th:text="${day.note}"></div>
+                                        </th:block>
                                     </th:block>
+
+                                    <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}"
+                                        th:with="dfx=${@environment.getProperty('date.format.add')}">User has skipped the day.</div>
                                 </th:block>
-
-                                <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}"
-                                    th:with="dfx=${@environment.getProperty('date.format.add')}">User has skipped the day.</div>
+                                <th:block th:if="${!day.canSee}">
+                                    You can't see that day
+                                </th:block>
                             </div>
 
                             <div th:if="${days.size() == 0}" class="card">

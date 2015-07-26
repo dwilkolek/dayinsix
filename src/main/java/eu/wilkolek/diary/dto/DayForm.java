@@ -15,7 +15,7 @@ public class DayForm {
 	private String sentence;
 	private String sentenceStatus;
 	private String note;
-	
+	private String shareStyle;
 	private Date dayDate;
 
 	public DayForm() {
@@ -88,7 +88,7 @@ public class DayForm {
             }
         }
         this.note = day.getNote();
-       
+        this.shareStyle = day.getShareStyle();
     }
 
     public String getNote() {
@@ -97,6 +97,14 @@ public class DayForm {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getShareStyle() {
+        return shareStyle;
+    }
+
+    public void setShareStyle(String shareStyle) {
+        this.shareStyle = shareStyle;
     }
 	
 	

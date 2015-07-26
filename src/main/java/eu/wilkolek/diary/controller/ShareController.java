@@ -59,13 +59,13 @@ public class ShareController {
             throw new NoSuchUserException("Looking for user ["+username+"] failed.");
         }
         
-        if (user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.PRIVATE.name())){
+        if (user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.PRIVATE.name())){
             return "sharePage/private";
         }
-        if ((user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.PROTECTED.name()) || user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.FOR_SELECTED.name())) && currentUser == null){
+        if ((user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.PROTECTED.name()) || user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.FOR_SELECTED.name())) && currentUser == null){
             return "sharePage/notLoggedIn";
         }
-        if (user.get().getOptions().get(UserOptions.SHARE_STYLE).equals(ShareStyleEnum.FOR_SELECTED.name())){
+        if (user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.FOR_SELECTED.name())){
             
             boolean canShare = false;
             if (user.get().getSharingWith() != null){
@@ -89,7 +89,7 @@ public class ShareController {
         
         int DAYS_PER_PAGE = 10;
 
-        DayViewData helper = DayHelper.createDataForView(dayRepository, page, user.get(), DAYS_PER_PAGE);
+        DayViewData helper = DayHelper.createDataForView(dayRepository, page, user.get(), DAYS_PER_PAGE, (currentUser != null) ? currentUser.getUser() : null);
         
         model.asMap().put("cPage", helper.getcPage());
         model.asMap().put("days", helper.getDays());
