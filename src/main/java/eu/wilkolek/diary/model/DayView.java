@@ -19,6 +19,8 @@ public class DayView {
     private String note;
 
     private String shareStyle;
+    
+    private String policy; //shareStyle in nice words...
 
     private boolean canSee;
 
@@ -32,8 +34,9 @@ public class DayView {
         this.creationDate = creationDate;
         this.empty = false;
         this.setUsername(whosDay.getUsername());
-        this.setShareStyle(dayShareStyle != null ? dayShareStyle : whosDay.getOptions().get(UserOptions.SHARE_STYLE));// whosDay.getOptions().get(UserOptions.SHARE_STYLE));
+        this.setShareStyle(dayShareStyle != null ? dayShareStyle : whosDay.getOptions().get(UserOptions.PROFILE_VISIBILITY));// whosDay.getOptions().get(UserOptions.SHARE_STYLE));
         this.setNote(note);
+        this.setPolicy(this.getShareStyle());
 
         // if (this.shareStyle == ShareStyleEnum.PUBLIC.name() || (whoWatches !=
         // null && this.shareStyle == ShareStyleEnum.PROTECTED.name())) {
@@ -154,6 +157,14 @@ public class DayView {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = ShareStyleEnum.asMap().get(policy).split(" - ")[0];
     }
 
 }

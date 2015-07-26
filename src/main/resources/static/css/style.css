@@ -135,7 +135,13 @@ input.form-control {
 	right: 10px;
 	top: 10px;
 }
-
+.policy-list-element{
+	position: absolute;
+	top:0px;
+	font-size:16px;
+	color:#aaa;
+	left: 3px;
+}
 .item-navias {
 	color: #cccccc;
 }

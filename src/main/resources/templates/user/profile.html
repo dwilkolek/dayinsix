@@ -88,13 +88,13 @@
                                             <textarea class="form-control" th:name="about" id="about" th:text="${form.about}" rows="5"></textarea>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="passwordRepeated">Default sharing for entries</label> <select class="form-control" th:name="shareStyle">
-                                                <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}"
-                                                    th:selected="${form != null and s.key == form.shareStyle}" />
+<!--                                         <div class="form-group"> -->
+<!--                                             <label for="passwordRepeated">Default sharing for entries</label> <select class="form-control" th:name="shareStyle"> -->
+<!--                                                 <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}" -->
+<!--                                                     th:selected="${form != null and s.key == form.shareStyle}" /> -->
 
-                                            </select>
-                                        </div>
+<!--                                             </select> -->
+<!--                                         </div> -->
                                         <div class="form-group">
                                             <label for="passwordRepeated">Profile visibility</label> <select class="form-control" th:name="profileVisibility">
                                                 <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}"

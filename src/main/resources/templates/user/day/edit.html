@@ -60,7 +60,7 @@
                                 <div class="form-group">
                                     <label for="shareStyle">Sharing</label> <select id="shareStyle" class="form-control" th:name="shareStyle">
                                         <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}"
-                                            th:selected="${(dayForm != null and dayForm.shareStyle != null and s.key == dayForm.shareStyle) or (dayForm.shareStyle == null and s.key == currentUser.user.options.shareStyle)}"  />
+                                            th:selected="${(dayForm != null and dayForm.shareStyle != null and s.key == dayForm.shareStyle) or (dayForm.shareStyle == null and s.key == currentUser.user.options.profileVisibility)}"  />
 
                                     </select>
                                 </div>
@@ -107,7 +107,7 @@
                                 <div class="form-group">
                                     <label for="shareStyle">Sharing</label> <select id="shareStyle" class="form-control" th:name="shareStyle">
                                         <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}"
-                                            th:selected="${(dayForm != null and dayForm.shareStyle != null and s.key == dayForm.shareStyle) or (dayForm.shareStyle == null and s.key == currentUser.user.options.shareStyle)}"  />
+                                            th:selected="${(dayForm != null and dayForm.shareStyle != null and s.key == dayForm.shareStyle) or (dayForm.shareStyle == null and s.key == currentUser.user.options.profileVisibility)}"  />
 
                                     </select>
                                 </div>

@@ -29,8 +29,8 @@ public class UserCreateForm {
 //    @NotEmpty
 //    private String timezone = "";
     
-    @NotEmpty
-    private String shareStyle = "";
+//    @NotEmpty
+//    private String shareStyle = "";
 
 //    @NotNull
 //    private Role role = Role.USER;
@@ -83,13 +83,13 @@ public class UserCreateForm {
 //        this.timezone = timezone;
 //    }
 
-    public String getShareStyle() {
-        return shareStyle;
-    }
-
-    public void setShareStyle(String shareStyle) {
-        this.shareStyle = shareStyle;
-    }
+//    public String getShareStyle() {
+//        return shareStyle;
+//    }
+//
+//    public void setShareStyle(String shareStyle) {
+//        this.shareStyle = shareStyle;
+//    }
 
     public String getUsername() {
         return username;

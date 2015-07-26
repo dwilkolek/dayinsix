@@ -43,7 +43,7 @@ public class UserCreateFormValidator implements Validator {
         validateEmail(errors, form);      
         validateInputType(errors, form);
         validateUsername(errors, form);
-        validateShareStyle(errors, form);
+//        validateShareStyle(errors, form);
 //        validateTimezone(errors, form);
     }
 
@@ -82,14 +82,14 @@ public class UserCreateFormValidator implements Validator {
     
     
     
-    private void validateShareStyle(Errors errors, UserCreateForm form) {
-        for (ShareStyleEnum type : ShareStyleEnum.values()){
-            if (type.name().equals(form.getShareStyle())){
-                return;
-            }
-        }
-        errors.reject("sharestyle.not_provided", "Wrong share style");
-    }
+//    private void validateShareStyle(Errors errors, UserCreateForm form) {
+//        for (ShareStyleEnum type : ShareStyleEnum.values()){
+//            if (type.name().equals(form.getShareStyle())){
+//                return;
+//            }
+//        }
+//        errors.reject("sharestyle.not_provided", "Wrong share style");
+//    }
     
 //    private void validateTimezone(Errors errors, UserCreateForm form) {
 //        LinkedHashMap<String,String> map = TimezoneUtils.getTimeZones();

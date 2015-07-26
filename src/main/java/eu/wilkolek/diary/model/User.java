@@ -81,7 +81,7 @@ public class User {
     	
     	this.options = new HashMap<String, String>();
     	this.options.put(UserOptions.INPUT_TYPE, form.getInputType());
-    	this.options.put(UserOptions.SHARE_STYLE, form.getShareStyle());
+//    	this.options.put(UserOptions.SHARE_STYLE, form.getShareStyle());
 //    	this.options.put(UserOptions.TIMEZONE, form.getTimezone());
     	this.options.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.DAY.name()); //in days
     	
@@ -89,7 +89,7 @@ public class User {
     	
     	this.optionsLastUpdate = new HashMap<String, Date>();
         this.optionsLastUpdate.put(UserOptions.INPUT_TYPE, new Date(1));
-        this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
+//        this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
         this.optionsLastUpdate.put(UserOptions.PROFILE_VISIBILITY, DateTimeUtils.getCurrentUTCTime());
 //        this.optionsLastUpdate.put(UserOptions.TIMEZONE, DateTimeUtils.getCurrentUTCTime());
         this.optionsLastUpdate.put(UserOptions.NOTIFICATION_FREQUENCY,DateTimeUtils.getCurrentUTCTime());
@@ -123,10 +123,10 @@ public class User {
             this.optionsLastUpdate.put(UserOptions.INPUT_TYPE, DateTimeUtils.getCurrentUTCTime());
         }
 
-        if (!this.options.get(UserOptions.SHARE_STYLE).equalsIgnoreCase(form.getShareStyle())){
-            this.options.put(UserOptions.SHARE_STYLE, form.getShareStyle());
-            this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
-        }
+//        if (!this.options.get(UserOptions.SHARE_STYLE).equalsIgnoreCase(form.getShareStyle())){
+//            this.options.put(UserOptions.SHARE_STYLE, form.getShareStyle());
+//            this.optionsLastUpdate.put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
+//        }
         
         if (!this.options.get(UserOptions.PROFILE_VISIBILITY).equalsIgnoreCase(form.getProfileVisibility())){
             this.options.put(UserOptions.PROFILE_VISIBILITY, form.getProfileVisibility());

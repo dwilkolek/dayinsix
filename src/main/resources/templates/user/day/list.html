@@ -55,6 +55,10 @@
                                     th:if="${day.canEdit and !(day.canAdd != null and day.canAdd and day.words == null and day.sentence == null)}"
                                     th:href="${'/user/day/edit/'+#calendars.format(day.creationDate,dfx)}"
                                     th:with="dfx=${@environment.getProperty('date.format.add')}"><i class="glyphicon glyphicon-edit"></i> </a>
+                                    
+                                <p class="policy-list-element" th:text="${day.policy}">
+                                    
+                                </p>
 
                             </div>
 
