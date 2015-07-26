@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public enum ShareStyleEnum {
-    PRIVATE("Only for you"), FOR_SELECTED("You share your days only with selected users"), PROTECTED("Only logged in users can view it"), PUBLIC("Anyone can see it");
+    PRIVATE("PRIVATE - Only for you"), FOR_SELECTED("FOR SELECTED - For users you've chosen in section \"share\""), PROTECTED("PROTECTED - Only logged in users can view it"), PUBLIC("PUBLIC - Anyone can see it");
     
     private String description;
     

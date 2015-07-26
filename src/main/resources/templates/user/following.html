@@ -31,7 +31,8 @@
                                 <th:block th:if="${follows.size() > 0}">
                                     <h2>You're following those users:</h2>
                                     <div class="card" th:each="u : ${follows}">
-                                        <a th:href="${'/s/'+u.username}" th:text="${u.username}"> </a> <a th:href="${'/user/unfollow/'+u.username}">X </a>
+                                        <a th:href="${'/s/'+u.username}" th:text="${u.username}"> </a> <a th:href="${'/user/unfollow/'+u.username}" class="unshare">
+                                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
                                     </div>
                                 </th:block>
                                 <th:block th:if="${follows.size() == 0}">

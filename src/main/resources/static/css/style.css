@@ -92,9 +92,9 @@ input.form-control{
 
 }
 
-.form-control{
-    font-size:20px;
-}
+/* .form-control{ */
+/*     font-size:20px; */
+/* } */
 
 .ico{
 
@@ -145,4 +145,8 @@ input.form-control{
 }
 .dropdown-menu{
 	z-index:10000;
+}
+
+.unshare{
+	position:absolute;color:#ed796c;top:25%;right:5px;
 }

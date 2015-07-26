@@ -71,7 +71,8 @@ public class DayFormValidator implements Validator {
     private void validateSentence(DayForm dayForm, Errors errors) {
         if (dayForm.getSentence() != null) {
             String sentence = dayForm.getSentence();
-            sentence = sentence.trim();
+            sentence = sentence.replaceAll("\\s+", " ").trim();
+            dayForm.setSentence(sentence);
             if (sentence.split(" ").length != 6) {
                 errors.reject("dayform.sentence_words","Sentence has wrong number of words");
             }

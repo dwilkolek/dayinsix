@@ -77,7 +77,7 @@
 
                                         <div class="form-group">
                                             <label for="passwordRepeated">Sharing</label> <select class="form-control" th:name="shareStyle">
-                                                <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.key + ' - ' +s.value}"
+                                                <option th:each="s : ${shareStyles}" th:value="${s.key}" th:text="${s.value}"
                                                     th:selected="${form != null and s.key == form.shareStyle}" />
 
                                             </select>

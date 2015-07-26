@@ -49,11 +49,11 @@
                                 </th:block>
 
                                 <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}"
-                                    th:with="dfx=${@environment.getProperty('date.format.add')}">User has skipped a day.</div>
+                                    th:with="dfx=${@environment.getProperty('date.format.add')}">User has skipped the day.</div>
                             </div>
 
                             <div th:if="${days.size() == 0}" class="card">
-                                <h4>No day is saved</h4>
+                                <h4>User has skipped the day.</h4>
                             </div>
 
                             <div th:if="${days.size() > 1}" class="text-center">

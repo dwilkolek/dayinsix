@@ -80,7 +80,7 @@ public class User {
     	this.options.put(UserOptions.INPUT_TYPE, form.getInputType());
     	this.options.put(UserOptions.SHARE_STYLE, form.getShareStyle());
 //    	this.options.put(UserOptions.TIMEZONE, form.getTimezone());
-    	this.options.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.WEEK.name()); //in days
+    	this.options.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.DAY.name()); //in days
     	
     	this.optionsLastUpdate = new HashMap<String, Date>();
         this.optionsLastUpdate.put(UserOptions.INPUT_TYPE, new Date(1));

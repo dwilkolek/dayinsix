@@ -69,8 +69,10 @@
                                             <th:block th:if="${shares.size() > 0}">
                                                 <h3>You're sharing with those users:</h3>
                                                 <div class="card" th:each="u : ${shares}">
-                                                    <a th:href="${'/s/'+u.username}" th:text="${u.username}"> </a> <a th:href="${'/user/unshare/'+u.username}">
-                                                        X </a>
+                                                    <a th:href="${'/s/'+u.username}" th:text="${u.username}"> </a> 
+                                                    <a th:href="${'/user/unshare/'+u.username}" class="unshare">
+                                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                                                 
 
                                                 </div>
                                             </th:block>
