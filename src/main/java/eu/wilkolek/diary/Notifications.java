@@ -30,7 +30,7 @@ public class Notifications {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @Scheduled(cron = "0 2 * * * * ?")
+    @Scheduled(cron = "0 0 2 * * ?")
     public void sendNotyfication() {
         Date now = DateTimeUtils.getCurrentUTCTime();
         if (this.userRepository != null) {
