@@ -85,7 +85,7 @@ public class StaticController {
             start += "User is not logged in";
             start += "<br /><br />";
         }
-        return msg;
+        return "<html><body>"+start +msg+"</body></html>";
     }
 
     private void sendEmail(String msg, String msgId, ModelAndView model) {
