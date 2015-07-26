@@ -1,6 +1,7 @@
 package eu.wilkolek.diary.repository;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -16,6 +17,6 @@ public interface DayRepository extends MongoRepository<Day, String>,DayRepositor
 
     public Optional<Day> findByCreationDateAndUser(Date date, User user);
     
-    
+    public List<Day> findAllByUser(User user);
 	
 }

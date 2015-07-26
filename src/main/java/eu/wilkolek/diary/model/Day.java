@@ -43,7 +43,7 @@ public class Day {
 		}
 		
 		this.note = dayForm.getNote();
-		
+		this.userProfileVisibility = user.getOptions().get(UserOptions.PROFILE_VISIBILITY);
 		this.creationDate = dayForm.getDayDate();
 	}
 
@@ -65,6 +65,7 @@ public class Day {
 	
 	private String shareStyle;
 	
+	private String userProfileVisibility;
 
 	public String getId() {
 		return id;
@@ -113,6 +114,12 @@ public class Day {
     }
     public void setShareStyle(String shareStyle) {
         this.shareStyle = shareStyle;
+    }
+    public String getUserProfileVisibility() {
+        return userProfileVisibility;
+    }
+    public void setUserProfileVisibility(String userProfileVisibility) {
+        this.userProfileVisibility = userProfileVisibility;
     }
 	
 	

@@ -2,6 +2,7 @@ package eu.wilkolek.diary.repository;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -44,19 +45,30 @@ private MongoOperations operation;
     }
 
     @Override
-    public List<Day> getLatestDays(ShareStyleEnum level, int limit) {
-        Criteria c = Criteria.where("user.$options.shareStyle").is(ShareStyleEnum.PUBLIC.name());
+    public LinkedList<Day> getLatestDays(ShareStyleEnum level, int limit) {
+        Criteria c = Criteria.where("shareStyle").is(ShareStyleEnum.PUBLIC.name());
         if (level.equals(ShareStyleEnum.PUBLIC) || level.equals(ShareStyleEnum.PROTECTED)){
-            c = Criteria.where("user.$options.shareStyle").is(ShareStyleEnum.PUBLIC.name());
+            c = Criteria.where("shareStyle").is(ShareStyleEnum.PUBLIC.name());
+            c.andOperator(Criteria.where("userProfileVisibility").is(ShareStyleEnum.PUBLIC.name()));
         }
         if (level.equals(ShareStyleEnum.PROTECTED)){
-            c.orOperator(Criteria.where("user.$options.shareStyle").is(ShareStyleEnum.PROTECTED.name()));
+            ArrayList<String> shareStyle = new ArrayList<String>();
+            shareStyle.add(ShareStyleEnum.PROTECTED.name());
+            shareStyle.add(ShareStyleEnum.PUBLIC.name());
+            c = Criteria.where("shareStyle").in(shareStyle);
+            c.orOperator(Criteria.where("userProfileVisibility").in(shareStyle));
         }
+        
+        
         Query query = new Query(c);
         query.with(new Sort(Sort.Direction.DESC, "storeDate"));
         query.limit(limit);
-        
-        return operation.find(query, Day.class);
+        LinkedList<Day> lList = new LinkedList<Day>();
+        ArrayList<Day> reOp = (ArrayList<Day>)operation.find(query, Day.class);
+        for (int i=0; i<reOp.size(); i++){
+            lList.add(reOp.get(i));
+        }
+        return lList;
     }
 
 	

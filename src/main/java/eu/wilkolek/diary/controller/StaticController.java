@@ -47,13 +47,13 @@ public class StaticController {
     public ModelAndView home(CurrentUser currentUser) {
         ModelAndView model = new ModelAndView("static/home");
         model.getModelMap().addAttribute("title", MetadataHelper.title("Welcome"));
-//        if (currentUser == null){
-//            LinkedHashSet<DayView> dayViews = DayHelper.getLastPublicDays(dayRepository, ShareStyleEnum.PUBLIC, 10);
-//            model.getModelMap().addAttribute("days", dayViews);
-//        } else {
-//            LinkedHashSet<DayView> dayViews = DayHelper.getLastPublicDays(dayRepository, ShareStyleEnum.PROTECTED, 10);
-//            model.getModelMap().addAttribute("days", dayViews);
-//        }
+        if (currentUser == null){
+            LinkedHashSet<DayView> dayViews = DayHelper.getLastPublicDays(dayRepository, ShareStyleEnum.PUBLIC, 10, ShareStyleEnum.PUBLIC.name());
+            model.getModelMap().addAttribute("days", dayViews);
+        } else {
+            LinkedHashSet<DayView> dayViews = DayHelper.getLastPublicDays(dayRepository, ShareStyleEnum.PROTECTED, 10, ShareStyleEnum.PUBLIC.name());
+            model.getModelMap().addAttribute("days", dayViews);
+        }
         
         LOGGER.debug("Getting home page");
         return model;

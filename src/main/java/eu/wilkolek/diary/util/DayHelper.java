@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -32,10 +33,10 @@ public class DayHelper {
             DayView d;
             if (days.size() > 0 && days.size() > count && days.get(count) != null && nowProcessed.equals(days.get(count).getCreationDate())) {
                 Day h = days.get(count);
-                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate(), h.getNote(),h.getShareStyle(),  whosDay, whoWatches);
+                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate(), h.getNote(),h.getShareStyle(),  whosDay, whoWatches, true);
                 count++;
             } else {
-                d = new DayView(null, null, nowProcessed, null, null,  whosDay, whoWatches);
+                d = new DayView(null, null, nowProcessed, null, null,  whosDay, whoWatches, true);
                 d.setEmpty(true);
             }
 
@@ -154,13 +155,13 @@ public class DayHelper {
         return data;
     }
     
-    public static LinkedHashSet<DayView> getLastPublicDays(DayRepository dayRepository,ShareStyleEnum level, int limit, String defaultShareStyle, User whosDay, User whoWatches){
+    public static LinkedHashSet<DayView> getLastPublicDays(DayRepository dayRepository,ShareStyleEnum level, int limit, String defaultShareStyle){
         LinkedHashSet<DayView> dayViews = new LinkedHashSet<DayView>();
         
-        List<Day> days = dayRepository.getLatestDays(level, limit);
+        LinkedList<Day> days = dayRepository.getLatestDays(level, limit);
         
         for (Day d : days){
-            DayView dv = new DayView(d.getSentence(), d.getWords(), d.getCreationDate(), d.getNote(),d.getShareStyle(), whosDay, whoWatches);
+            DayView dv = new DayView(d.getSentence(), d.getWords(), d.getCreationDate(), d.getNote(),d.getShareStyle(), d.getUser(), null, true);
             dayViews.add(dv);
         }
         

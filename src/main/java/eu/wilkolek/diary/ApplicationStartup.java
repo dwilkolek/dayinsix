@@ -103,6 +103,9 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         user.getOptions().put(UserOptions.SHARE_STYLE, ShareStyleEnum.PUBLIC.name());
         user.getOptionsLastUpdate().put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
 
+        user.getOptions().put(UserOptions.PROFILE_VISIBILITY, ShareStyleEnum.PUBLIC.name());
+        user.getOptionsLastUpdate().put(UserOptions.PROFILE_VISIBILITY, DateTimeUtils.getCurrentUTCTime());
+        
         user.setEnabled(true);
         
         // user.getOptions().put(UserOptions.TIMEZONE,
@@ -118,7 +121,9 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         user.setFollowingBy(new ArrayList<String>());
         user.setSharingWith(new ArrayList<String>());
         System.out.println("User used:" + gson.toJson(user));
-
+        
+        
+        
         ArrayList<DictionaryWord> words = new ArrayList<DictionaryWord>();
         words.add(new DictionaryWord(user, "Dodbre"));
         words.add(new DictionaryWord(user, "Dobtre"));
@@ -127,15 +132,19 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         words.add(new DictionaryWord(user, "Dobre"));
         words.add(new DictionaryWord(user, "Dobrre"));
         words = (ArrayList<DictionaryWord>) dictionaryWordRepository.save(words);
-
+        int los = 0;
         for (int i = 0; i < 751; i++) {
             Day day = new Day();
+            los++;
+            day.setShareStyle((ShareStyleEnum.values()[los % ShareStyleEnum.values().length].name()));
+            day.setStoreDate(new Date(DateTimeUtils.getCurrentUTCTime().getTime() - TimeUnit.DAYS.toMillis(i)));
+            day.setUserProfileVisibility(user.getOptions().get(UserOptions.PROFILE_VISIBILITY));
             day.setCreationDate(new Date(DateTimeUtils.getCurrentUTCTime().getTime() - TimeUnit.DAYS.toMillis(i)));
             if (Math.random() > 0.5) {
                 ArrayList<Word> w = new ArrayList<Word>();
                 for (int j = 0; j < 7; j++) {
                     Word wo = new Word();
-                    wo.setStatus(StatusEnum.values()[i % StatusEnum.values().length].name());
+                    wo.setStatus(StatusEnum.values()[(los+i+j) % StatusEnum.values().length].name());
                     wo.setValue(words.get(i % words.size()));
                     w.add(wo);
                 }

@@ -22,13 +22,17 @@ public class DayView {
 
     private boolean canSee;
 
-    public DayView(Sentence sentence, ArrayList<Word> words, Date creationDate, String note, String dayShareStyle, User whosDay, User whoWatches) {
+    private String username;
+
+    public DayView(Sentence sentence, ArrayList<Word> words, Date creationDate, String note, String dayShareStyle, User whosDay, User whoWatches,
+            boolean checkUserProfileVisibility) {
         super();
         this.sentence = sentence;
         this.words = words;
         this.creationDate = creationDate;
         this.empty = false;
-        this.setShareStyle(dayShareStyle != null ? dayShareStyle : whosDay.getOptions().get(UserOptions.SHARE_STYLE));//whosDay.getOptions().get(UserOptions.SHARE_STYLE));
+        this.setUsername(whosDay.getUsername());
+        this.setShareStyle(dayShareStyle != null ? dayShareStyle : whosDay.getOptions().get(UserOptions.SHARE_STYLE));// whosDay.getOptions().get(UserOptions.SHARE_STYLE));
         this.setNote(note);
 
         // if (this.shareStyle == ShareStyleEnum.PUBLIC.name() || (whoWatches !=
@@ -42,25 +46,27 @@ public class DayView {
         if ((this.shareStyle.equals(ShareStyleEnum.PROTECTED.name()) || this.shareStyle.equals(ShareStyleEnum.FOR_SELECTED.name())) && whoWatches == null) {
             this.canSee = false;
         }
-        if (this.shareStyle.equals(ShareStyleEnum.FOR_SELECTED.name())) {
+        if (checkUserProfileVisibility) {
+            if (this.shareStyle.equals(ShareStyleEnum.FOR_SELECTED.name())) {
 
-            boolean canShare = false;
-            if (whoWatches != null) {
-                if (this.shareStyle != null) {
-                    for (String id : whosDay.getSharingWith()) {
-                        if (id.equals(whoWatches.getId())) {
-                            canShare = true;
+                boolean canShare = false;
+                if (whoWatches != null) {
+                    if (this.shareStyle != null && whosDay.getSharingWith() != null) {
+                        for (String id : whosDay.getSharingWith()) {
+                            if (id.equals(whoWatches.getId())) {
+                                canShare = true;
+                            }
                         }
                     }
-                }
-                if (whosDay.getId().equals(whoWatches.getId())) {
-                    canShare = true;
-                }
-                if (!canShare) {
+                    if (whosDay.getId().equals(whoWatches.getId())) {
+                        canShare = true;
+                    }
+                    if (!canShare) {
+                        this.canSee = false;
+                    }
+                } else {
                     this.canSee = false;
                 }
-            } else {
-                this.canSee = false;
             }
         }
 
@@ -140,6 +146,14 @@ public class DayView {
 
     public void setCanSee(boolean canSee) {
         this.canSee = canSee;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
 }

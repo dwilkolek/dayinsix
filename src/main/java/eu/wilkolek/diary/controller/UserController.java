@@ -3,6 +3,7 @@ package eu.wilkolek.diary.controller;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -349,6 +350,12 @@ public class UserController {
             user.updateUser(profileForm);
             user = userRepository.save(user);
             currentUser.setUser(user);
+            
+            List<Day> storedDays = dayRepository.findAllByUser(user);
+            for (Day storedDay : storedDays){
+                storedDay.setUserProfileVisibility(user.getOptions().get(UserOptions.PROFILE_VISIBILITY));
+            }
+            storedDays = dayRepository.save(storedDays);
         } else {
             model.addAttribute("errors", profileForm.createMessages(result.getAllErrors()));
         }
