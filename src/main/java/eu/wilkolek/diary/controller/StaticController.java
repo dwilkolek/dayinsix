@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import eu.wilkolek.diary.model.CurrentUser;
+import eu.wilkolek.diary.model.Mail;
 import eu.wilkolek.diary.model.User;
+import eu.wilkolek.diary.repository.MailRepository;
+import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.MailUtils;
 import eu.wilkolek.diary.util.MetadataHelper;
 
@@ -28,6 +31,9 @@ public class StaticController {
     
     @Autowired
     private JavaMailSender javaMailSender;
+    
+    @Autowired
+    private MailRepository mailRepository;
     
     @RequestMapping("/")
     public ModelAndView home() {
@@ -57,12 +63,17 @@ public class StaticController {
     public ModelAndView contactPOST(@RequestParam(value="mail") String mail, CurrentUser currentUser) {
         ModelAndView model = new ModelAndView("static/feedbackSent");
         model.getModelMap().addAttribute("title", MetadataHelper.title("Feedback"));
-        this.sendEmail(mail, currentUser!=null ? currentUser.getUser() : null, model);
-        LOGGER.debug("Getting feedback page");
+        String msg = this.sendEmail(mail, currentUser!=null ? currentUser.getUser() : null, model);
+        Mail m = new Mail();
+        m.setMessage(msg);
+        m.setDate(DateTimeUtils.getCurrentUTCTime());
+        mailRepository.save(m);
+        LOGGER.debug("Feedback POST");
         return model;
     }
     
-    private void sendEmail(String mail, User user, ModelAndView model) {
+    private String sendEmail(String mail, User user, ModelAndView model) {
+        String start = "";
         try {
 
             // sender.setHost("mail.host.com");
@@ -72,7 +83,7 @@ public class StaticController {
             MimeMessageHelper helper = new MimeMessageHelper(message);
 
             helper.setTo(MailUtils.FEEDBACK);
-            String start = "";
+            
             if (user != null){
                 start += "Email:"+user.getEmail()+"<br />";
                 start += "Username:"+user.getUsername()+"<br />";
@@ -83,8 +94,8 @@ public class StaticController {
                 start += "<br /><br />";
             }
             helper.setFrom(MailUtils.FROM, MailUtils.NAME);
-            helper.setText("<html><body>"+user + mail+"</body></html>", true);
-            helper.setSubject("Activate your account at dayinsix.com");
+            helper.setText("<html><body>"+start + mail+"</body></html>", true);
+            helper.setSubject("Feedback required");
             this.javaMailSender.send(message);
             model.getModelMap().addAttribute("sent", true);
         } catch (MessagingException e) {
@@ -94,7 +105,8 @@ public class StaticController {
             model.getModelMap().addAttribute("sent", false);
             e.printStackTrace();
         }
-
+        
+        return "<html><body>"+start + mail+"</body></html>";
     }
 
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +18,7 @@ import eu.wilkolek.diary.util.DateTimeUtils;
 @Document(collection = "users")
 public class User {
 
-
+    @Id
     private String id;
 
     private String username;
