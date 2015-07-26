@@ -44,7 +44,7 @@ public class Notifications {
 
                 boolean shouldNotify = !DateTimeUtils.isLowerThanMinTimeDiff(u.getLastLogIn(), now, daysL);
                 long diff = DateTimeUtils.diffInDays(u.getLastLogIn(), now);
-                if (shouldNotify) {
+                if (shouldNotify && u.isEnabled()) {
 
                     this.sendEmail(u.getEmail(), u.getUsername(), diff);
                 }
