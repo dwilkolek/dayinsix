@@ -42,7 +42,7 @@
                 <div class="col-md-12" th:if="${days.size() > 0}" th:each="day : ${days}">
                     <div class="card"  th:with="df=${@environment.getProperty('date.format.add')}">
                         <!--                         <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4> -->
-                        <a th:href="${'/s/'+day.username}" th:text="${day.username}"></a><span th:text="${#calendars.format(day.creationDate,df)}" />
+                        <a th:href="${'/s/'+day.username}" th:text="${day.username}"></a>
                         <div th:if="${day.sentence != null}">
                             <th:block>
                                 <span th:class="${'sentence ico ico'+day.sentence.status}"> <i>&nbsp;</i><span th:text="${day.sentence.value}"></span>

@@ -2,7 +2,11 @@ package eu.wilkolek.diary.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -85,16 +89,16 @@ public class UserController {
         this.profileFormValidator = new ProfileFormValidator(userRepository);
     }
 
-//    @PreAuthorize("hasAuthority('USER')")
-//    @RequestMapping(value = "/user/details")
-//    public ModelAndView details() {
-//        return new ModelAndView("/user/details");
-//    }
+    // @PreAuthorize("hasAuthority('USER')")
+    // @RequestMapping(value = "/user/details")
+    // public ModelAndView details() {
+    // return new ModelAndView("/user/details");
+    // }
 
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/day/list")
     public ModelAndView days(CurrentUser currentUser, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) throws Exception {
-        
+
         int DAYS_PER_PAGE = 10;
 
         Optional<User> user = userRepository.findById(currentUser.getId());
@@ -111,9 +115,9 @@ public class UserController {
         model.getModelMap().put("pages", helper.getPages());
         model.getModelMap().put("tPage", helper.gettPage());
         model.getModelMap().put("sPage", helper.getsPage());
-        
+
         model.getModelMap().addAttribute("title", MetadataHelper.title("Your diary"));
-        
+
         return model;
     }
 
@@ -128,7 +132,7 @@ public class UserController {
     public ModelAndView editDaySave(CurrentUser currentUser, @PathVariable(value = "dateStr") String dateStr, @Valid DayForm dayForm, BindingResult result)
             throws ParseException, OutOfDateException {
 
-       // this.dayFormValidator.validate(dayForm, result);
+        // this.dayFormValidator.validate(dayForm, result);
 
         if (result.hasErrors()) {
             ModelAndView model = new ModelAndView("user/day/edit");
@@ -183,8 +187,6 @@ public class UserController {
         dayRepository.save(new Day(dayForm, user));
         LOGGER.debug("User " + user.getEmail() + " added new day");
 
-        
-        
         return new ModelAndView("redirect:/user/day/list");
     }
 
@@ -231,7 +233,7 @@ public class UserController {
     public ModelAndView saveDay(CurrentUser currentUser, @Valid DayForm dayForm, BindingResult result, @PathVariable(value = "dateStr") String dateStr)
             throws ParseException, OutOfDateException {
 
-       // this.dayFormValidator.validate(dayForm, result);
+        // this.dayFormValidator.validate(dayForm, result);
 
         if (result.hasErrors()) {
             ModelAndView model = new ModelAndView("user/day/add");
@@ -260,7 +262,6 @@ public class UserController {
         }
 
         dayForm.setDayDate(date);
-        
 
         System.out.println("User id:" + user.getId());
         if (dayForm.getWords() != null && dayForm.getWords().size() > 0) {
@@ -332,7 +333,7 @@ public class UserController {
         model.addAttribute("shareStyles", ShareStyleEnum.asMap());
         model.addAttribute("inputTypes", InputTypeEnum.asMap());
         model.addAttribute("notificationFrequencyTypes", NotificationTypesEnum.asMap());
-        
+
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -341,8 +342,9 @@ public class UserController {
         boolean saveSuccess = false;
         User user = userRepository.findOne(currentUser.getId());
         profileForm.setEmail(profileForm.getEmail().toLowerCase());
-       // ProfileFormCustomValidator validator = new ProfileFormCustomValidator();
-        //validator.validate(user, userRepository, profileForm, result);
+        // ProfileFormCustomValidator validator = new
+        // ProfileFormCustomValidator();
+        // validator.validate(user, userRepository, profileForm, result);
 
         ProfileFormCustomValidator.validate(user, userRepository, profileForm, result);
 
@@ -350,9 +352,9 @@ public class UserController {
             user.updateUser(profileForm);
             user = userRepository.save(user);
             currentUser.setUser(user);
-            
+
             List<Day> storedDays = dayRepository.findAllByUser(user);
-            for (Day storedDay : storedDays){
+            for (Day storedDay : storedDays) {
                 storedDay.setUserProfileVisibility(user.getOptions().get(UserOptions.PROFILE_VISIBILITY));
             }
             storedDays = dayRepository.save(storedDays);
@@ -368,7 +370,7 @@ public class UserController {
         saveSuccess = true;
         model.addAttribute("saveSuccess", !result.hasErrors());
         model.addAttribute("title", MetadataHelper.title("Your profile"));
-        
+
         return "user/profile";
 
     }
@@ -507,12 +509,10 @@ public class UserController {
                 }
             }
 
-            
             otherUserDb.get().setFollowedBy(newOtherArray);
 
             userRepository.save(otherUserDb.get());
 
-            
         }
 
         return "redirect:/user/following";
@@ -537,8 +537,74 @@ public class UserController {
         }
         return "redirect:/user/share";
     }
-    
-    
-    
 
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/archive/{year}/{month}", method = RequestMethod.GET)
+    public String archive(Model model, CurrentUser currentUser, @PathVariable(value = "year") Integer year, @PathVariable(value = "month") Integer month) {
+        User u = userRepository.findById(currentUser.getUser().getId()).get();
+
+        int monthEnd = month - 1;
+        int yearEnd = year;
+        monthEnd++;
+        if (12 == monthEnd) {
+            monthEnd = 1;
+            yearEnd++;
+        }
+        Date dateStart = new GregorianCalendar(year, month - 1, 1).getTime();
+        Date dateEnd = new GregorianCalendar(yearEnd, monthEnd, 1).getTime();
+        dateEnd = new Date(dateEnd.getTime() - TimeUnit.DAYS.toMillis(1L));
+        long dateStartMilis = dateStart.getTime();
+        long dateCreatedMilis = u.getCreated().getTime();
+        long dateEndMilis = dateEnd.getTime();
+        
+        Calendar nowCal= new GregorianCalendar();
+        nowCal.setTime(new Date(DateTimeUtils.getCurrentUTCTime().getTime()+TimeUnit.DAYS.toMillis(31L)));
+        
+        if (dateCreatedMilis > dateStartMilis) {
+            dateStart = new Date(dateCreatedMilis);
+        }
+        if (nowCal.getTimeInMillis() <= dateEndMilis || dateEndMilis < dateCreatedMilis) {
+
+            Calendar cal = new GregorianCalendar();
+            cal.setTime(u.getCreated());
+            return "redirect:/user/archive/" + (cal.get(Calendar.YEAR)) + "/" + (cal.get(Calendar.MONTH) + 1);
+        }
+        ArrayList<Day> days = dayRepository.getDaysFromDateToDate(u, dateStart, dateEnd);
+        ArrayList<DayView> daysView = DayHelper.fillDates(days, dateStart, dateEnd, "e msg", u, u);
+
+        model.asMap().put("days", daysView);
+        model.asMap().put("dateStr", DayHelper.createDateStr(month - 1, year));
+        return "user/day/archive";
+    }
+    
+    public static LinkedHashMap<String,String> createArchiveMenu(User u){
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(u.getCreated());
+        int monthStart = cal.get(Calendar.MONTH);
+        int yearStart = cal.get(Calendar.YEAR);
+        
+        Calendar calNow = new GregorianCalendar();
+        calNow.setTime(DateTimeUtils.getCurrentUTCTime());
+        int monthEnd = calNow.get(Calendar.MONTH);
+        int yearEnd = calNow.get(Calendar.YEAR);
+        
+        int m = monthEnd;
+        int y = yearEnd;
+        
+        LinkedHashMap<String,String> result = new LinkedHashMap<String, String>();
+        
+        while (!(monthStart == m && yearStart == y)){
+            String text = DayHelper.createDateStr(m, y);
+            result.put(y+"/"+m, text);
+            m--;
+            if (m<0){
+                m=11;
+                y--;
+                result.put("divider"+y, "divider");
+            }
+        }
+        return result;
+        
+    }
+    
 }

@@ -169,3 +169,8 @@ input.form-control {
 input, button, select, option, textarea, .btn {
 	font-family: 'Alegreya Sans', sans-serif !important;
 }
+
+.logout.smaller{
+	font-size:0.8em;
+	margin:0px 5px;
+}
