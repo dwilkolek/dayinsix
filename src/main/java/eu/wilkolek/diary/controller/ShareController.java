@@ -96,7 +96,8 @@ public class ShareController {
         model.asMap().put("pages", helper.getPages());
         model.asMap().put("tPage", helper.gettPage());
         model.asMap().put("sPage", helper.getsPage());
-       
+        model.asMap().put("usersTitle", username+"'s diary");
+        model.asMap().put("user", user.get());
         if (currentUser != null){
         
             ArrayList<String> following = currentUser.getUser().getFollowingBy();

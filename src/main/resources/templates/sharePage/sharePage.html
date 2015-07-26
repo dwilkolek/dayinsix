@@ -25,6 +25,12 @@
                             <div th:if="${currentUser != null and currentUser.username != user.username and follows}">
                                 <a th:href="${'/user/unfollow/'+user.username}">Unfollow</a>
                             </div>
+                            <h1 th:text="${usersTitle}" />
+                            <th:block th:if="${user.about != null and user.about != ''}">
+<!--                                 <h2 th:text="${'About'}"/> -->
+                                <p th:text="${user.about}" />
+                            </th:block>
+                            
                             <div class="card" th:if="${days.size() > 0}" th:each="day : ${days}" th:with="df=${@environment.getProperty('date.format.add')}">
                                 <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4>
 

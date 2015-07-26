@@ -30,6 +30,7 @@ public class ProfileForm{
         this.setUsername(user.getUsername());
         this.setPassword("");
         this.setPasswordRepeated("");
+        this.setAbout(user.getAbout());
         
         this.setInputType(user.getOptions().get(UserOptions.INPUT_TYPE));
         this.setNotificationFrequency(user.getOptions().get(UserOptions.NOTIFICATION_FREQUENCY));
