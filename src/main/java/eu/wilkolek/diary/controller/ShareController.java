@@ -84,7 +84,7 @@ public class ShareController {
         }
         
         model.asMap().put("user", user.get());
-        model.asMap().put("title", MetadataHelper.title("Share page of user "+username));
+        model.asMap().put("title", MetadataHelper.title(username+"'s diary"));
         model.asMap().put("description", "Share page of user");
         
         int DAYS_PER_PAGE = 10;

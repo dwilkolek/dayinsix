@@ -89,7 +89,7 @@ public class DayHelper {
         Date created = user.getCreated();
         long mCurrent = current.getTime();
         long mCreated = created.getTime();
-        int allDays = (int) TimeUnit.MILLISECONDS.toDays(mCurrent - mCreated);
+        int allDays = (int) TimeUnit.MILLISECONDS.toDays(mCurrent - mCreated)+1;
 
         int mPages = (int) Math.ceil(allDays / recordsPerPage);
         
@@ -109,6 +109,15 @@ public class DayHelper {
             tPages = mPages;
         }
 
+        if (sPages < 1){
+            sPages = 1;
+        }
+        if (mPages < 1){
+            mPages = 1;
+        }
+        if (tPages < 1){
+            tPages = 1;
+        }
         // int tPages = mPages > 8 ? sPage+8 : mPages;
 
         long milisDay = TimeUnit.DAYS.toMillis(1);

@@ -453,7 +453,7 @@ public class UserController {
         }
         currentUser.setUser(userByDb);
         model.asMap().put("follows", userRepository.findAll(lookFor));
-        model.asMap().put("title", MetadataHelper.title("Followed by others"));
+        model.asMap().put("title", MetadataHelper.title("Followed by you"));
         return "user/following";
     }
 
@@ -467,7 +467,7 @@ public class UserController {
         }
         currentUser.setUser(userByDb);
         model.asMap().put("follows", userRepository.findAll(lookFor));
-        model.asMap().put("title", MetadataHelper.title("Followed by others"));
+        model.asMap().put("title", MetadataHelper.title("Your followers"));
         return "user/followed";
     }
 
