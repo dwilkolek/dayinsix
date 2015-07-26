@@ -28,21 +28,21 @@ import eu.wilkolek.diary.util.MetadataHelper;
 public class StaticController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StaticController.class);
-    
+
     @Autowired
     private JavaMailSender javaMailSender;
-    
+
     @Autowired
     private MailRepository mailRepository;
-    
+
     @RequestMapping("/")
     public ModelAndView home() {
-    	ModelAndView model = new ModelAndView("static/home");
-    	model.getModelMap().addAttribute("title", MetadataHelper.title("Welcome"));
+        ModelAndView model = new ModelAndView("static/home");
+        model.getModelMap().addAttribute("title", MetadataHelper.title("Welcome"));
         LOGGER.debug("Getting home page");
         return model;
     }
-    
+
     @RequestMapping("/faq")
     public ModelAndView about() {
         ModelAndView model = new ModelAndView("static/faq");
@@ -50,30 +50,46 @@ public class StaticController {
         LOGGER.debug("Getting about page");
         return model;
     }
-    
-    @RequestMapping(value="/feedback",method = RequestMethod.GET)
+
+    @RequestMapping(value = "/feedback", method = RequestMethod.GET)
     public ModelAndView contact() {
         ModelAndView model = new ModelAndView("static/feedback");
         model.getModelMap().addAttribute("title", MetadataHelper.title("Feedback"));
         LOGGER.debug("Getting feedback page");
         return model;
     }
-    
-    @RequestMapping(value="/feedback",method = RequestMethod.POST)
-    public ModelAndView contactPOST(@RequestParam(value="mail") String mail, CurrentUser currentUser) {
+
+    @RequestMapping(value = "/feedback", method = RequestMethod.POST)
+    public ModelAndView contactPOST(@RequestParam(value = "mail") String mail, CurrentUser currentUser) {
         ModelAndView model = new ModelAndView("static/feedbackSent");
         model.getModelMap().addAttribute("title", MetadataHelper.title("Feedback"));
-        String msg = this.sendEmail(mail, currentUser!=null ? currentUser.getUser() : null, model);
+        String msg = this.createMsg(currentUser != null ? currentUser.getUser() : null, mail);
         Mail m = new Mail();
         m.setMessage(msg);
         m.setDate(DateTimeUtils.getCurrentUTCTime());
-        mailRepository.save(m);
+        Mail mailS = mailRepository.save(m);
+        this.sendEmail(msg, mailS.getId(), model);
+
         LOGGER.debug("Feedback POST");
         return model;
     }
-    
-    private String sendEmail(String mail, User user, ModelAndView model) {
+
+    private String createMsg(User user, String msg) {
         String start = "";
+        if (user != null) {
+            start += "Email:" + user.getEmail() + "<br />";
+            start += "Username:" + user.getUsername() + "<br />";
+            start += "ID:" + user.getId() + "<br />";
+            start += "<br /><br />";
+        } else {
+            start += "User is not logged in";
+            start += "<br /><br />";
+        }
+        return msg;
+    }
+
+    private void sendEmail(String msg, String msgId, ModelAndView model) {
+
         try {
 
             // sender.setHost("mail.host.com");
@@ -83,19 +99,10 @@ public class StaticController {
             MimeMessageHelper helper = new MimeMessageHelper(message);
 
             helper.setTo(MailUtils.FEEDBACK);
-            
-            if (user != null){
-                start += "Email:"+user.getEmail()+"<br />";
-                start += "Username:"+user.getUsername()+"<br />";
-                start += "ID:"+user.getId()+"<br />";
-                start += "<br /><br />";
-            } else {
-                start += "User is not logged in";
-                start += "<br /><br />";
-            }
+
             helper.setFrom(MailUtils.FROM, MailUtils.NAME);
-            helper.setText("<html><body>"+start + mail+"</body></html>", true);
-            helper.setSubject("Feedback required");
+            helper.setText(msg, true);
+            helper.setSubject("Feedback required #" + msgId);
             this.javaMailSender.send(message);
             model.getModelMap().addAttribute("sent", true);
         } catch (MessagingException e) {
@@ -105,8 +112,7 @@ public class StaticController {
             model.getModelMap().addAttribute("sent", false);
             e.printStackTrace();
         }
-        
-        return "<html><body>"+start + mail+"</body></html>";
+
     }
 
 }
