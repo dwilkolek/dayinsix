@@ -36,7 +36,7 @@
                                     <h2>Share with</h2>
                                     <div th:if="${username != null}">
                                         <h4>
-                                            Now you will be sharing all your days with user:
+                                            From now on you will be sharing your days with:
                                             <th:block th:text="${username}" />
                                         </h4>
                                     </div>
@@ -67,7 +67,7 @@
 
                                         <th:block th:if="${shares != null}">
                                             <th:block th:if="${shares.size() > 0}">
-                                                <h3>You're sharing with those users:</h3>
+                                                <h3>You're sharing your days with:</h3>
                                                 <div class="card" th:each="u : ${shares}">
                                                     <a th:href="${'/s/'+u.username}" th:text="${u.username}"> </a> 
                                                     <a th:href="${'/user/unshare/'+u.username}" class="unshare">

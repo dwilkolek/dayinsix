@@ -62,10 +62,19 @@ public class ShareController {
         if (!user.get().isEnabled()){
             throw new UserIsDisabledException("User ["+username+"] is disabled.");
         }
-        if (user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.PRIVATE.name()) && !currentUser.getUser().getId().equals(user.get().getId())){
-            return "sharePage/private";
+        if (user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.PRIVATE.name())){
+            if (currentUser == null){
+                return "sharePage/private";
+            }
+            if (!currentUser.getUser().getId().equals(user.get().getId())){
+                return "sharePage/private";
+            }
         }
         if ((user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.PROTECTED.name()) || user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.FOR_SELECTED.name())) && currentUser == null){
+            model.asMap().put("username", user.get().getUsername()+"'s");
+            if (user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.FOR_SELECTED.name()) && currentUser == null){
+                return "sharePage/cantShare";
+            }
             return "sharePage/notLoggedIn";
         }
         if (user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.FOR_SELECTED.name())){
