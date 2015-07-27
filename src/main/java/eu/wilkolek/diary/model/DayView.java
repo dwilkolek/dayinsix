@@ -44,7 +44,15 @@ public class DayView {
         // }
         this.canSee = true;
         if (this.shareStyle.equals(ShareStyleEnum.PRIVATE.name())) {
-            this.canSee = false;
+            if (whosDay!=null && whoWatches!=null){
+                if (!whosDay.getId().equals(whoWatches.getId())){
+                    this.canSee = false;
+                }
+            } else {
+                this.canSee = false;
+            }
+            
+            
         }
         if ((this.shareStyle.equals(ShareStyleEnum.PROTECTED.name()) || this.shareStyle.equals(ShareStyleEnum.FOR_SELECTED.name())) && whoWatches == null) {
             this.canSee = false;

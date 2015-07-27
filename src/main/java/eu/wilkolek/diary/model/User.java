@@ -48,6 +48,8 @@ public class User {
     private String about;
     
     private boolean enabled;
+
+    private ArrayList<String> blocked;
     
     public String getToken() {
         return token;
@@ -99,6 +101,7 @@ public class User {
         this.followedBy = new ArrayList<String>();
         this.followingBy = new ArrayList<String>();
         this.sharingWith = new ArrayList<String>();
+        this.setBlocked(new ArrayList<String>());
         this.created = DateTimeUtils.getCurrentUTCTime();
 
     }
@@ -148,7 +151,7 @@ public class User {
             this.setAbout(form.getAbout());
         }
         
-        
+        this.enabled = StringUtils.isEmpty((form.getEnabled())) ? true : false;
         
         
         
@@ -267,6 +270,14 @@ public class User {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public ArrayList<String> getBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(ArrayList<String> blocked) {
+        this.blocked = blocked;
     }
 
 

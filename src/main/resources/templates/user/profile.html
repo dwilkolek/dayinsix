@@ -72,6 +72,12 @@
                                                     th:selected="${form != null and s.key == form.notificationFrequency}" />
                                             </select>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="userEnabled">
+                                            <input type="checkbox" class="fonr-control" value="false" th:checked="${form.enabled == 'false'}" name="enabled" />
+                                            Disable account</label> 
+                                            
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <!--                                     <div class="form-group"> -->

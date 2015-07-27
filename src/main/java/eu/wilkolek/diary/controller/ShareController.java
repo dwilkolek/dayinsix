@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import eu.wilkolek.diary.dto.DayForm;
 import eu.wilkolek.diary.exception.NoSuchUserException;
 import eu.wilkolek.diary.exception.OutOfDateException;
+import eu.wilkolek.diary.exception.UserIsDisabledException;
 import eu.wilkolek.diary.model.CurrentUser;
 import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.DayView;
@@ -46,20 +47,22 @@ public class ShareController {
     
     
     @RequestMapping("/s/{username}")
-    public String sharePageStart(Model model,  @PathVariable(value = "username") String username, CurrentUser currentUser) throws NoSuchUserException {
+    public String sharePageStart(Model model,  @PathVariable(value = "username") String username, CurrentUser currentUser) throws NoSuchUserException, UserIsDisabledException {
         return this.sharePage(model, username, 1, currentUser);
     }
     
     @RequestMapping("/s/{username}/{page}")
-    public String sharePage(Model model,  @PathVariable(value = "username") String username, @PathVariable(value = "page") Integer page, CurrentUser currentUser) throws NoSuchUserException {
+    public String sharePage(Model model,  @PathVariable(value = "username") String username, @PathVariable(value = "page") Integer page, CurrentUser currentUser) throws NoSuchUserException, UserIsDisabledException {
         model.asMap().put("title", MetadataHelper.title(username + "'s diary"));
         Optional<User> user = userRepository.findByUsername(username);
         
         if (!user.isPresent()){
             throw new NoSuchUserException("Looking for user ["+username+"] failed.");
         }
-        
-        if (user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.PRIVATE.name())){
+        if (!user.get().isEnabled()){
+            throw new UserIsDisabledException("User ["+username+"] is disabled.");
+        }
+        if (user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.PRIVATE.name()) && !currentUser.getUser().getId().equals(user.get().getId())){
             return "sharePage/private";
         }
         if ((user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.PROTECTED.name()) || user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.FOR_SELECTED.name())) && currentUser == null){

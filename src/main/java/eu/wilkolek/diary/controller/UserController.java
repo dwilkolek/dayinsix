@@ -370,7 +370,9 @@ public class UserController {
         saveSuccess = true;
         model.addAttribute("saveSuccess", !result.hasErrors());
         model.addAttribute("title", MetadataHelper.title("Your profile"));
-
+        if (!user.isEnabled()){
+            return "redirect:/logout/userDisabled";
+        }
         return "user/profile";
 
     }

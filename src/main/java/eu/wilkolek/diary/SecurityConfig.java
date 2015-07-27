@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -23,6 +25,9 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationSuccessHandler successHandler;
 
+    @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
+    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -34,9 +39,9 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .anyRequest().fullyAuthenticated().and().formLogin()
                 .loginPage("/login").failureUrl("/loginError").defaultSuccessUrl("/loginSuccess").successHandler(successHandler).usernameParameter("email")
-                .permitAll().and().logout().logoutUrl("/logout").deleteCookies("remember-me").logoutSuccessUrl("/").permitAll().and()
-
-                .rememberMe();
+                .permitAll().and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout/**")).deleteCookies("remember-me").logoutSuccessHandler(logoutSuccessHandler).permitAll()
+                
+                .and().rememberMe();
 
     }
 

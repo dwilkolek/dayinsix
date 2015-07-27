@@ -158,6 +158,11 @@ public class AuthController {
         return new ModelAndView("redirect:/thankyou");
     }
 
+    @RequestMapping(value = "/userDisabled", method = RequestMethod.GET)
+    public String logoutDisabled(){
+        return "auth/logoutDisabledUser";
+    }
+    
     @RequestMapping(value = "/activate/{username}/{token}", method = RequestMethod.GET)
     public ModelAndView activate(@PathVariable(value = "username") String username, @PathVariable(value = "token") String token) {
         ModelAndView model = new ModelAndView("auth/activate");

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.validation.ObjectError;
 
@@ -37,6 +38,9 @@ public class ProfileForm{
 //        this.setShareStyle(user.getOptions().get(UserOptions.SHARE_STYLE));
 //        this.setTimezone(user.getOptions().get(UserOptions.TIMEZONE));
         this.setProfileVisibility(user.getOptions().get(UserOptions.PROFILE_VISIBILITY));
+        if (!user.isEnabled()){
+            this.setEnabled("false");
+        }
         
     }
 
@@ -64,6 +68,8 @@ public class ProfileForm{
     
     @NotEmpty
     private String inputType = "";
+    
+    private String enabled = "";
     
 //    @NotEmpty
 //    private String timezone = "";
@@ -159,6 +165,14 @@ public class ProfileForm{
 
     public void setProfileVisibility(String profileVisibility) {
         this.profileVisibility = profileVisibility;
+    }
+
+    public String getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(String enabled) {
+        this.enabled = enabled;
     }
     
     
