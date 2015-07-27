@@ -41,9 +41,9 @@ import eu.wilkolek.diary.model.InputTypeEnum;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.service.MailService;
 import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.Email;
-import eu.wilkolek.diary.util.MailUtils;
 //import eu.wilkolek.diary.util.TimezoneUtils;
 import eu.wilkolek.diary.util.MetadataHelper;
 
@@ -56,6 +56,7 @@ public class AuthController {
 
     private UserCreateFormValidator userCreateFormValidator;
     private JavaMailSender javaMailSender;
+    private MailService mailService;
 
     @InitBinder("form")
     public void initBinder(WebDataBinder binder) {
@@ -63,10 +64,11 @@ public class AuthController {
     }
 
     @Autowired
-    public AuthController(UserRepository userRepository, UserCreateFormValidator userCreateFormValidator, JavaMailSender javaMailSender) {
+    public AuthController(UserRepository userRepository, UserCreateFormValidator userCreateFormValidator, JavaMailSender javaMailSender, MailService mailService) {
         this.userRepository = userRepository;
         this.userCreateFormValidator = userCreateFormValidator;
         this.javaMailSender = javaMailSender;
+        this.mailService = mailService;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -112,7 +114,7 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView handleRegister(@Valid @ModelAttribute("form") UserCreateForm form, BindingResult bindingResult) {
+    public ModelAndView handleRegister(@Valid @ModelAttribute("form") UserCreateForm form, BindingResult bindingResult) throws UnsupportedEncodingException, MessagingException {
         LOGGER.debug("Processing user create form={}, bindingResult={}", form, bindingResult);
 
         ModelAndView model = new ModelAndView("auth/register");
@@ -138,7 +140,7 @@ public class AuthController {
             user.setToken(token);
             user = userRepository.save(user);
            
-            this.sendActivation(user.getUsername(), user.getToken(), user.getEmail());
+            this.sendActivation(user);
           
 
         } catch (DataIntegrityViolationException e) {
@@ -192,62 +194,51 @@ public class AuthController {
         return model;
     }
 
-    public void sendActivation(String username, String token, String email) {
-        try {
-            String link = "http://dayinsix.com/activate/" + username + "/" + token;
+    public void sendActivation(User user) throws UnsupportedEncodingException, MessagingException {
+
+            String link = "http://dayinsix.com/activate/" + user.getUsername() + "/" + user.getToken();
             // sender.setHost("mail.host.com");
 
-            MimeMessage message = this.javaMailSender.createMimeMessage();
-
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setTo(email);
-            helper.setFrom(MailUtils.FROM, MailUtils.NAME);
+            MimeMessage message = this.mailService.createMimeMessage();
+            MimeMessageHelper helper = this.mailService.getHelper(message, false);
+            helper.setTo(user.getEmail());
             helper.setText("<html><body>Welcome to dayinsix, <br />" + "Your diary is almost ready for you to write in it. <br />"
                     + "Finish the registration by opening the link below and enjoy saving your days.<br />" + "<a href='" + link + "'>" + link
                     + "</a><br /><br />Cheers, dayinsix crew</body></html>", true);
             helper.setSubject("Activate your account at dayinsix.com");
-
-            this.javaMailSender.send(message);
-        } catch (MessagingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (java.lang.Exception e){
-            e.printStackTrace();
-        }
+            mailService.sendMessage(message, null);
+        
     }
 
-    public SimpleMailMessage sendThanks(String email) {
-        // TODO
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(email);
-        // mailMessage.setReplyTo("someone@localhost");
-        mailMessage.setFrom(MailUtils.FROM);
-        mailMessage.setSubject("Thanks for registering at dayinsix.com");
-        mailMessage.setText("Thanks for registering :*");
-        javaMailSender.send(mailMessage);
-        return mailMessage;
+//    public SimpleMailMessage sendThanks(String email) {
+//        // TODO
+//        SimpleMailMessage mailMessage = new SimpleMailMessage();
+//        mailMessage.setTo(email);
+//        // mailMessage.setReplyTo("someone@localhost");
+//        mailMessage.setFrom(MailService.FROM);
+//        mailMessage.setSubject("Thanks for registering at dayinsix.com");
+//        mailMessage.setText("Thanks for registering :*");
+//        javaMailSender.send(mailMessage);
+//        return mailMessage;
+//
+//    }
 
-    }
+    public void sendNewPassowrd(User user, String password) {
 
-    public void sendNewPassowrd(String email, String username, String password) {
+        
 
-        MimeMessage message = this.javaMailSender.createMimeMessage();
-
-        MimeMessageHelper helper;
+       
         try {
-            helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setTo(email);
-            helper.setFrom(MailUtils.FROM, MailUtils.NAME);
-            helper.setText("<html><body>Hi " + username + ",\n" + "Seems like you've got forgotten your password. Here's the new one: " + password + " .\n"
+            MimeMessage message = mailService.createMimeMessage();
+            MimeMessageHelper helper = mailService.getHelper(message,false);
+            helper.setTo(user.getEmail());
+           
+            helper.setText("<html><body>Hi " + user.getUsername() + ",\n" + "Seems like you've got forgotten your password. Here's the new one: " + password + " .\n"
                     + "Log in with it and remember that you can change it in settings if you'd like to\n\n\n"
                     + "Cheers, dayinsix crew<br /><br />Cheers, dayinsix crew</body></html>", true);
             helper.setSubject("You've got new password at dayinsix.com");
 
-            this.javaMailSender.send(message);
+            mailService.sendMessage(message, null);
         } catch (MessagingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -282,10 +273,10 @@ public class AuthController {
 
         user.get().setPasswordHash(encoder.encode(token));
 
-        userRepository.save(user.get());
+        User uSaved = userRepository.save(user.get());
 
         model.getModelMap().addAttribute("title", MetadataHelper.title("Reset successful"));
-        this.sendNewPassowrd(user.get().getEmail(), user.get().getUsername(), token);
+        this.sendNewPassowrd(uSaved, token);
 
         return model;
     }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public enum NotificationTypesEnum {
-    DAY("1 day"),WEEK("1 week"), TWO_WEEKS("2 weeks"), MONTH("1 month"), THREE_MONTHS(
+    NONE("no notifications at all"),DAY("1 day"),WEEK("1 week"), TWO_WEEKS("2 weeks"), MONTH("1 month"), THREE_MONTHS(
             "3 months"), YEAR("1 year");
 
     private String description;
@@ -29,7 +29,9 @@ public enum NotificationTypesEnum {
         if (n == null) {
             n = WEEK.name();
         }
-
+        if (n.equals(NONE.name())){
+            return new String(Long.MAX_VALUE+"");
+        } else
         if (n.equals(DAY.name())) {
             return "1";
         } else
@@ -62,6 +64,10 @@ public enum NotificationTypesEnum {
         if (days == null) {
             days = "7";
         }
+        String none = new String(Long.MAX_VALUE+"");
+        if(none.equals(days)){
+            return NONE;
+        } else
         if ("1".equals(days)){
             return DAY;
         }

@@ -24,9 +24,9 @@ import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.MailRepository;
+import eu.wilkolek.diary.service.MailService;
 import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.DayHelper;
-import eu.wilkolek.diary.util.MailUtils;
 import eu.wilkolek.diary.util.MetadataHelper;
 
 @Controller
@@ -42,6 +42,9 @@ public class StaticController {
 
     @Autowired
     private DayRepository dayRepository;
+    
+    @Autowired
+    private MailService mailService;
     
     @RequestMapping("/")
     public ModelAndView home(CurrentUser currentUser) {
@@ -110,16 +113,13 @@ public class StaticController {
 
             // sender.setHost("mail.host.com");
 
-            MimeMessage message = this.javaMailSender.createMimeMessage();
+            MimeMessage message = mailService.createMimeMessage();
 
-            MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+            MimeMessageHelper helper = mailService.getHelper(message, true);
 
-            helper.setTo(MailUtils.FEEDBACK);
-
-            helper.setFrom(MailUtils.FROM, MailUtils.NAME);
             helper.setText(msg, true);
             helper.setSubject("Feedback required #" + msgId);
-            this.javaMailSender.send(message);
+            mailService.sendMessage(message, null);
             model.getModelMap().addAttribute("sent", true);
         } catch (MessagingException e) {
             model.getModelMap().addAttribute("sent", false);

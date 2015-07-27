@@ -1,8 +1,10 @@
 package eu.wilkolek.diary.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +36,8 @@ public class User {
     private HashMap<String, Date> optionsLastUpdate;
     
     private Date lastLogIn;
+    
+    private Date lastNotification;
     
     private Date created;
     
@@ -278,6 +282,19 @@ public class User {
 
     public void setBlocked(ArrayList<String> blocked) {
         this.blocked = blocked;
+    }
+
+    public Date getLastNotification() {
+        if (lastNotification == null){
+            Calendar cal = new GregorianCalendar();
+            cal.set(1990, 1, 1);
+            return cal.getTime();
+        }
+        return lastNotification;
+    }
+
+    public void setLastNotification(Date lastNotification) {
+        this.lastNotification = lastNotification;
     }
 
 

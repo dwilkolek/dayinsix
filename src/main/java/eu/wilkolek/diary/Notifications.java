@@ -18,8 +18,8 @@ import eu.wilkolek.diary.model.NotificationTypesEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.model.UserOptions;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.service.MailService;
 import eu.wilkolek.diary.util.DateTimeUtils;
-import eu.wilkolek.diary.util.MailUtils;
 
 @Component
 public class Notifications {
@@ -28,29 +28,28 @@ public class Notifications {
     private UserRepository userRepository;
 
     @Autowired
-    private JavaMailSender javaMailSender;
-
+    private MailService mailService;
 
 //    @Scheduled(fixedDelay = 5000L)
-    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void sendNotification() {
         System.out.println("sentNotification "+DateTimeUtils.getCurrentUTCTime() + " | "+(new Date(System.currentTimeMillis())));
-        Date now = DateTimeUtils.getCurrentUTCTime();
+        
         if (this.userRepository != null) {
             List<User> users = this.userRepository.findAll();
 
             for (User u : users) {
-                System.out.println(u.getUsername());
-                String freq = u.getOptions().get(UserOptions.NOTIFICATION_FREQUENCY);
-
-                Long daysL = Long.parseLong(NotificationTypesEnum.getInDays(freq));
-
-                boolean shouldNotify = DateTimeUtils.isDiffIsBiggerThanMin(u.getLastLogIn(), now, daysL);
-                long diff = DateTimeUtils.diffInDays(u.getLastLogIn(), now);
-                if (shouldNotify && u.isEnabled()) {
-//                    System.out.println(" Send");
-                    this.sendEmail(u.getEmail(), u.getUsername(), diff);
-                }
+               try {
+                mailService.sendNotification(u);
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+//                e.printStackTrace();
+            } catch (MessagingException e) {
+                // TODO Auto-generated catch block
+//                e.printStackTrace();
+            } catch (Exception e) {
+//                e.printStackTrace();
+            }
 
             }
 
@@ -59,31 +58,7 @@ public class Notifications {
     }
 
     private void sendEmail(String email, String username, long diff) {
-        try {
-
-            // sender.setHost("mail.host.com");
-
-            MimeMessage message = this.javaMailSender.createMimeMessage();
-
-            MimeMessageHelper helper = new MimeMessageHelper(message);
-
-            helper.setTo(email);
-
-            helper.setFrom(MailUtils.FROM, MailUtils.NAME);
-            helper.setText("<html><body>Hello " + username + ", <br />" + "You haven't written in your diary for " + diff + ".<br />"
-                    + "Quickly, log in <a href='http://dayinsix.com'>DayInSix.com</a> and make up for all these days. <br />"
-                    + "Otherwise you're going to lost many beautiful memories.<br /><br />" + "DayInSix crew" + "</body></html>", true);
-            helper.setSubject("Activate your account at dayinsix.com");
-            this.javaMailSender.send(message);
-        } catch (MessagingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (Exception e){
-            System.out.println("timeout exception");
-        }
+        
 
     }
 
