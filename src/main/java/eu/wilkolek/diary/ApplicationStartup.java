@@ -224,5 +224,18 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         u3.setEnabled(true);
         userRepository.save(u3);
         u3 = null;
+        
+        
+        User u5 = new User();
+        HashMap<String,String> opt5 = new HashMap<String, String>();
+        opt5.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.NONE.name());
+        u5.setOptions(opt5);
+        u5.setLastLogIn(new Date(nowMilis - dayMilis*94 - 3000));
+        u5.setLastNotification(new Date(nowMilis - dayMilis*2000));
+        u5.setUsername("Julia5_true_true");
+        u5.setEmail("juliush@interia.pl");
+        u5.setEnabled(true);
+        userRepository.save(u5);
+        u5=null;
     }
 }

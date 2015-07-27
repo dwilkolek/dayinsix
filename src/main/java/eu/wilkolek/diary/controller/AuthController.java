@@ -236,7 +236,7 @@ public class AuthController {
             helper.setText("<html><body>Hi " + user.getUsername() + ",\n" + "Seems like you've got forgotten your password. Here's the new one: " + password + " .\n"
                     + "Log in with it and remember that you can change it in settings if you'd like to\n\n\n"
                     + "Cheers, dayinsix crew<br /><br />Cheers, dayinsix crew</body></html>", true);
-            helper.setSubject("You've got new password at dayinsix.com");
+            helper.setSubject("Password reminder / DayInSix.com");
 
             mailService.sendMessage(message, null);
         } catch (MessagingException e) {

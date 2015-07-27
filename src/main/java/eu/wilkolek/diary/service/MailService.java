@@ -30,12 +30,16 @@ public class MailService {
     private UserRepository userRepository;
     
     public void sendMessage(MimeMessage message, User user ){
+        try{
         boolean canSend = true;
         if (user != null) {
             canSend = this.checkights(user);
         }
         if (canSend) {
             this.javaMailSender.send(message);
+        }
+        } catch(Exception timeout){
+            timeout.printStackTrace();
         }
     }
 
@@ -81,9 +85,9 @@ public class MailService {
         helper.setText("<html><body>Hello " + u.getUsername() + ", <br />" + "You haven't written in your diary for " + diff + " days .<br />"
                 + "Quickly, log in <a href='http://dayinsix.com'>DayInSix.com</a> and make up for all these days. <br />"
                 + "Otherwise you're going to lost many beautiful memories.<br /><br />" + "DayInSix crew" + "</body></html>", true);
-        helper.setSubject("Activate your account at dayinsix.com");
+        helper.setSubject("Absence notification / DayInSix.com");
         
-        System.out.println(u.getUsername());
+        System.out.println("Message sent: "+u.getUsername());
         u.setLastNotification(DateTimeUtils.getCurrentUTCTime());
         userRepository.save(u);
         this.sendMessage(message, null);
