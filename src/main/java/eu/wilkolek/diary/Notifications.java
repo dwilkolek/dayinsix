@@ -30,22 +30,25 @@ public class Notifications {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @Scheduled(cron = "0 0 2 * * ?")
-    public void sendNotyfication() {
+
+//    @Scheduled(fixedDelay = 5000L)
+    @Scheduled(cron = "0 0 12 * * ?")
+    public void sendNotification() {
+        System.out.println("sentNotification "+DateTimeUtils.getCurrentUTCTime() + " | "+(new Date(System.currentTimeMillis())));
         Date now = DateTimeUtils.getCurrentUTCTime();
         if (this.userRepository != null) {
             List<User> users = this.userRepository.findAll();
 
             for (User u : users) {
-
+                System.out.println(u.getUsername());
                 String freq = u.getOptions().get(UserOptions.NOTIFICATION_FREQUENCY);
 
                 Long daysL = Long.parseLong(NotificationTypesEnum.getInDays(freq));
 
-                boolean shouldNotify = !DateTimeUtils.isLowerThanMinTimeDiff(u.getLastLogIn(), now, daysL);
+                boolean shouldNotify = DateTimeUtils.isDiffIsBiggerThanMin(u.getLastLogIn(), now, daysL);
                 long diff = DateTimeUtils.diffInDays(u.getLastLogIn(), now);
                 if (shouldNotify && u.isEnabled()) {
-
+//                    System.out.println(" Send");
                     this.sendEmail(u.getEmail(), u.getUsername(), diff);
                 }
 
@@ -78,6 +81,8 @@ public class Notifications {
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        } catch (Exception e){
+            System.out.println("timeout exception");
         }
 
     }

@@ -84,5 +84,11 @@ public class DateTimeUtils {
         }
 
     }
+
+    public static boolean isDiffIsBiggerThanMin(Date lastLogIn, Date now, Long daysL) {
+        long diffinDays = diffInDays(lastLogIn, now);
+        Boolean resultValue = diffinDays > daysL;
+        return resultValue;
+    }
     
 }

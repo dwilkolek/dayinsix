@@ -190,7 +190,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         
         User u2 = new User();
         HashMap<String,String> opt2 = new HashMap<String, String>();
-        opt.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.THREE_MONTHS.name());
+        opt2.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.THREE_MONTHS.name());
         u2.setOptions(opt2);
         u2.setLastLogIn(new Date(nowMilis - dayMilis*94 - 3000));
         u2.setUsername("Julia2_true_true");
@@ -201,9 +201,9 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         
         User u4 = new User();
         HashMap<String,String> opt4 = new HashMap<String, String>();
-        opt.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.DAY.name());
+        opt4.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.DAY.name());
         u4.setOptions(opt4);
-        u4.setLastLogIn(new Date(nowMilis - dayMilis*1 - 3000));
+        u4.setLastLogIn(new Date(nowMilis - dayMilis*2));
         u4.setUsername("Julia4_true_false");
         u4.setEmail("juliush@interia.pl");
         u4.setEnabled(false);
@@ -212,7 +212,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         
         User u3 = new User();
         HashMap<String,String> opt3 = new HashMap<String, String>();
-        opt.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.THREE_MONTHS.name());
+        opt3.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.THREE_MONTHS.name());
         u3.setOptions(opt3);
         u3.setLastLogIn(new Date(nowMilis - dayMilis*89 - 3000));
         u3.setUsername("Julia3_false_true");
