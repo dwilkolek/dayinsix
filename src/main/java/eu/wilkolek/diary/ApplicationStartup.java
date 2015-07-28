@@ -89,7 +89,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         long milis = TimeUnit.DAYS.toMillis(751L);
         long mili2 = DateTimeUtils.getCurrentUTCTime().getTime();
         user.setCreated(new Date(mili2 - milis));
-        user.setEmail("word@word.it");
+        user.setEmail("word@dayinsix.com");
         user.setPasswordHash(encoder.encode("wordit"));
         user.setLastLogIn(DateTimeUtils.getCurrentUTCTime());
         user.setRoles(roles);
@@ -169,7 +169,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
             this.setupDictionaryEN();
         }
         this.prepareTestUserWithData();
-        this.prepareNotyficationTest();
+     //   this.prepareNotyficationTest();
 
     }
 
