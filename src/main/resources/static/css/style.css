@@ -180,3 +180,9 @@ input, button, select, option, textarea, .btn {
 	font-size:0.8em;
 	margin:0px 5px;
 }
+
+.card.explore .action{
+	float:right;
+	margin: 5px 10px;
+	font-size:0.8em;
+}

@@ -1,0 +1,53 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head" />
+<body class="">
+    <div id="page-wrapper">
+        <div class="container">
+            <!-- Header -->
+            <div id="header-wrapper" th:replace="fragments/header" />
+
+
+
+            <div id="content" class="full-body">
+                <!--             <div class="container"> -->
+
+                <!--                 <div id="sidebar" class="col-md-3" th:replace="fragments/topbar " /> -->
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <!-- Content -->
+                        <div class="content">
+                            <div class="form-group">
+                               
+                                <label for="searchbox">Search</label>
+                                <input type="form-control" name="search" id="searchbox" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <!-- Content -->
+                        <div class="content resultbox">
+
+                            <div class='card explore' >Type at least 3 letters...</div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            <!-- Footer -->
+            <div id="footer-wrapper" th:replace="fragments/footer" />
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:replace="fragments/scripts" />
+
+</body>
+</html>

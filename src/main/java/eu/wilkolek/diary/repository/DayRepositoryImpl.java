@@ -50,13 +50,15 @@ private MongoOperations operation;
         if (level.equals(ShareStyleEnum.PUBLIC) || level.equals(ShareStyleEnum.PROTECTED)){
             c = Criteria.where("shareStyle").is(ShareStyleEnum.PUBLIC.name());
             c.andOperator(Criteria.where("userProfileVisibility").is(ShareStyleEnum.PUBLIC.name()));
+//            c.andOperator(Criteria.where("enabled").is(true));
         }
         if (level.equals(ShareStyleEnum.PROTECTED)){
             ArrayList<String> shareStyle = new ArrayList<String>();
             shareStyle.add(ShareStyleEnum.PROTECTED.name());
             shareStyle.add(ShareStyleEnum.PUBLIC.name());
             c = Criteria.where("shareStyle").in(shareStyle);
-            c.orOperator(Criteria.where("userProfileVisibility").in(shareStyle));
+//            c.andOperator(Criteria.where("enabled").is(true));
+            c.andOperator(Criteria.where("userProfileVisibility").in(shareStyle));
         }
         
         

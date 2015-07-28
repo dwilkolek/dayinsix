@@ -224,10 +224,6 @@ public class AuthController {
 //    }
 
     public void sendNewPassowrd(User user, String password) {
-
-        
-
-       
         try {
             MimeMessage message = mailService.createMimeMessage();
             MimeMessageHelper helper = mailService.getHelper(message,false);

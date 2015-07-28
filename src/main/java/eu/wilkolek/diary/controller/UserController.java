@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -355,7 +356,11 @@ public class UserController {
 
             List<Day> storedDays = dayRepository.findAllByUser(user);
             for (Day storedDay : storedDays) {
-                storedDay.setUserProfileVisibility(user.getOptions().get(UserOptions.PROFILE_VISIBILITY));
+                if (!user.isEnabled()){
+                    storedDay.setUserProfileVisibility(ShareStyleEnum.PRIVATE.name());
+                } else {
+                    storedDay.setUserProfileVisibility(user.getOptions().get(UserOptions.PROFILE_VISIBILITY));
+                }
             }
             storedDays = dayRepository.save(storedDays);
         } else {
@@ -371,12 +376,18 @@ public class UserController {
         model.addAttribute("saveSuccess", !result.hasErrors());
         model.addAttribute("title", MetadataHelper.title("Your profile"));
         if (!user.isEnabled()){
-            return "redirect:/logout/userDisabled";
+           return "redirect:/logout/userDisabled";
         }
         return "user/profile";
 
     }
 
+//    @PreAuthorize("hasAuthority('USER')")
+//    @RequestMapping(value = "/user/share/{username}", method = RequestMethod.POST)
+//    public String followByPathParam(CurrentUser currentUser,Model model, @PathVariable(value="username") String username) throws NoSuchUserException {
+//        return this.followBy(currentUser,model, username);
+//    }
+    
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/follow/{username}")
     public String followBy(CurrentUser currentUser, Model model, @PathVariable(value = "username") String username) {
@@ -411,7 +422,7 @@ public class UserController {
         }
 
         model.asMap().put("username", user.get().getUsername());
-        model.asMap().put("follows", userRepository.findAll(currentUser.getUser().getFollowingBy()));
+        model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(currentUser.getUser().getFollowingBy())));
         model.asMap().put("title", MetadataHelper.title("Followed by you"));
         return "redirect:/user/following";
     }
@@ -423,11 +434,17 @@ public class UserController {
         if (lookFor == null) {
             lookFor = new ArrayList<String>();
         }
-        model.asMap().put("shares", userRepository.findAll(lookFor));
+        model.asMap().put("shares", DayHelper.selectEnabled(userRepository.findAll(lookFor)));
         model.asMap().put("title", MetadataHelper.title("Users you share days with"));
         return "user/share";
     }
 
+    @PreAuthorize("hasAuthority('USER')")
+    @RequestMapping(value = "/user/share/{username}", method = {RequestMethod.POST, RequestMethod.GET})
+    public ModelAndView shareWithPathParam(CurrentUser currentUser, @PathVariable(value="username") String username) throws NoSuchUserException {
+        return this.shareWith(currentUser, username);
+    }
+    
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/share", method = RequestMethod.POST)
     public ModelAndView shareWith(CurrentUser currentUser, @RequestParam(value = "username", required = true) String username) throws NoSuchUserException {
@@ -455,7 +472,7 @@ public class UserController {
         }
 
         model.getModelMap().put("username", user.get().getUsername());
-        model.getModelMap().put("shares", userRepository.findAll(currentUser.getUser().getSharingWith()));
+        model.getModelMap().put("shares", DayHelper.selectEnabled(userRepository.findAll(currentUser.getUser().getSharingWith())));
         return model;
     }
 
@@ -468,7 +485,7 @@ public class UserController {
             lookFor = new ArrayList<String>();
         }
         currentUser.setUser(userByDb);
-        model.asMap().put("follows", userRepository.findAll(lookFor));
+        model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(lookFor)));
         model.asMap().put("title", MetadataHelper.title("Followed by you"));
         return "user/following";
     }
@@ -482,13 +499,13 @@ public class UserController {
             lookFor = new ArrayList<String>();
         }
         currentUser.setUser(userByDb);
-        model.asMap().put("follows", userRepository.findAll(lookFor));
+        model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(lookFor)));
         model.asMap().put("title", MetadataHelper.title("Your followers"));
         return "user/followed";
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @RequestMapping(value = "/user/unfollow/{username}")
+    @RequestMapping(value = "/user/unfollow/{username}", method = {RequestMethod.POST, RequestMethod.GET})
     public String unfollow(CurrentUser currentUser, @PathVariable(value = "username") String username) throws NoSuchUserException {
         User currentUserDb = userRepository.findById(currentUser.getUser().getId()).get();
         Optional<User> otherUserDb = userRepository.findByUsername(username);
@@ -520,8 +537,10 @@ public class UserController {
         return "redirect:/user/following";
     }
 
+    
+    
     @PreAuthorize("hasAuthority('USER')")
-    @RequestMapping(value = "/user/unshare/{username}", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/unshare/{username}", method = {RequestMethod.POST, RequestMethod.GET})
     public String unshare(Model model, CurrentUser currentUser, @PathVariable(value = "username") String username) {
         User u = userRepository.findById(currentUser.getUser().getId()).get();
         Optional<User> op = userRepository.findByUsername(username);
@@ -608,5 +627,7 @@ public class UserController {
         return result;
         
     }
+    
+    
     
 }

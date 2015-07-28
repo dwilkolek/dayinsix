@@ -1,5 +1,7 @@
 package eu.wilkolek.diary.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +13,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import eu.wilkolek.diary.model.CurrentUser;
+import eu.wilkolek.diary.model.Day;
+import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
+import eu.wilkolek.diary.model.UserOptions;
+import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.UserRepository;
 
 
@@ -20,10 +26,12 @@ public class CurrentUserDetailsService implements UserDetailsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CurrentUserDetailsService.class);
     private final UserRepository userRepository;
+    private final DayRepository dayRepository;
 
     @Autowired
-    public CurrentUserDetailsService(UserRepository userRepository) {
+    public CurrentUserDetailsService(UserRepository userRepository, DayRepository dayRepository) {
         this.userRepository = userRepository;
+        this.dayRepository = dayRepository;
     }
 
     @Override
@@ -38,6 +46,13 @@ public class CurrentUserDetailsService implements UserDetailsService {
         }
         if (!user.get().isEnabled() && StringUtils.isEmpty(user.get().getToken())){
             user.get().setEnabled(true);
+            List<Day> storedDays = dayRepository.findAllByUser(user.get());
+            for (Day storedDay : storedDays) {          
+                storedDay.setUserProfileVisibility(user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY));
+            }
+            
+            dayRepository.save(storedDays);
+//            System.out.println("Stored : "+storedDays.size());
             return new CurrentUser(userRepository.save(user.get()));
         }
         

@@ -216,4 +216,14 @@ public class DayHelper {
         
         return monthStr+" "+year;
     }
+    
+    public static List<User> selectEnabled(Iterable<User> list){
+        LinkedList<User> result = new LinkedList<User>();
+        for (User u : list){
+            if (u.isEnabled()){
+                result.add(u);
+            }
+        }
+        return result;
+    }
 }

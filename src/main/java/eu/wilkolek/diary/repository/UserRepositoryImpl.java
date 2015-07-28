@@ -3,6 +3,7 @@ package eu.wilkolek.diary.repository;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -46,6 +47,15 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
             }
         }
         return canShare;
+    }
+
+    @Override
+    public List<User> findAllByPartUserName(String search, int limit) {
+        Criteria c = Criteria.where("username").regex("^"+search+"(.*)$","i").and("enabled").is(true);
+        Query query = new Query(c);
+        query.with(new Sort(Sort.Direction.DESC, "username"));
+        
+        return operation.find(query.limit(limit), User.class);
     }
 	
 }
