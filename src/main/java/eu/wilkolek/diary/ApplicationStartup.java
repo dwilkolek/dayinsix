@@ -120,7 +120,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         user = userRepository.save(user);
         user.setFollowingBy(new ArrayList<String>());
         user.setSharingWith(new ArrayList<String>());
-        System.out.println("User used:" + gson.toJson(user));
+//        System.out.println("User used:" + gson.toJson(user));
         
         
         
@@ -157,7 +157,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
             }
             day.setUser(user);
             day = dayRepository.save(day);
-            System.out.println("Day added: " + gson.toJson(day));
+//            System.out.println("Day added: " + gson.toJson(day));
             i++;
         }
 
