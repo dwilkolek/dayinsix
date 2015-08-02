@@ -84,11 +84,10 @@ public class StaticController {
         ModelAndView model = new ModelAndView("static/feedbackSent");
         model.getModelMap().addAttribute("title", MetadataHelper.title("Feedback"));
         String msg = this.createMsg(currentUser != null ? currentUser.getUser() : null, mail);
-        Mail m = new Mail();
-        m.setMessage(msg);
-        m.setDate(DateTimeUtils.getCurrentUTCTime());
-        Mail mailS = mailRepository.save(m);
-        this.sendEmail(msg, mailS.getId(), model);
+        
+        
+        
+        this.sendEmail(msg,  model );
 
         LOGGER.debug("Feedback POST");
         return model;
@@ -108,7 +107,7 @@ public class StaticController {
         return "<html><body>"+start +msg+"</body></html>";
     }
 
-    private void sendEmail(String msg, String msgId, ModelAndView model) {
+    private void sendEmail(String msg, ModelAndView model) {
 
         try {
 
@@ -119,8 +118,8 @@ public class StaticController {
             MimeMessageHelper helper = MailUtil.getHelper(message, true);
 
             helper.setText(msg, true);
-            helper.setSubject("Feedback required #" + msgId);
-            mailService.sendMessage(message, null);
+            helper.setSubject("Feedback required");
+            mailService.sendMessage(message,msg, null, true);
             model.getModelMap().addAttribute("sent", true);
         } catch (MessagingException e) {
             model.getModelMap().addAttribute("sent", false);

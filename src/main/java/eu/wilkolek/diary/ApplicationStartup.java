@@ -34,6 +34,8 @@ import eu.wilkolek.diary.model.UserOptions;
 import eu.wilkolek.diary.model.Word;
 import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.DictionaryWordRepository;
+import eu.wilkolek.diary.repository.ErrorRepository;
+import eu.wilkolek.diary.repository.MailRepository;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
 
@@ -45,12 +47,16 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
     private DictionaryWordRepository dictionaryWordRepository;
     private UserRepository userRepository;
     private DayRepository dayRepository;
+    private MailRepository mailRepository;
+    private ErrorRepository errorRepository;
 
     @Autowired
-    public ApplicationStartup(DictionaryWordRepository dictionaryWordRepository, UserRepository userRepository, DayRepository dayRepository) {
+    public ApplicationStartup(DictionaryWordRepository dictionaryWordRepository, UserRepository userRepository, DayRepository dayRepository,ErrorRepository errorRepository,MailRepository mailRepository) {
         this.dictionaryWordRepository = dictionaryWordRepository;
         this.dayRepository = dayRepository;
         this.userRepository = userRepository;
+        this.mailRepository = mailRepository;
+        this.errorRepository = errorRepository;
     }
 
     private void setupDictionaryEN() {
@@ -77,7 +83,8 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         Gson gson = new Gson();
         Collection<String> roles = new ArrayList<String>();
         roles.add("USER");
-
+        errorRepository.deleteAll();
+        mailRepository.deleteAll();
         dayRepository.deleteAll();
         userRepository.deleteAll();
         dictionaryWordRepository.deleteAll();

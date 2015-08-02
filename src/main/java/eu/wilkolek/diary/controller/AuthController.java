@@ -203,11 +203,12 @@ public class AuthController {
             MimeMessage message = MailUtil.createMessage(javaMailSender);
             MimeMessageHelper helper = MailUtil.getHelper(message, false);
             helper.setTo(user.getEmail());
-            helper.setText("<html><body>Welcome to dayinsix, <br />" + "Your diary is almost ready for you to write in it. <br />"
+            String text = "<html><body>Welcome to dayinsix, <br />" + "Your diary is almost ready for you to write in it. <br />"
                     + "Finish the registration by opening the link below and enjoy saving your days.<br />" + "<a href='" + link + "'>" + link
-                    + "</a><br /><br />Cheers, dayinsix crew</body></html>", true);
+                    + "</a><br /><br />Cheers, dayinsix crew</body></html>";
+            helper.setText(text, true);
             helper.setSubject("Activate your account at dayinsix.com");
-            mailService.sendMessage(message, null);
+            mailService.sendMessage(message,text, null, false);
         
     }
 
@@ -229,13 +230,13 @@ public class AuthController {
             MimeMessage message = MailUtil.createMessage(javaMailSender);
             MimeMessageHelper helper = MailUtil.getHelper(message,false);
             helper.setTo(user.getEmail());
-           
-            helper.setText("<html><body>Hi " + user.getUsername() + ",\n" + "Seems like you've got forgotten your password. Here's the new one: " + password + " .<br />"
+            String text = "<html><body>Hi " + user.getUsername() + ",\n" + "Seems like you've got forgotten your password. Here's the new one: " + password + " .<br />"
                     + "Log in with it and remember that you can change it in settings if you'd like to.<br /><br /><br />"
-                    + "Cheers, dayinsix crew<br /></body></html>", true);
+                    + "Cheers, dayinsix crew<br /></body></html>";
+            helper.setText(text, true);
             helper.setSubject("Password reminder / DayInSix.com");
 
-            mailService.sendMessage(message, null);
+            mailService.sendMessage(message, text,null, false);
         } catch (MessagingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

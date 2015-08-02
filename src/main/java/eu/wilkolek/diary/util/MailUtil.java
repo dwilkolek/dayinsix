@@ -48,14 +48,17 @@ public class MailUtil {
         MimeMessageHelper helper = getHelper(message, false);
         String value = new String(""+TimeUnit.MILLISECONDS.toDays(diff));
         helper.setTo(u.getEmail());
-        helper.setText("<html><body>Hello " + u.getUsername() + ", <br />" + "You haven't written in your diary for " + value + " .<br />"
+        
+        String text = "<html><body>Hello " + u.getUsername() + ", <br />" + "You haven't written in your diary for " + value + " .<br />"
                 + "Quickly, log in <a href='http://dayinsix.com'>DayInSix.com</a> and make up for all these days. <br />"
-                + "Otherwise you're going to lost many beautiful memories.<br /><br />" + "DayInSix crew" + "</body></html>", true);
+                + "Otherwise you're going to lost many beautiful memories.<br /><br />" + "DayInSix crew" + "</body></html>";
+        
+        helper.setText(text, true);
         helper.setSubject("Absence notification / DayInSix.com");
         System.out.println("Message sent: " + u.getUsername());
         u.setLastNotification(DateTimeUtils.getCurrentUTCTime());
         userRepository.save(u);
-        mailService.sendMessage(helper.getMimeMessage(), null);
+        mailService.sendMessage(helper.getMimeMessage(),text, null,false);
     }
     public static boolean checkights(User u) {
         Date now = DateTimeUtils.getUTCDAte();

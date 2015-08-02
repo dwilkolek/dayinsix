@@ -2,6 +2,8 @@ package eu.wilkolek.diary.model;
 
 import java.util.Date;
 
+import javax.mail.Address;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +16,18 @@ public class Mail {
     private String message;
 
     private Date date;
+
+    private String subject;
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public Address[] getTo() {
+        return to;
+    }
+
+    private Address[] to;
     
     public String getId() {
         return id;
@@ -37,6 +51,16 @@ public class Mail {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+        
+    }
+
+    public void setTo(Address[] addresses) {
+        this.to = addresses;
+        
     }
     
     
