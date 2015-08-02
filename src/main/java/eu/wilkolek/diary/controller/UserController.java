@@ -182,11 +182,20 @@ public class UserController {
             }
             dayForm.setDictionaryWords(resultList);
         }
+        boolean partialEdit = false;
 
         Optional<Day> dayToDelete = dayRepository.findByCreationDateAndUser(date, user);
-        dayRepository.delete(dayToDelete.get());
-        dayRepository.save(new Day(dayForm, user));
-        LOGGER.debug("User " + user.getEmail() + " added new day");
+        try {
+            DayHelper.checkDate(null, dayToDelete.get().getCreationDate(), false, null, "This day isn't editable.");
+        } catch (OutOfDateException e) {
+            partialEdit = true;
+            dayToDelete.get().setShareStyle(dayForm.getShareStyle());
+            dayRepository.save(dayToDelete.get());
+        }
+        if (!partialEdit) {
+            dayRepository.delete(dayToDelete.get());
+            dayRepository.save(new Day(dayForm, user));
+        }
 
         return new ModelAndView("redirect:/user/day/list");
     }
@@ -209,21 +218,25 @@ public class UserController {
         DayForm dayForm = new DayForm();
         dayForm.setDayDate(date);
 
-        if (!day.isPresent()) {
-            throw new OutOfDateException("You can't modify this day.");
-        }
+        // if (!day.isPresent()) {
+        // throw new OutOfDateException("You can't modify this day.");
+        // }
 
         if (day.get().getSentence() != null || day.get().getWords() != null) {
             dayForm.assignDay(day.get());
         } else {
             throw new OutOfDateException("Propably it's a wrong day...");
         }
-
-        DayHelper.checkDate(null, day.get().getCreationDate(), false, null, "This day isn't editable.");
-
+        boolean partialEdit = false;
+        try {
+            DayHelper.checkDate(null, day.get().getCreationDate(), false, null, "This day isn't editable.");
+        } catch (OutOfDateException e) {
+            partialEdit = true;
+        }
         ModelAndView model = new ModelAndView("user/day/edit");
         model.getModelMap().put("status", StatusEnum.asMap());
         model.getModelMap().put("dayForm", dayForm);
+        model.getModelMap().put("partialEdit", partialEdit);
         model.getModelMap().addAttribute("title", MetadataHelper.title("Change your day"));
         model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
         return model;
@@ -356,7 +369,7 @@ public class UserController {
 
             List<Day> storedDays = dayRepository.findAllByUser(user);
             for (Day storedDay : storedDays) {
-                if (!user.isEnabled()){
+                if (!user.isEnabled()) {
                     storedDay.setUserProfileVisibility(ShareStyleEnum.PRIVATE.name());
                 } else {
                     storedDay.setUserProfileVisibility(user.getOptions().get(UserOptions.PROFILE_VISIBILITY));
@@ -375,19 +388,22 @@ public class UserController {
         saveSuccess = true;
         model.addAttribute("saveSuccess", !result.hasErrors());
         model.addAttribute("title", MetadataHelper.title("Your profile"));
-        if (!user.isEnabled()){
-           return "redirect:/logout/userDisabled";
+        if (!user.isEnabled()) {
+            return "redirect:/logout/userDisabled";
         }
         return "user/profile";
 
     }
 
-//    @PreAuthorize("hasAuthority('USER')")
-//    @RequestMapping(value = "/user/share/{username}", method = RequestMethod.POST)
-//    public String followByPathParam(CurrentUser currentUser,Model model, @PathVariable(value="username") String username) throws NoSuchUserException {
-//        return this.followBy(currentUser,model, username);
-//    }
-    
+    // @PreAuthorize("hasAuthority('USER')")
+    // @RequestMapping(value = "/user/share/{username}", method =
+    // RequestMethod.POST)
+    // public String followByPathParam(CurrentUser currentUser,Model model,
+    // @PathVariable(value="username") String username) throws
+    // NoSuchUserException {
+    // return this.followBy(currentUser,model, username);
+    // }
+
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/follow/{username}")
     public String followBy(CurrentUser currentUser, Model model, @PathVariable(value = "username") String username) {
@@ -440,11 +456,11 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @RequestMapping(value = "/user/share/{username}", method = {RequestMethod.POST, RequestMethod.GET})
-    public ModelAndView shareWithPathParam(CurrentUser currentUser, @PathVariable(value="username") String username) throws NoSuchUserException {
+    @RequestMapping(value = "/user/share/{username}", method = { RequestMethod.POST, RequestMethod.GET })
+    public ModelAndView shareWithPathParam(CurrentUser currentUser, @PathVariable(value = "username") String username) throws NoSuchUserException {
         return this.shareWith(currentUser, username);
     }
-    
+
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/share", method = RequestMethod.POST)
     public ModelAndView shareWith(CurrentUser currentUser, @RequestParam(value = "username", required = true) String username) throws NoSuchUserException {
@@ -466,7 +482,16 @@ public class UserController {
 
             }
         }
-        if (!isSharing) {
+
+        if (isSharing) {
+            model.getModelMap().put("msg", "You already share your diary with:" + user.get().getUsername() + ".");
+        } else if (currentUser.getId().equals(user.get().getId())) {
+            model.getModelMap().put("msg", "You always share your diary with yourself.");
+        } else {
+            model.getModelMap().put("msg", "From now on you will be sharing your days with: " + user.get().getUsername() + ".");
+        }
+
+        if (!isSharing && !currentUser.getId().equals(user.get().getId())) {
             currentUser.getUser().getSharingWith().add(user.get().getId());
             currentUser.setUser(userRepository.save(currentUser.getUser()));
         }
@@ -505,7 +530,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @RequestMapping(value = "/user/unfollow/{username}", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/user/unfollow/{username}", method = { RequestMethod.POST, RequestMethod.GET })
     public String unfollow(CurrentUser currentUser, @PathVariable(value = "username") String username) throws NoSuchUserException {
         User currentUserDb = userRepository.findById(currentUser.getUser().getId()).get();
         Optional<User> otherUserDb = userRepository.findByUsername(username);
@@ -537,10 +562,8 @@ public class UserController {
         return "redirect:/user/following";
     }
 
-    
-    
     @PreAuthorize("hasAuthority('USER')")
-    @RequestMapping(value = "/user/unshare/{username}", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/user/unshare/{username}", method = { RequestMethod.POST, RequestMethod.GET })
     public String unshare(Model model, CurrentUser currentUser, @PathVariable(value = "username") String username) {
         User u = userRepository.findById(currentUser.getUser().getId()).get();
         Optional<User> op = userRepository.findByUsername(username);
@@ -577,10 +600,10 @@ public class UserController {
         long dateStartMilis = dateStart.getTime();
         long dateCreatedMilis = u.getCreated().getTime();
         long dateEndMilis = dateEnd.getTime();
-        
-        Calendar nowCal= new GregorianCalendar();
-        nowCal.setTime(new Date(DateTimeUtils.getCurrentUTCTime().getTime()+TimeUnit.DAYS.toMillis(31L)));
-        
+
+        Calendar nowCal = new GregorianCalendar();
+        nowCal.setTime(new Date(DateTimeUtils.getCurrentUTCTime().getTime() + TimeUnit.DAYS.toMillis(31L)));
+
         if (dateCreatedMilis > dateStartMilis) {
             dateStart = new Date(dateCreatedMilis);
         }
@@ -597,37 +620,35 @@ public class UserController {
         model.asMap().put("dateStr", DayHelper.createDateStr(month - 1, year));
         return "user/day/archive";
     }
-    
-    public static LinkedHashMap<String,String> createArchiveMenu(User u){
+
+    public static LinkedHashMap<String, String> createArchiveMenu(User u) {
         Calendar cal = new GregorianCalendar();
         cal.setTime(u.getCreated());
         int monthStart = cal.get(Calendar.MONTH);
         int yearStart = cal.get(Calendar.YEAR);
-        
+
         Calendar calNow = new GregorianCalendar();
         calNow.setTime(DateTimeUtils.getCurrentUTCTime());
         int monthEnd = calNow.get(Calendar.MONTH);
         int yearEnd = calNow.get(Calendar.YEAR);
-        
+
         int m = monthEnd;
         int y = yearEnd;
-        
-        LinkedHashMap<String,String> result = new LinkedHashMap<String, String>();
-        
-        while (!(monthStart == m && yearStart == y)){
+
+        LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
+
+        while (!(monthStart == m && yearStart == y)) {
             String text = DayHelper.createDateStr(m, y);
-            result.put(y+"/"+(m+1), text);
+            result.put(y + "/" + (m + 1), text);
             m--;
-            if (m<0){
-                m=11;
+            if (m < 0) {
+                m = 11;
                 y--;
-                result.put("divider"+y, "divider");
+                result.put("divider" + y, "divider");
             }
         }
         return result;
-        
+
     }
-    
-    
-    
+
 }

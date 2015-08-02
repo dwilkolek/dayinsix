@@ -58,7 +58,13 @@ public class ExploreController {
                 // f = user.getUser().getFollowingBy().contains(u.getId()) ? 2 :
                 // 1;
                 // }
-                result.add(u.getUsername() + ";" + s + ";" + f);
+                boolean isTheSameUser = false;
+                if (user != null){
+                    isTheSameUser = user.getId().equals(u.getId());
+                }
+                if (!isTheSameUser){
+                    result.add(u.getUsername() + ";" + s + ";" + f);
+                }
             } else {
                 result.add(u.getUsername() + ";0;0");
             }

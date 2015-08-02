@@ -39,10 +39,10 @@ public class CurrentUserDetailsService implements UserDetailsService {
         LOGGER.debug("Authenticating user with email={}", email.replaceFirst("@.*", "@***"));
         Optional<User> user = userRepository.findByEmail(email.toLowerCase());
         if (!user.isPresent()){
-        	new UsernameNotFoundException(String.format("User with email=%s was not found", email));
+            return null;//new UsernameNotFoundException(String.format("User with email=%s was not found", email));
         }
         if (!user.get().isEnabled() && !StringUtils.isEmpty(user.get().getToken())){
-            throw new UsernameNotFoundException(String.format("User with email=%s isn't enabled", email));
+            return null;//throw new UsernameNotFoundException(String.format("User with email=%s isn't enabled", email));
         }
         if (!user.get().isEnabled() && StringUtils.isEmpty(user.get().getToken())){
             user.get().setEnabled(true);

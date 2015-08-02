@@ -50,9 +50,9 @@
                                     <a th:href="${'/user/day/add/'+#calendars.format(day.creationDate,dfx)}">Save THE day</a>
 
                                 </div>
-
+<!--      -->
                                 <a class="edit-list-element"
-                                    th:if="${day.canEdit and !(day.canAdd != null and day.canAdd and day.words == null and day.sentence == null)}"
+                                    th:if="${ !(day.canAdd != null and day.canAdd and day.words == null and day.sentence == null)}"
                                     th:href="${'/user/day/edit/'+#calendars.format(day.creationDate,dfx)}"
                                     th:with="dfx=${@environment.getProperty('date.format.add')}"><i class="glyphicon glyphicon-edit"></i> </a>
                                     

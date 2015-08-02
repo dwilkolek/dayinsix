@@ -41,12 +41,13 @@
                                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                         <div class="form-group">
 
-                                            <input th:field="*{sentence}" class="form-control" type="text"></input>
+                                            <input th:field="*{sentence}" class="form-control" type="text" th:readonly="${partialEdit}"></input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <select th:name="${'sentenceStatus'}" class="form-control">
+                                        <input class="form-control" readonly="readonly" th:if="${partialEdit}" th:name="${'sentenceStatus'}" th:value="${dayForm.sentenceStatus}" />
+                                            <select th:name="${'sentenceStatus'}" class="form-control" th:if="${!partialEdit}">
                                                 <option th:value="${s.key}" th:each="s : ${status}" th:text="${s.key}"
                                                     th:selected="${s.key == dayForm.sentenceStatus}" />
                                             </select>
@@ -55,7 +56,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>You can add additional note to share with others</label>
-                                    <textarea class="form-control" name="note" th:text="${dayForm.note}"></textarea>
+                                    <textarea class="form-control" name="note" th:text="${dayForm.note}" th:readonly="${partialEdit}"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="shareStyle">Sharing</label> <select id="shareStyle" class="form-control" th:name="shareStyle">
@@ -81,14 +82,14 @@
                                         <div class="col-md-9">
                                             <div style="position: relative;">
                                                 <input type="text" th:id="${'word'+i}" class="form-control sugesstionAutocomplete" th:name="${'words['+i+']'}"
-                                                    th:value="${dayForm.words.get(i)}" autocomplete="off" />
+                                                    th:value="${dayForm.words.get(i)}" autocomplete="off" th:readonly="${partialEdit}"/>
                                                 <div class="list-group wordList" th:id="${'word'+i+'_list'}"
                                                     style="display: none; position: absolute; z-index: 10000;"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
-
-                                            <select th:name="${'wordsStatuses['+i+']'}" class="form-control">
+                                            <input class="form-control" readonly="readonly" th:if="${partialEdit}" th:name="${'wordsStatuses['+i+']'}" th:value="${dayForm.wordsStatuses.get(i)}" />
+                                            <select th:name="${'wordsStatuses['+i+']'}" class="form-control" th:if="${!partialEdit}">
                                                 <option th:value="${s.key}" th:each="s: ${status}" th:text="${s.value}"
                                                     th:selected="${s.key == dayForm.wordsStatuses.get(i)}" />
                                             </select>
@@ -102,7 +103,7 @@
 
                                 <div class="form-group">
                                     <label>You can add additional note to share with others</label>
-                                    <textarea class="form-control" name="note" th:text="${dayForm.note}"></textarea>
+                                    <textarea class="form-control" name="note" th:text="${dayForm.note}" th:readonly="${partialEdit}"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="shareStyle">Sharing</label> <select id="shareStyle" class="form-control" th:name="shareStyle">

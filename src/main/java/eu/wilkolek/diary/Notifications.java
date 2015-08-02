@@ -37,8 +37,8 @@ public class Notifications {
     @Autowired
     private MailService mailService;
 
-//    @Scheduled(fixedDelay = 5000L)
-    @Scheduled(cron = "0 0 */1 * * ?")
+    @Scheduled(fixedDelay = 5000L)
+//    @Scheduled(cron = "0 0 */1 * * ?")
     public void sendNotification() {
         System.out.println("sentNotification "+DateTimeUtils.getCurrentUTCTime() + " | "+(new Date(System.currentTimeMillis())));
         
@@ -51,12 +51,8 @@ public class Notifications {
                     MailUtil.sendNotification(u, userRepository, javaMailSender, mailService);
                 }  catch (Exception e){
                     if (errorRepository != null){
-                        eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error();
-                        Gson gson = new Gson();
-                        
-                        ex.setStacktrace(gson.toJson(e.getStackTrace()));
-                        ex.setMessage("Notification : "+e.getMessage());
-                        ex.setUser(u);
+                        eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error(e,u);
+                        ex.setMessage("Notification : "+ex.getMessage());   
                         errorRepository.save(ex);
                     }
                 }
@@ -68,9 +64,5 @@ public class Notifications {
 
     }
 
-    private void sendEmail(String email, String username, long diff) {
-        
-
-    }
 
 }

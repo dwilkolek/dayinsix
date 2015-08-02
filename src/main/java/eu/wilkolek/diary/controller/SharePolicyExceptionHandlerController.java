@@ -28,12 +28,7 @@ public class SharePolicyExceptionHandlerController {
         ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
         
         if (errorRepository != null){
-            eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error();
-            Gson gson = new Gson();
-            
-            ex.setStacktrace(gson.toJson(e.getStackTrace()));
-            ex.setMessage(e.getMessage());
-            ex.setUser(cu != null ? cu.getUser() : null);
+            eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error(e, cu);
             errorRepository.save(ex);
         }
         

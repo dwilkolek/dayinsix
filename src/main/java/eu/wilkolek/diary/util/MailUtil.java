@@ -46,10 +46,10 @@ public class MailUtil {
 
         MimeMessage message = createMessage(javaMailSender);
         MimeMessageHelper helper = getHelper(message, false);
-        String value = new String(""+TimeUnit.MILLISECONDS.toDays(diff));
+//        String value = new String(""+TimeUnit.MILLISECONDS.toDays(diff));
         helper.setTo(u.getEmail());
         
-        String text = "<html><body>Hello " + u.getUsername() + ", <br />" + "You haven't written in your diary for " + value + " .<br />"
+        String text = "<html><body>Hello " + u.getUsername() + ", <br />" + "You haven't written in your diary for " + diff + " days .<br />"
                 + "Quickly, log in <a href='http://dayinsix.com'>DayInSix.com</a> and make up for all these days. <br />"
                 + "Otherwise you're going to lost many beautiful memories.<br /><br />" + "DayInSix crew" + "</body></html>";
         

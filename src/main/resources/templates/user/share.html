@@ -34,10 +34,10 @@
 
                                 <div class="col-md-6">
                                     <h2>Share with</h2>
-                                    <div th:if="${username != null}">
+                                    <div th:if="${msg != null}">
                                         <h4>
-                                            From now on you will be sharing your days with:
-                                            <th:block th:text="${username}" />
+                           
+                                            <th:block th:text="${msg}" />
                                         </h4>
                                     </div>
                                     <form id="shareForm" role="form" name="form" action="/user/share" method="post">

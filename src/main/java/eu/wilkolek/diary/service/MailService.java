@@ -68,13 +68,8 @@ public class MailService {
                 this.javaMailSender.send(message);
             }
         } catch (Exception e) {
-            if (errorRepository != null) {
-                eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error();
-                Gson gson = new Gson();
-
-                ex.setStacktrace(gson.toJson(e.getStackTrace()));
-                ex.setMessage("SendMessage : " + e.getMessage());
-                ex.setUser(user);
+            if (errorRepository != null){
+                eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error(e, user);
                 errorRepository.save(ex);
             }
         }

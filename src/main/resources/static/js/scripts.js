@@ -46,7 +46,7 @@ $(document).ready(function(){
 																	if (vals[1] == 1){
 																		tpl += '<a class="action" href="/user/share/'+vals[0]+'">Share</a>';
 																	} else {
-																		tpl += '<a class="action" href="/user/unshare/'+vals[0]+'">Unshare</a>';
+																		tpl += '<a class="action" href="/user/unshare/'+vals[0]+'">Don\'t share</a>';
 																	}
 																	
 																}
