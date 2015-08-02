@@ -42,11 +42,11 @@ public class MailUtil {
             return;
         }
 
-        long diff = DateTimeUtils.diffInDays(u.getLastLogIn(), DateTimeUtils.getCurrentUTCTime());
+        long diff = DateTimeUtils.diffInDays(u.getLastLogIn(), DateTimeUtils.getUTCDAte());
 
         MimeMessage message = createMessage(javaMailSender);
         MimeMessageHelper helper = getHelper(message, false);
-        String value = NotificationTypesEnum.valueOf(u.getOptions().get(UserOptions.NOTIFICATION_FREQUENCY)).getDescription();
+        String value = new String(""+TimeUnit.MILLISECONDS.toDays(diff));
         helper.setTo(u.getEmail());
         helper.setText("<html><body>Hello " + u.getUsername() + ", <br />" + "You haven't written in your diary for " + value + " .<br />"
                 + "Quickly, log in <a href='http://dayinsix.com'>DayInSix.com</a> and make up for all these days. <br />"

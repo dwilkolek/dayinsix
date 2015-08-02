@@ -37,8 +37,8 @@ public class Notifications {
     @Autowired
     private MailService mailService;
 
-    @Scheduled(fixedDelay = 5000L)
-//    @Scheduled(cron = "0 0 */1 * * ?")
+//    @Scheduled(fixedDelay = 5000L)
+    @Scheduled(cron = "0 0 */1 * * ?")
     public void sendNotification() {
         System.out.println("sentNotification "+DateTimeUtils.getCurrentUTCTime() + " | "+(new Date(System.currentTimeMillis())));
         
