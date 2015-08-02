@@ -43,15 +43,6 @@ public class MailService {
                 canSend = this.checkights(user);
             }
             if (canSend) {
-               
-                if (this.javaMailSender == null){
-                    System.out.println("javaMailSender");
-                }
-                if (message == null){
-                    System.out.println("message");
-                }
-                Gson gson = new Gson();
-                System.out.println(gson.toJson(message.getContent()));
                 this.javaMailSender.send(message);
             }
         } catch (Exception e) {
