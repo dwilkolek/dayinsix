@@ -1,7 +1,11 @@
 package eu.wilkolek.diary.model;
 
+import java.util.Date;
+
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import eu.wilkolek.diary.util.DateTimeUtils;
 
 @Document(collection = "errors")
 public class Error {
@@ -10,10 +14,20 @@ public class Error {
     
     private String stacktrace;
     
+    private Date date;
+    
+    
+    
     @DBRef
     private User user;
     
     private String message;
+    
+    
+    
+    public Error() {
+        this.date = DateTimeUtils.getUTCDAte();
+    }
 
     public String getId() {
         return id;
@@ -53,6 +67,14 @@ public class Error {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
     
 
