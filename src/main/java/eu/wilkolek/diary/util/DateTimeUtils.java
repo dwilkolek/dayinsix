@@ -1,8 +1,11 @@
 package eu.wilkolek.diary.util;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -91,4 +94,8 @@ public class DateTimeUtils {
         return resultValue;
     }
     
+    public static Date getUTCDAte(){
+        Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+        return c.getTime();
+    }
 }

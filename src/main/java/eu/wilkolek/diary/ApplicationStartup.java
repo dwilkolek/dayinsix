@@ -169,7 +169,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
             this.setupDictionaryEN();
         }
         this.prepareTestUserWithData();
-     //   this.prepareNotyficationTest();
+        this.prepareNotyficationTest();
 
     }
 
@@ -184,7 +184,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         u.setLastLogIn(new Date(nowMilis - dayMilis*1 - 3000));
         u.setLastNotification(new Date(nowMilis - dayMilis*2000));
         u.setUsername("Julia_true_true");
-        u.setEmail("juliush@interia.pl");
+        u.setEmail("dayinsixdiary@gmail.com");
         u.setEnabled(true);
         userRepository.save(u);
         u=null;
@@ -196,7 +196,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         u2.setLastLogIn(new Date(nowMilis - dayMilis*94 - 3000));
         u2.setLastNotification(new Date(nowMilis - dayMilis*2000));
         u2.setUsername("Julia2_true_true");
-        u2.setEmail("juliush@interia.pl");
+        u2.setEmail("dayinsixdiary@gmail.com");
         u2.setEnabled(true);
         userRepository.save(u2);
         u2=null;
@@ -208,7 +208,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         u4.setLastLogIn(new Date(nowMilis - dayMilis*2));
         u4.setLastNotification(new Date(nowMilis - dayMilis*2000));
         u4.setUsername("Julia4_true_false");
-        u4.setEmail("juliush@interia.pl");
+        u4.setEmail("dayinsixdiary@gmail.com");
         u4.setEnabled(false);
         userRepository.save(u4);
         u4 = null;
@@ -220,7 +220,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         u3.setLastLogIn(new Date(nowMilis - dayMilis*89 - 3000));
         u3.setLastNotification(new Date(nowMilis - dayMilis*2000));
         u3.setUsername("Julia3_false_true");
-        u3.setEmail("juliush@interia.pl");
+        u3.setEmail("dayinsixdiary@gmail.com");
         u3.setEnabled(true);
         userRepository.save(u3);
         u3 = null;
@@ -233,7 +233,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         u5.setLastLogIn(new Date(nowMilis - dayMilis*94 - 3000));
         u5.setLastNotification(new Date(nowMilis - dayMilis*2000));
         u5.setUsername("Julia5_true_true");
-        u5.setEmail("juliush@interia.pl");
+        u5.setEmail("dayinsixdiary@gmail.com");
         u5.setEnabled(true);
         userRepository.save(u5);
         u5=null;

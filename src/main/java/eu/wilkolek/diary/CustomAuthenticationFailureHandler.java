@@ -3,6 +3,7 @@ package eu.wilkolek.diary;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -25,39 +28,42 @@ import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
 
 @Component
-public class CustomAuthenticationSuccessHandler implements
-        AuthenticationSuccessHandler {
+public class CustomAuthenticationFailureHandler implements
+        AuthenticationFailureHandler {
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    public CustomAuthenticationSuccessHandler(UserRepository userRepository) {
+    public CustomAuthenticationFailureHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-            HttpServletResponse response, Authentication authentication)
+    public void onAuthenticationFailure(HttpServletRequest request,
+            HttpServletResponse response, AuthenticationException exception)
             throws IOException, ServletException {
 
-        CurrentUser currentUser = (CurrentUser) authentication.getPrincipal();
-        User user = userRepository.findOne(currentUser.getId());
-        Date date = DateTimeUtils.getCurrentUTCTime();
-        user.setLastLogIn(date);
+        Map<String, String[]> map = request.getParameterMap();
 
-        currentUser.setUser(userRepository.save(user));
-
-        String redirectTo = request.getParameter("redirect");
         Gson gson = new Gson();
-
-        if (!StringUtils.isEmpty(redirectTo)){
-            redirectStrategy.sendRedirect(request, response, redirectTo);
+        System.out.println(gson.toJson(map));
+        String url = "";
+        if (map.containsKey("redirect")){
+            url = "?redirect="+map.get("redirect")[0];
         }
-       
+        if (!StringUtils.isEmpty((String)request.getAttribute("redirect"))){
+            url = "?redirect="+request.getAttribute("redirect");
+        }
+        if (!StringUtils.isEmpty(request.getParameter("redirect"))){
+            url = "?redirect="+request.getParameter("redirect");
+        }
         
+        redirectStrategy.sendRedirect(request, response, "/login"+url+"&error=1");
         
     }
+
+   
 
 }

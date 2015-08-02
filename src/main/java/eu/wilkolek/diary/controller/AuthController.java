@@ -229,9 +229,9 @@ public class AuthController {
             MimeMessageHelper helper = mailService.getHelper(message,false);
             helper.setTo(user.getEmail());
            
-            helper.setText("<html><body>Hi " + user.getUsername() + ",\n" + "Seems like you've got forgotten your password. Here's the new one: " + password + " .\n"
-                    + "Log in with it and remember that you can change it in settings if you'd like to\n\n\n"
-                    + "Cheers, dayinsix crew<br /><br />Cheers, dayinsix crew</body></html>", true);
+            helper.setText("<html><body>Hi " + user.getUsername() + ",\n" + "Seems like you've got forgotten your password. Here's the new one: " + password + " .<br />"
+                    + "Log in with it and remember that you can change it in settings if you'd like to.<br /><br /><br />"
+                    + "Cheers, dayinsix crew<br /></body></html>", true);
             helper.setSubject("Password reminder / DayInSix.com");
 
             mailService.sendMessage(message, null);

@@ -2,16 +2,16 @@
 
     <div class="" th:if="${currentUser == null}">
         <h3>Log in</h3>
-        <span id="error" style="display:none; color:#f00;">
+        <p th:if="${param.error}" class="alert alert-danger" id="error" >
                     Email or password is wrong.
-            </span>
-        <form id="loginForm" role="form" name="form" method="post" action="/login">
+            </p>
+        <form id="loginForm" role="form" name="form" method="post" action="">
             <input id="csrf" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
+            <input type="hidden" name="redirect" value="" id="redirParam" />
             <div class="form-group" th:class="${'form-group'}">
                 <label for="email">Email address</label> 
                 <input class="form-control" type="email" th:value="${form != null ? form.email : ''}" name="email"
-                    id="email" autofocus="autofocus" required="required" /> 
+                    id="email" required="required" /> 
                     
 
             </div>
@@ -21,53 +21,29 @@
 
             </div>
             <div class="form-group text-right">
+            
             <button class="btn btn-default" id="sbmbtn" type="submit">Log in</button>
             </div>
         </form>
         <script>
-             	// <![CDATA[	
-// 				$("#registerForm .form-group input").click(function(){
-// 						$(this).parent().find("span").remove();
-// 						$(this).parent().removeClass("has-error");
-// 						$(this).parent().removeClass("has-feedback");
-// 					})
-				
-             	            $(document).ready(function(){
-             	            	$("#sbmbtn").click(function(event){
-             	            		event.preventDefault();
-             	            		console.log("click")
-             	            		$.ajax({
-             	                 	  method: "POST",
-             	                 	  url: "/login",
-             	                 	  data: { email: $("#email").val(), password: $("#password").val(), _csrf : $("#csrf").val()}
-             	                 	})
-             	                 	  .done(function( msg ) {
-             	                 	    var text = $(msg, "p").text();
-             	                 	    console.log(text)
-             	                 	    vars = text.split("|");
-             	                 	    if (vars[0] == 'false'){
-             	                 	      	$("#error").show();
-             	                 	        $("#csrf").val(vars[2])
-             	                 	    }
-             	                 	    else {
-             	                 	    	window.location.replace("/user/day/list");
-             	                 	    }
-             	                 	  })
-             	            		
-             	            		return false;
-             	            	})
-             	            	
-             	            	$("#email").on("input focus change", function(){
-             	            		$("#error").hide();
-             	            	})
-             	            	$("#password").on("input focus change", function(){
-             	            		$("#error").hide();
-             	            	})
-             	            
-             	            })
+            $(document).ready(function(){
+                console.log(gup('redirect'))
+                if (gup('redirect') != ""){
+                    $("#redirParam").val(gup('redirect'));
+//                     $("#loginForm").attr("action", "/login?redirect="+gup('redirect'));
+        		}
+                $("#email").focus(function(){
+                	console.log("asd")
+	            		$("#error").css("display","none")
+	            	})
+	            	$("#password").focus(function(){
+	            		$("#error").css("display","none")
+	            	})
                 
-             	// ]]>
-                </script>
+    		});
+		</script>
+                
+
 <!--                  <h3> -->
 <!--                         Forgot password?  <a href="/remind" class="btn btn-default button " style="">Reset it!!</a> -->
 <!--                     </h3> -->

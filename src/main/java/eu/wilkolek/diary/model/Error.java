@@ -8,7 +8,7 @@ public class Error {
     
     private String id;
     
-    private Exception exception;
+    private String stacktrace;
     
     @DBRef
     private User user;
@@ -23,12 +23,20 @@ public class Error {
         this.id = id;
     }
 
-    public Exception getException() {
-        return exception;
+    public String getException() {
+        return stacktrace;
     }
 
-    public void setException(Exception exception) {
-        this.exception = exception;
+    public String getStacktrace() {
+        return stacktrace;
+    }
+
+    public void setStacktrace(String stacktrace) {
+        this.stacktrace = stacktrace;
+    }
+
+    public void setException(String exception) {
+        this.stacktrace = exception;
     }
 
     public User getUser() {

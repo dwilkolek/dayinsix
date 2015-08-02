@@ -14,9 +14,12 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.Gson;
+
 import eu.wilkolek.diary.model.NotificationTypesEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.model.UserOptions;
+import eu.wilkolek.diary.repository.ErrorRepository;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.service.MailService;
 import eu.wilkolek.diary.util.DateTimeUtils;
@@ -26,12 +29,14 @@ public class Notifications {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ErrorRepository errorRepository;
 
     @Autowired
     private MailService mailService;
 
-//    @Scheduled(fixedDelay = 5000L)
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(fixedDelay = 5000L)
+//    @Scheduled(cron = "0 0 */1 * * ?")
     public void sendNotification() {
         System.out.println("sentNotification "+DateTimeUtils.getCurrentUTCTime() + " | "+(new Date(System.currentTimeMillis())));
         
@@ -39,17 +44,21 @@ public class Notifications {
             List<User> users = this.userRepository.findAll();
 
             for (User u : users) {
-               try {
-                mailService.sendNotification(u);
-            } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
-//                e.printStackTrace();
-            } catch (MessagingException e) {
-                // TODO Auto-generated catch block
-//                e.printStackTrace();
-            } catch (Exception e) {
-//                e.printStackTrace();
-            }
+
+                try {
+                    mailService.sendNotification(u);
+                }  catch (Exception e){
+                    if (errorRepository != null){
+                        eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error();
+                        Gson gson = new Gson();
+                        
+                        ex.setStacktrace(gson.toJson(e.getStackTrace()));
+                        ex.setMessage("Notification : "+e.getMessage());
+                        ex.setUser(u);
+                        errorRepository.save(ex);
+                    }
+                }
+            
 
             }
 

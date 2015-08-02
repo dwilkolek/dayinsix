@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -24,6 +25,9 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationSuccessHandler successHandler;
+    
+    @Autowired
+    private AuthenticationFailureHandler failureHandler;
 
     @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
@@ -38,7 +42,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**")
                 .permitAll()
                 .anyRequest().fullyAuthenticated().and().formLogin()
-                .loginPage("/login").failureUrl("/loginError").defaultSuccessUrl("/loginSuccess").successHandler(successHandler).usernameParameter("email")
+                .loginPage("/login").failureHandler(failureHandler).successHandler(successHandler).usernameParameter("email")
                 .permitAll().and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout/**")).deleteCookies("remember-me").logoutSuccessHandler(logoutSuccessHandler).permitAll()
                 
                 .and().rememberMe();
