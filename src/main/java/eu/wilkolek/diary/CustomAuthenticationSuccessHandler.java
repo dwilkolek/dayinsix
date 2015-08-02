@@ -44,7 +44,7 @@ public class CustomAuthenticationSuccessHandler implements
 
         CurrentUser currentUser = (CurrentUser) authentication.getPrincipal();
         User user = userRepository.findOne(currentUser.getId());
-        Date date = DateTimeUtils.getCurrentUTCTime();
+        Date date = DateTimeUtils.getUTCDAte();
         user.setLastLogIn(date);
 
         currentUser.setUser(userRepository.save(user));

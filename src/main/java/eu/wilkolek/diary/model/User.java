@@ -101,12 +101,13 @@ public class User {
         this.optionsLastUpdate.put(UserOptions.NOTIFICATION_FREQUENCY,DateTimeUtils.getCurrentUTCTime());
         this.enabled = false;
         this.token = "";
-        this.lastLogIn = DateTimeUtils.getCurrentUTCTime();
+        this.lastLogIn = DateTimeUtils.getUTCDAte();
+        this.lastNotification = DateTimeUtils.getUTCDAte();
         this.followedBy = new ArrayList<String>();
         this.followingBy = new ArrayList<String>();
         this.sharingWith = new ArrayList<String>();
         this.setBlocked(new ArrayList<String>());
-        this.created = DateTimeUtils.getCurrentUTCTime();
+        this.created = DateTimeUtils.getUTCDAte();
 
     }
     
