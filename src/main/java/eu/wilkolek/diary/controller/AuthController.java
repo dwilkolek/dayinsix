@@ -44,6 +44,7 @@ import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.service.MailService;
 import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.Email;
+import eu.wilkolek.diary.util.MailUtil;
 //import eu.wilkolek.diary.util.TimezoneUtils;
 import eu.wilkolek.diary.util.MetadataHelper;
 
@@ -199,8 +200,8 @@ public class AuthController {
             String link = "http://dayinsix.com/activate/" + user.getUsername() + "/" + user.getToken();
             // sender.setHost("mail.host.com");
 
-            MimeMessage message = this.mailService.createMimeMessage();
-            MimeMessageHelper helper = this.mailService.getHelper(message, false);
+            MimeMessage message = MailUtil.createMessage(javaMailSender);
+            MimeMessageHelper helper = MailUtil.getHelper(message, false);
             helper.setTo(user.getEmail());
             helper.setText("<html><body>Welcome to dayinsix, <br />" + "Your diary is almost ready for you to write in it. <br />"
                     + "Finish the registration by opening the link below and enjoy saving your days.<br />" + "<a href='" + link + "'>" + link
@@ -225,8 +226,8 @@ public class AuthController {
 
     public void sendNewPassowrd(User user, String password) {
         try {
-            MimeMessage message = mailService.createMimeMessage();
-            MimeMessageHelper helper = mailService.getHelper(message,false);
+            MimeMessage message = MailUtil.createMessage(javaMailSender);
+            MimeMessageHelper helper = MailUtil.getHelper(message,false);
             helper.setTo(user.getEmail());
            
             helper.setText("<html><body>Hi " + user.getUsername() + ",\n" + "Seems like you've got forgotten your password. Here's the new one: " + password + " .<br />"

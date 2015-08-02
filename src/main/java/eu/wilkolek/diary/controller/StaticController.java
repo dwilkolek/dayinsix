@@ -27,6 +27,7 @@ import eu.wilkolek.diary.repository.MailRepository;
 import eu.wilkolek.diary.service.MailService;
 import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.DayHelper;
+import eu.wilkolek.diary.util.MailUtil;
 import eu.wilkolek.diary.util.MetadataHelper;
 
 @Controller
@@ -113,9 +114,9 @@ public class StaticController {
 
             // sender.setHost("mail.host.com");
 
-            MimeMessage message = mailService.createMimeMessage();
+            MimeMessage message = MailUtil.createMessage(javaMailSender);
 
-            MimeMessageHelper helper = mailService.getHelper(message, true);
+            MimeMessageHelper helper = MailUtil.getHelper(message, true);
 
             helper.setText(msg, true);
             helper.setSubject("Feedback required #" + msgId);

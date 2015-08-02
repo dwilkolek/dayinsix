@@ -23,6 +23,7 @@ import eu.wilkolek.diary.repository.ErrorRepository;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.service.MailService;
 import eu.wilkolek.diary.util.DateTimeUtils;
+import eu.wilkolek.diary.util.MailUtil;
 
 @Component
 public class Notifications {
@@ -31,7 +32,8 @@ public class Notifications {
     private UserRepository userRepository;
     @Autowired
     private ErrorRepository errorRepository;
-
+    @Autowired
+    private JavaMailSender javaMailSender;
     @Autowired
     private MailService mailService;
 
@@ -46,7 +48,7 @@ public class Notifications {
             for (User u : users) {
 
                 try {
-                    mailService.sendNotification(u);
+                    MailUtil.sendNotification(u, userRepository, javaMailSender, mailService);
                 }  catch (Exception e){
                     if (errorRepository != null){
                         eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error();
