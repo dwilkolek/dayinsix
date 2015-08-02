@@ -74,7 +74,7 @@
                                     <!--                                     <th:block th:with="sPage =${param.page != null ? param.page-4 : 1}"> -->
                                     <li class="disabled" th:if="${6 lt cPage}"><a href="#">...</a></li>
                                     <li th:class="${cPage == i ? 'active' : ''}" th:each="i : ${#numbers.sequence( sPage, tPage)}"><a
-                                        th:href="${'/user/day/list/?page='+i}" th:text="${i}">1</a></li>
+                                        th:href="${'/s/'+user.username+'/'+i}" th:text="${i}">1</a></li>
                                     <li class="disabled" th:if="${pages gt tPage}"><a href="#">...</a></li>
                                     <!--                                     </th:block> -->
                                     <li><a th:href="${'/user/day/list/?page='+(pages)}">&raquo;</a></li>
