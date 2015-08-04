@@ -25,8 +25,7 @@ import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
 
 @Component
-public class CustomAuthenticationSuccessHandler implements
-        AuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
     private UserRepository userRepository;
@@ -35,12 +34,12 @@ public class CustomAuthenticationSuccessHandler implements
     public CustomAuthenticationSuccessHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-            HttpServletResponse response, Authentication authentication)
-            throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException,
+            ServletException {
 
         CurrentUser currentUser = (CurrentUser) authentication.getPrincipal();
         User user = userRepository.findOne(currentUser.getId());
@@ -51,13 +50,19 @@ public class CustomAuthenticationSuccessHandler implements
 
         String redirectTo = request.getParameter("redirect");
         Gson gson = new Gson();
-
-        if (!StringUtils.isEmpty(redirectTo)){
+        String x = request.getRequestURL().toString();
+        if (!StringUtils.isEmpty(redirectTo)) {
+            
+            int start = x.indexOf("login");
+            x = x.substring(0,start);
+            if (redirectTo.contains("thankyou") || redirectTo.contains("userDisabled") || redirectTo.contains("activate") || redirectTo.contains("") || x.equals(redirectTo)) {
+                redirectStrategy.sendRedirect(request, response, "/user/day/list");
+                return;
+            }
             redirectStrategy.sendRedirect(request, response, redirectTo);
+
         }
-       
-        
-        
+
     }
 
 }

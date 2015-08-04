@@ -56,7 +56,7 @@ public class MailUtil {
         helper.setText(text, true);
         helper.setSubject("Absence notification / DayInSix.com");
         System.out.println("Message sent: " + u.getUsername());
-        u.setLastNotification(DateTimeUtils.getCurrentUTCTime());
+        u.setLastNotification(DateTimeUtils.getUTCDAte());
         userRepository.save(u);
         mailService.sendMessage(helper.getMimeMessage(),text, null,false);
     }

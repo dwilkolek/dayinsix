@@ -37,11 +37,11 @@ public class Notifications {
     @Autowired
     private MailService mailService;
 
-//    @Scheduled(fixedDelay = 5000L)
+    // @Scheduled(fixedDelay = 5000L)
     @Scheduled(cron = "0 0 */1 * * ?")
     public void sendNotification() {
-        System.out.println("sentNotification "+DateTimeUtils.getCurrentUTCTime() + " | "+(new Date(System.currentTimeMillis())));
-        
+        System.out.println("sentNotification " + DateTimeUtils.getCurrentUTCTime() + " | " + (new Date(System.currentTimeMillis())));
+
         if (this.userRepository != null) {
             List<User> users = this.userRepository.findAll();
 
@@ -49,20 +49,18 @@ public class Notifications {
 
                 try {
                     MailUtil.sendNotification(u, userRepository, javaMailSender, mailService);
-                }  catch (Exception e){
-                    if (errorRepository != null){
-                        eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error(e,u);
-                        ex.setMessage("Notification : "+ex.getMessage());   
+                } catch (Exception e) {
+                    if (errorRepository != null) {
+                        eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error(e, u);
+                        ex.setMessage("Notification : " + ex.getMessage());
                         errorRepository.save(ex);
                     }
                 }
-            
 
             }
 
         }
 
     }
-
 
 }

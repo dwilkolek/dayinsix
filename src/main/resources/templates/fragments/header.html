@@ -70,13 +70,13 @@
                 <div id="bs-example-navbar-collapse-1" class="">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="/">MAIN PAGE</a></li>
+                        <li><a href="/stats">STATS</a></li>
                         <li><a href="/explore">EXPLORE</a></li>
                         <li th:if="${currentUser==null}"><a href="#">STATS</a></li>
                         <li th:if="${currentUser!=null}" class="dropdown"><a data-toggle="dropdown" class="dropdown-toggle" href="#">MY DIARY<strong
                                 class="caret"></strong></a>
                             <ul class="dropdown-menu">
                                 <li><a href="/user/day/list">Latest entries</a></li>
-                                <li><a href="#">Stats</a></li>
                                 <li><a href="/user/share">Share</a></li>
                                 <li><a href="/user/following">Following</a></li>
                                 <li><a href="/user/followed">Followed by</a></li>

@@ -107,7 +107,7 @@ public class User {
         this.followingBy = new ArrayList<String>();
         this.sharingWith = new ArrayList<String>();
         this.setBlocked(new ArrayList<String>());
-        this.created = DateTimeUtils.getUTCDAte();
+        this.created = DateTimeUtils.getCurrentUTCTime();
 
     }
     
