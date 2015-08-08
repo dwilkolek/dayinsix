@@ -15,7 +15,7 @@ public class DateTimeUtils {
 
     public static Date getCurrentUTCTime() {
         try {
-            return StringDateToDate(getCurrentUTCTimeAsString());
+            return stringDateToDate(getCurrentUTCTimeAsString());
         } catch (ParseException e) {
             e.printStackTrace();
 
@@ -41,7 +41,7 @@ public class DateTimeUtils {
         return dateFormat.format(date);
     }
     
-    public static Date StringDateToDate(String StrDate) throws ParseException {
+    public static Date stringDateToDate(String StrDate) throws ParseException {
         Date dateToReturn = null;
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
 
@@ -70,9 +70,9 @@ public class DateTimeUtils {
 
             Date lastUpdateInUTC;
 
-            lastUpdateInUTC = StringDateToDate(lastUpdateInUTCString);
+            lastUpdateInUTC = stringDateToDate(lastUpdateInUTCString);
 
-            Date nowInUTC = StringDateToDate(nowInUTCString);
+            Date nowInUTC = stringDateToDate(nowInUTCString);
             
             long nowInUTCMilis = nowInUTC.getTime();
             long lastUpdateInUTCMilis = lastUpdateInUTC.getTime();
@@ -94,7 +94,7 @@ public class DateTimeUtils {
         return resultValue;
     }
     
-    public static Date getUTCDAte(){
+    public static Date getUTCDate(){
         Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
         return c.getTime();
     }

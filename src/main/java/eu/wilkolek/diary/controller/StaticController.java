@@ -1,6 +1,7 @@
 package eu.wilkolek.diary.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 import javax.mail.MessagingException;
@@ -20,15 +21,16 @@ import org.springframework.web.servlet.ModelAndView;
 import eu.wilkolek.diary.model.CurrentUser;
 import eu.wilkolek.diary.model.DayView;
 import eu.wilkolek.diary.model.Mail;
+import eu.wilkolek.diary.model.Meta;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.MailRepository;
 import eu.wilkolek.diary.service.MailService;
+import eu.wilkolek.diary.service.MetaService;
 import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.DayHelper;
 import eu.wilkolek.diary.util.MailUtil;
-import eu.wilkolek.diary.util.MetadataHelper;
 
 @Controller
 public class StaticController {
@@ -47,10 +49,13 @@ public class StaticController {
     @Autowired
     private MailService mailService;
     
+    @Autowired
+    private MetaService metaService;
+    
     @RequestMapping("/")
     public ModelAndView home(CurrentUser currentUser) {
         ModelAndView model = new ModelAndView("static/home");
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Welcome"));
+
         if (currentUser == null){
             LinkedHashSet<DayView> dayViews = DayHelper.getLastPublicDays(dayRepository, ShareStyleEnum.PUBLIC, 10, ShareStyleEnum.PUBLIC.name());
             model.getModelMap().addAttribute("days", dayViews);
@@ -58,7 +63,7 @@ public class StaticController {
             LinkedHashSet<DayView> dayViews = DayHelper.getLastPublicDays(dayRepository, ShareStyleEnum.PROTECTED, 10, ShareStyleEnum.PUBLIC.name());
             model.getModelMap().addAttribute("days", dayViews);
         }
-        
+        model = metaService.updateModel(model, "/", new Meta(), null,"");
         LOGGER.debug("Getting home page");
         return model;
     }
@@ -66,7 +71,8 @@ public class StaticController {
     @RequestMapping("/faq")
     public ModelAndView about() {
         ModelAndView model = new ModelAndView("static/faq");
-        model.getModelMap().addAttribute("title", MetadataHelper.title("How dayinsix works"));
+
+        model = metaService.updateModel(model, "/faq", new Meta(), null,"");
         LOGGER.debug("Getting about page");
         return model;
     }
@@ -74,7 +80,7 @@ public class StaticController {
     @RequestMapping(value = "/feedback", method = RequestMethod.GET)
     public ModelAndView contact() {
         ModelAndView model = new ModelAndView("static/feedback");
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Feedback"));
+        model = metaService.updateModel(model, "/feedback", new Meta(), null,"");
         LOGGER.debug("Getting feedback page");
         return model;
     }
@@ -82,7 +88,8 @@ public class StaticController {
     @RequestMapping(value = "/feedback", method = RequestMethod.POST)
     public ModelAndView contactPOST(@RequestParam(value = "mail") String mail, CurrentUser currentUser) {
         ModelAndView model = new ModelAndView("static/feedbackSent");
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Feedback"));
+
+        model = metaService.updateModel(model, "/feedback", new Meta(), null,"");
         String msg = this.createMsg(currentUser != null ? currentUser.getUser() : null, mail);
         
         

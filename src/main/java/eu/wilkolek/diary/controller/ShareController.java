@@ -4,9 +4,11 @@ import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,15 +24,16 @@ import eu.wilkolek.diary.model.CurrentUser;
 import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.DayView;
 import eu.wilkolek.diary.model.DayViewData;
+import eu.wilkolek.diary.model.Meta;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.StatusEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.model.UserOptions;
 import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.service.MetaService;
 import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.DayHelper;
-import eu.wilkolek.diary.util.MetadataHelper;
 
 
 @Controller
@@ -38,11 +41,13 @@ public class ShareController {
     
     private final UserRepository userRepository;
     private final DayRepository dayRepository;
+    private MetaService metaService;
     
     @Autowired
-    public ShareController(UserRepository userRepository, DayRepository dayRepository) {
+    public ShareController(UserRepository userRepository, DayRepository dayRepository, MetaService metaService) {
         this.dayRepository = dayRepository;
         this.userRepository = userRepository;
+        this.metaService = metaService;
     }
     
     
@@ -53,7 +58,7 @@ public class ShareController {
     
     @RequestMapping("/s/{username}/{page}")
     public String sharePage(Model model,  @PathVariable(value = "username") String username, @PathVariable(value = "page") Integer page, CurrentUser currentUser) throws NoSuchUserException, UserIsDisabledException {
-        model.asMap().put("title", MetadataHelper.title(username + "'s diary"));
+        
         Optional<User> user = userRepository.findByUsername(username);
         
         if (!user.isPresent()){
@@ -96,8 +101,6 @@ public class ShareController {
         }
         
         model.asMap().put("user", user.get());
-        model.asMap().put("title", MetadataHelper.title(username+"'s diary"));
-        model.asMap().put("description", "Share page of user");
         
         int DAYS_PER_PAGE = 10;
 
@@ -110,6 +113,12 @@ public class ShareController {
         model.asMap().put("sPage", helper.getsPage());
         model.asMap().put("usersTitle", username+"'s diary");
         model.asMap().put("user", user.get());
+        
+        HashMap<String, String> replacement = new HashMap<String, String>();
+        replacement.put("{page}",helper.getcPage()+"");
+        replacement.put("{user}",username);
+        model = metaService.updateModel(model, "/s{page}", new Meta(), replacement,(!StringUtils.isEmpty(user.get().getAbout()) && user.get().getAbout().length() > 160) ? user.get().getAbout().substring(0, 155) + "..." : "");
+        
         if (currentUser != null){
         
             ArrayList<String> following = currentUser.getUser().getFollowingBy();

@@ -54,7 +54,7 @@ public class MailService {
             }
             if (canSend) {
                 Mail m = new Mail();
-                m.setDate(DateTimeUtils.getUTCDAte());
+                m.setDate(DateTimeUtils.getUTCDate());
                 m.setMessage(text);
                 m.setSubject(message.getSubject());
                 m.setTo(message.getAllRecipients());

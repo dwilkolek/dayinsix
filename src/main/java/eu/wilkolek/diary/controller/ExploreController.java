@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.google.gson.Gson;
 
 import eu.wilkolek.diary.model.CurrentUser;
+import eu.wilkolek.diary.model.Meta;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.service.MetaService;
 
 @Controller
 public class ExploreController {
@@ -22,9 +24,14 @@ public class ExploreController {
     @Autowired
     private UserRepository userRepository;
 
+    
+    @Autowired
+    private MetaService metaService;
+    
+    
     @RequestMapping(value = "/explore", method = RequestMethod.GET)
-    public String explore() {
-
+    public String explore(Model model) {
+        model = metaService.updateModel(model, "/explore", new Meta(), null,"");
         return "explore";
     }
 
@@ -70,6 +77,8 @@ public class ExploreController {
             }
         }
         model.asMap().put("results", gson.toJson(result));
+        
+        
 
         return "plain";
     }

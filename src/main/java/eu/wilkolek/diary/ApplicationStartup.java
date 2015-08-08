@@ -25,19 +25,24 @@ import ch.qos.logback.core.util.TimeUtil;
 import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.DictionaryWord;
 import eu.wilkolek.diary.model.InputTypeEnum;
+import eu.wilkolek.diary.model.Meta;
 import eu.wilkolek.diary.model.NotificationTypesEnum;
 import eu.wilkolek.diary.model.Sentence;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.StatusEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.model.UserOptions;
+import eu.wilkolek.diary.model.WebsiteOptions;
 import eu.wilkolek.diary.model.Word;
 import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.DictionaryWordRepository;
 import eu.wilkolek.diary.repository.ErrorRepository;
 import eu.wilkolek.diary.repository.MailRepository;
+import eu.wilkolek.diary.repository.MetaRepository;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.repository.WebsiteOptionsRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
+import eu.wilkolek.diary.util.OptionMap;
 
 //import eu.wilkolek.diary.util.TimezoneUtils;
 
@@ -49,14 +54,34 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
     private DayRepository dayRepository;
     private MailRepository mailRepository;
     private ErrorRepository errorRepository;
+    private MetaRepository metaRepository;
+    private WebsiteOptionsRepository websiteOptionsRepository;
 
     @Autowired
-    public ApplicationStartup(DictionaryWordRepository dictionaryWordRepository, UserRepository userRepository, DayRepository dayRepository,ErrorRepository errorRepository,MailRepository mailRepository) {
+    public ApplicationStartup(DictionaryWordRepository dictionaryWordRepository, UserRepository userRepository, DayRepository dayRepository,
+            ErrorRepository errorRepository, MailRepository mailRepository, MetaRepository metaRepository, WebsiteOptionsRepository websiteOptionsRepository) {
         this.dictionaryWordRepository = dictionaryWordRepository;
         this.dayRepository = dayRepository;
         this.userRepository = userRepository;
         this.mailRepository = mailRepository;
         this.errorRepository = errorRepository;
+        this.metaRepository = metaRepository;
+        this.websiteOptionsRepository = websiteOptionsRepository;
+    }
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (!StringUtils.isEmpty(System.getProperty("dictionary.words"))) {
+            this.setupDictionaryEN();
+        }
+        if (!StringUtils.isEmpty(System.getProperty("debug"))) {
+            this.prepareTestUserWithData();
+            this.prepareNotyficationTest();
+        }
+        if (!StringUtils.isEmpty(System.getProperty("preload"))) {
+            this.preloadOptions();
+            this.preloadMeta();
+        }
     }
 
     private void setupDictionaryEN() {
@@ -112,9 +137,9 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
 
         user.getOptions().put(UserOptions.PROFILE_VISIBILITY, ShareStyleEnum.PUBLIC.name());
         user.getOptionsLastUpdate().put(UserOptions.PROFILE_VISIBILITY, DateTimeUtils.getCurrentUTCTime());
-        
+
         user.setEnabled(true);
-        
+
         // user.getOptions().put(UserOptions.TIMEZONE,
         // TimezoneUtils.getTimeZones().get("Europe/Berlin"));
         // user.getOptionsLastUpdate().put(UserOptions.TIMEZONE,
@@ -127,10 +152,8 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         user = userRepository.save(user);
         user.setFollowingBy(new ArrayList<String>());
         user.setSharingWith(new ArrayList<String>());
-//        System.out.println("User used:" + gson.toJson(user));
-        
-        
-        
+        // System.out.println("User used:" + gson.toJson(user));
+
         ArrayList<DictionaryWord> words = new ArrayList<DictionaryWord>();
         words.add(new DictionaryWord(user, "Dodbre"));
         words.add(new DictionaryWord(user, "Dobtre"));
@@ -151,7 +174,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
                 ArrayList<Word> w = new ArrayList<Word>();
                 for (int j = 0; j < 7; j++) {
                     Word wo = new Word();
-                    wo.setStatus(StatusEnum.values()[(los+i+j) % StatusEnum.values().length].name());
+                    wo.setStatus(StatusEnum.values()[(los + i + j) % StatusEnum.values().length].name());
                     wo.setValue(words.get(i % words.size()));
                     w.add(wo);
                 }
@@ -164,85 +187,110 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
             }
             day.setUser(user);
             day = dayRepository.save(day);
-//            System.out.println("Day added: " + gson.toJson(day));
+            // System.out.println("Day added: " + gson.toJson(day));
             i++;
         }
 
     }
+    private void preloadOptions() {
+        websiteOptionsRepository.deleteAll();
+        WebsiteOptions w = new WebsiteOptions(OptionMap.TITLE_SUFFIX, " / Day in six");
+        websiteOptionsRepository.save(w);
+    }
+    private void preloadMeta() {
+        
+        
+        metaRepository.deleteAll();
+        metaRepository.save(new Meta("/","Welcome","",""));
+        metaRepository.save(new Meta("/faq","How it works","",""));
+        metaRepository.save(new Meta("/feedback","Feedback","",""));
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (!StringUtils.isEmpty(System.getProperty("dictionary.words"))) {
-            this.setupDictionaryEN();
-        }
-        this.prepareTestUserWithData();
-        this.prepareNotyficationTest();
-
+        metaRepository.save(new Meta("/remind","Reset your password","",""));
+        metaRepository.save(new Meta("/remindSuccess","Reset successful","",""));
+        metaRepository.save(new Meta("/explore","Explore this world","",""));
+        metaRepository.save(new Meta("/stats","DayInSix in numbers","",""));
+        metaRepository.save(new Meta("/s","{user}'s diary","",""));
+        metaRepository.save(new Meta("/login","Login","",""));
+        metaRepository.save(new Meta("/logout","Logout","",""));
+        metaRepository.save(new Meta("/register","Register","",""));
+        metaRepository.save(new Meta("/archive","Archive - {dateString}","",""));
+        
+        
+        metaRepository.save(new Meta("/followed","Your followers","",""));
+        metaRepository.save(new Meta("/following","Followed by you","",""));
+        metaRepository.save(new Meta("/share","Users you share days with","",""));
+        metaRepository.save(new Meta("/profile","Your profile","",""));
+        
+        metaRepository.save(new Meta("/day/add","Save the day","",""));
+        metaRepository.save(new Meta("/day/edit","Change your day","",""));
+        metaRepository.save(new Meta("/day/list","Your diary","",""));
+        
+        metaRepository.save(new Meta("/day/list{page}","Your diary / page {page}","",""));
+        metaRepository.save(new Meta("/s{page}","{user}'s diary / page {page}","",""));
     }
 
     private void prepareNotyficationTest() {
-        
+
         User u = new User();
         long nowMilis = DateTimeUtils.getCurrentUTCTime().getTime();
         long dayMilis = TimeUnit.DAYS.toMillis(1L);
-        HashMap<String,String> opt = new HashMap<String, String>();
+        HashMap<String, String> opt = new HashMap<String, String>();
         opt.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.DAY.name());
         u.setOptions(opt);
-        u.setLastLogIn(new Date(nowMilis - dayMilis*1 - 3000));
-        u.setLastNotification(new Date(nowMilis - dayMilis*2000));
+        u.setLastLogIn(new Date(nowMilis - dayMilis * 1 - 3000));
+        u.setLastNotification(new Date(nowMilis - dayMilis * 2000));
         u.setUsername("Julia_true_true");
         u.setEmail("dayinsixdiary@gmail.com");
         u.setEnabled(true);
         userRepository.save(u);
-        u=null;
-        
+        u = null;
+
         User u2 = new User();
-        HashMap<String,String> opt2 = new HashMap<String, String>();
+        HashMap<String, String> opt2 = new HashMap<String, String>();
         opt2.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.THREE_MONTHS.name());
         u2.setOptions(opt2);
-        u2.setLastLogIn(new Date(nowMilis - dayMilis*94 - 3000));
-        u2.setLastNotification(new Date(nowMilis - dayMilis*2000));
+        u2.setLastLogIn(new Date(nowMilis - dayMilis * 94 - 3000));
+        u2.setLastNotification(new Date(nowMilis - dayMilis * 2000));
         u2.setUsername("Julia2_true_true");
         u2.setEmail("dayinsixdiary@gmail.com");
         u2.setEnabled(true);
         userRepository.save(u2);
-        u2=null;
-        
+        u2 = null;
+
         User u4 = new User();
-        HashMap<String,String> opt4 = new HashMap<String, String>();
+        HashMap<String, String> opt4 = new HashMap<String, String>();
         opt4.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.DAY.name());
         u4.setOptions(opt4);
-        u4.setLastLogIn(new Date(nowMilis - dayMilis*2));
-        u4.setLastNotification(new Date(nowMilis - dayMilis*2000));
+        u4.setLastLogIn(new Date(nowMilis - dayMilis * 2));
+        u4.setLastNotification(new Date(nowMilis - dayMilis * 2000));
         u4.setUsername("Julia4_true_false");
         u4.setEmail("dayinsixdiary@gmail.com");
         u4.setEnabled(false);
         userRepository.save(u4);
         u4 = null;
-        
+
         User u3 = new User();
-        HashMap<String,String> opt3 = new HashMap<String, String>();
+        HashMap<String, String> opt3 = new HashMap<String, String>();
         opt3.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.THREE_MONTHS.name());
         u3.setOptions(opt3);
-        u3.setLastLogIn(new Date(nowMilis - dayMilis*89 - 3000));
-        u3.setLastNotification(new Date(nowMilis - dayMilis*2000));
+        u3.setLastLogIn(new Date(nowMilis - dayMilis * 89 - 3000));
+        u3.setLastNotification(new Date(nowMilis - dayMilis * 2000));
         u3.setUsername("Julia3_false_true");
         u3.setEmail("dayinsixdiary@gmail.com");
         u3.setEnabled(true);
         userRepository.save(u3);
         u3 = null;
-        
-        
+
         User u5 = new User();
-        HashMap<String,String> opt5 = new HashMap<String, String>();
+        HashMap<String, String> opt5 = new HashMap<String, String>();
         opt5.put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.NONE.name());
         u5.setOptions(opt5);
-        u5.setLastLogIn(new Date(nowMilis - dayMilis*94 - 3000));
-        u5.setLastNotification(new Date(nowMilis - dayMilis*2000));
+        u5.setLastLogIn(new Date(nowMilis - dayMilis * 94 - 3000));
+        u5.setLastNotification(new Date(nowMilis - dayMilis * 2000));
         u5.setUsername("Julia5_true_true");
         u5.setEmail("dayinsixdiary@gmail.com");
         u5.setEnabled(true);
         userRepository.save(u5);
-        u5=null;
+        u5 = null;
     }
 }

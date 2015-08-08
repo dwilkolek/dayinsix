@@ -28,7 +28,7 @@ public class Error {
     
     @Deprecated
     public Error() {
-        this.date = DateTimeUtils.getUTCDAte();
+        this.date = DateTimeUtils.getUTCDate();
     }
     
     public Error(Exception ex, CurrentUser cu){
@@ -38,7 +38,7 @@ public class Error {
             this.setMessage(ex.getMessage());
             this.setUser(cu != null ? cu.getUser() : null);
             this.setExceptionName(ex.getClass().getName());
-            this.date = DateTimeUtils.getUTCDAte();
+            this.date = DateTimeUtils.getUTCDate();
             
     }
     public Error(Exception ex, User cu){
@@ -48,7 +48,7 @@ public class Error {
         this.setMessage(ex.getMessage());
         this.setUser(cu);
         this.setExceptionName(ex.getClass().getName());
-        this.date = DateTimeUtils.getUTCDAte();
+        this.date = DateTimeUtils.getUTCDate();
         
 }
     public String getId() {

@@ -101,8 +101,8 @@ public class User {
         this.optionsLastUpdate.put(UserOptions.NOTIFICATION_FREQUENCY,DateTimeUtils.getCurrentUTCTime());
         this.enabled = false;
         this.token = "";
-        this.lastLogIn = DateTimeUtils.getUTCDAte();
-        this.lastNotification = DateTimeUtils.getUTCDAte();
+        this.lastLogIn = DateTimeUtils.getUTCDate();
+        this.lastNotification = DateTimeUtils.getUTCDate();
         this.followedBy = new ArrayList<String>();
         this.followingBy = new ArrayList<String>();
         this.sharingWith = new ArrayList<String>();

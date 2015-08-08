@@ -42,26 +42,31 @@ public class MailUtil {
             return;
         }
 
-        long diff = DateTimeUtils.diffInDays(u.getLastLogIn(), DateTimeUtils.getUTCDAte());
+        long diff = DateTimeUtils.diffInDays(u.getLastLogIn(), DateTimeUtils.getUTCDate());
 
         MimeMessage message = createMessage(javaMailSender);
         MimeMessageHelper helper = getHelper(message, false);
 //        String value = new String(""+TimeUnit.MILLISECONDS.toDays(diff));
         helper.setTo(u.getEmail());
         
-        String text = "<html><body>Hello " + u.getUsername() + ", <br />" + "You haven't written in your diary for " + diff + " days .<br />"
+        String dayText = "1 day";
+        if (diff > 1L){
+            dayText = diff + " days";
+        }
+        
+        String text = "<html><body>Hello " + u.getUsername() + ", <br />" + "You haven't written in your diary for " + dayText + " .<br />"
                 + "Quickly, log in <a href='http://dayinsix.com'>DayInSix.com</a> and make up for all these days. <br />"
                 + "Otherwise you're going to lost many beautiful memories.<br /><br />" + "DayInSix crew" + "</body></html>";
         
         helper.setText(text, true);
         helper.setSubject("Absence notification / DayInSix.com");
         System.out.println("Message sent: " + u.getUsername());
-        u.setLastNotification(DateTimeUtils.getUTCDAte());
+        u.setLastNotification(DateTimeUtils.getUTCDate());
         userRepository.save(u);
         mailService.sendMessage(helper.getMimeMessage(),text, null,false);
     }
     public static boolean checkights(User u) {
-        Date now = DateTimeUtils.getUTCDAte();
+        Date now = DateTimeUtils.getUTCDate();
         String freq = u.getOptions().get(UserOptions.NOTIFICATION_FREQUENCY);
 
         Long daysL = Long.parseLong(NotificationTypesEnum.getInDays(freq));

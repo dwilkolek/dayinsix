@@ -38,15 +38,17 @@ import eu.wilkolek.diary.dto.UserCreateForm;
 import eu.wilkolek.diary.dto.UserCreateFormValidator;
 import eu.wilkolek.diary.exception.NoSuchUserException;
 import eu.wilkolek.diary.model.InputTypeEnum;
+import eu.wilkolek.diary.model.Meta;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.service.MailService;
+import eu.wilkolek.diary.service.MetaService;
 import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.Email;
 import eu.wilkolek.diary.util.MailUtil;
 //import eu.wilkolek.diary.util.TimezoneUtils;
-import eu.wilkolek.diary.util.MetadataHelper;
+
 
 @Controller
 public class AuthController {
@@ -59,17 +61,20 @@ public class AuthController {
     private JavaMailSender javaMailSender;
     private MailService mailService;
 
+    private MetaService metaService;
+
     @InitBinder("form")
     public void initBinder(WebDataBinder binder) {
         binder.addValidators(userCreateFormValidator);
     }
 
     @Autowired
-    public AuthController(UserRepository userRepository, UserCreateFormValidator userCreateFormValidator, JavaMailSender javaMailSender, MailService mailService) {
+    public AuthController(UserRepository userRepository, UserCreateFormValidator userCreateFormValidator, JavaMailSender javaMailSender, MailService mailService, MetaService metaService) {
         this.userRepository = userRepository;
         this.userCreateFormValidator = userCreateFormValidator;
         this.javaMailSender = javaMailSender;
         this.mailService = mailService;
+        this.metaService= metaService;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -79,7 +84,8 @@ public class AuthController {
         model.getModelMap().addAttribute("sidebarNoLogin", true);
         model.getModelMap().addAttribute("errors", new HashMap<String, String>());
 
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Login"));
+        
+        model = metaService.updateModel(model, "/login", new Meta(), null,"");
 
         return model;
     }
@@ -109,7 +115,7 @@ public class AuthController {
         model.getModelMap().addAttribute("inputTypes", InputTypeEnum.asMap());
         model.getModelMap().addAttribute("errors", new HashMap<String, String>());
 
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Register"));
+        model = metaService.updateModel(model, "/register", new Meta(), null,"");
 
         return model;
     }
@@ -120,7 +126,7 @@ public class AuthController {
 
         ModelAndView model = new ModelAndView("auth/register");
 
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Register"));
+        model = metaService.updateModel(model, "/register", new Meta(), null,"");
 
         if (bindingResult.hasErrors()) {
             // failed validation
@@ -169,7 +175,8 @@ public class AuthController {
     @RequestMapping(value = "/activate/{username}/{token}", method = RequestMethod.GET)
     public ModelAndView activate(@PathVariable(value = "username") String username, @PathVariable(value = "token") String token) {
         ModelAndView model = new ModelAndView("auth/activate");
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Your account is activated"));
+        
+        model = metaService.updateModel(model, "/activate", new Meta(), null,"");
 
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
@@ -190,8 +197,7 @@ public class AuthController {
     @RequestMapping(value = "/thankyou", method = RequestMethod.GET)
     public ModelAndView thankyou() {
         ModelAndView model = new ModelAndView("auth/thankyou");
-        ;
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Thank you"));
+        model = metaService.updateModel(model, "/thankyou", new Meta(), null,"");
         return model;
     }
 
@@ -249,7 +255,7 @@ public class AuthController {
     @RequestMapping(value = "/remind", method = RequestMethod.GET)
     public ModelAndView remind() {
         ModelAndView model = new ModelAndView("auth/remind");
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Reset your password"));
+        model = metaService.updateModel(model, "/remind", new Meta(), null,"");
         return model;
     }
 
@@ -273,7 +279,7 @@ public class AuthController {
 
         User uSaved = userRepository.save(user.get());
 
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Reset successful"));
+        model = metaService.updateModel(model, "/remindSuccess", new Meta(), null,"");
         this.sendNewPassowrd(uSaved, token);
 
         return model;

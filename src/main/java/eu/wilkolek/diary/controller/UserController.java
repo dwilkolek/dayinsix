@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -46,6 +47,7 @@ import eu.wilkolek.diary.model.DayView;
 import eu.wilkolek.diary.model.DayViewData;
 import eu.wilkolek.diary.model.DictionaryWord;
 import eu.wilkolek.diary.model.InputTypeEnum;
+import eu.wilkolek.diary.model.Meta;
 import eu.wilkolek.diary.model.NotificationTypesEnum;
 import eu.wilkolek.diary.model.ShareStyleEnum;
 import eu.wilkolek.diary.model.StatusEnum;
@@ -54,10 +56,11 @@ import eu.wilkolek.diary.model.UserOptions;
 import eu.wilkolek.diary.repository.DayRepository;
 import eu.wilkolek.diary.repository.DictionaryWordRepository;
 import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.service.MetaService;
 import eu.wilkolek.diary.util.DateTimeUtils;
 //import eu.wilkolek.diary.util.TimezoneUtils;
 import eu.wilkolek.diary.util.DayHelper;
-import eu.wilkolek.diary.util.MetadataHelper;
+
 
 @Controller
 public class UserController {
@@ -71,6 +74,8 @@ public class UserController {
     private final ProfileFormValidator profileFormValidator;
     private CurrentUser currentUser;
 
+    private MetaService metaService;
+
     @InitBinder("form")
     public void initBinderProfile(WebDataBinder binder) {
         binder.addValidators(profileFormValidator);
@@ -82,12 +87,13 @@ public class UserController {
     }
 
     @Autowired
-    public UserController(UserRepository userRepository, DayRepository dayRepository, DictionaryWordRepository dictionaryWordRepository) {
+    public UserController(UserRepository userRepository, DayRepository dayRepository, DictionaryWordRepository dictionaryWordRepository, MetaService metaService) {
         this.userRepository = userRepository;
         this.dayRepository = dayRepository;
         this.dictionaryWordRepository = dictionaryWordRepository;
         this.dayFormValidator = new DayFormValidator(userRepository);
         this.profileFormValidator = new ProfileFormValidator(userRepository);
+        this.metaService = metaService;
     }
 
     // @PreAuthorize("hasAuthority('USER')")
@@ -116,8 +122,10 @@ public class UserController {
         model.getModelMap().put("pages", helper.getPages());
         model.getModelMap().put("tPage", helper.gettPage());
         model.getModelMap().put("sPage", helper.getsPage());
-
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Your diary"));
+        
+        HashMap<String, String> replacement = new HashMap<String, String>();
+        replacement.put("{page}",helper.getcPage()+"");
+        model = metaService.updateModel(model, "/day/list{page}", new Meta(), replacement,"");
 
         return model;
     }
@@ -140,7 +148,8 @@ public class UserController {
             model.getModelMap().put("dayForm", dayForm);
             model.getModelMap().put("status", StatusEnum.asMap());
             model.getModelMap().put("errors", result.getAllErrors());
-            model.getModelMap().addAttribute("title", MetadataHelper.title("Change your day"));
+           
+            model = metaService.updateModel(model, "/day/edit", new Meta(), null,"");
             model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
             return model;
         }
@@ -148,9 +157,11 @@ public class UserController {
         Date date = DateTimeUtils.getCurrentUTCTime();
 
         if (!StringUtils.isEmpty(dateStr)) {
-            date = DateTimeUtils.StringDateToDate(dateStr);
+            date = DateTimeUtils.stringDateToDate(dateStr);
         }
-
+        if (date.after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
+            throw new OutOfDateException("Your date is newer than UTC+0");
+        }
         Optional<Day> isDay = dayRepository.findByCreationDateAndUser(date, user);
 
         if (!isDay.isPresent()) {
@@ -207,10 +218,10 @@ public class UserController {
         Date date = DateTimeUtils.getCurrentUTCTime();
 
         if (!StringUtils.isEmpty(dateStr)) {
-            date = DateTimeUtils.StringDateToDate(dateStr);
+            date = DateTimeUtils.stringDateToDate(dateStr);
         }
 
-        if (date.getTime() > DateTimeUtils.getCurrentUTCTime().getTime()) {
+        if (date.after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
             throw new OutOfDateException("Your date is newer than UTC+0");
         }
         User user = currentUser.getUser();
@@ -237,7 +248,9 @@ public class UserController {
         model.getModelMap().put("status", StatusEnum.asMap());
         model.getModelMap().put("dayForm", dayForm);
         model.getModelMap().put("partialEdit", partialEdit);
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Change your day"));
+        
+        model = metaService.updateModel(model, "/day/edit", new Meta(), null,"");
+        
         model.getModelMap().addAttribute("shareStyles", ShareStyleEnum.asMap());
         return model;
     }
@@ -249,12 +262,18 @@ public class UserController {
 
         // this.dayFormValidator.validate(dayForm, result);
 
+        
+        
+        
         if (result.hasErrors()) {
             ModelAndView model = new ModelAndView("user/day/add");
             model.getModelMap().put("dayForm", dayForm);
             model.getModelMap().put("status", StatusEnum.asMap());
             model.getModelMap().put("errors", result.getAllErrors());
-            model.getModelMap().addAttribute("title", MetadataHelper.title("Save the day"));
+            
+
+            model = metaService.updateModel(model, "/day/add", new Meta(), null,"");
+            
             model.getModelMap().put("shareStyles", ShareStyleEnum.asMap());
             return model;
         }
@@ -262,9 +281,11 @@ public class UserController {
         Date date = DateTimeUtils.getCurrentUTCTime();
 
         if (!StringUtils.isEmpty(dateStr)) {
-            date = DateTimeUtils.StringDateToDate(dateStr);
+            date = DateTimeUtils.stringDateToDate(dateStr);
         }
-
+        if (date.after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
+            throw new OutOfDateException("Your date is newer than UTC+0");
+        }
         Optional<Day> isDay = dayRepository.findByCreationDateAndUser(date, user);
 
         if (isDay.isPresent()) {
@@ -305,24 +326,31 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @RequestMapping(value = "/user/day/add/{date}", method = RequestMethod.GET)
-    public String add(Model model, @PathVariable(value = "date") String date, CurrentUser currentUser) throws ParseException, OutOfDateException {
+    @RequestMapping(value = "/user/day/add/{dateStr}", method = RequestMethod.GET)
+    public String add(Model model, @PathVariable(value = "dateStr") String dateStr, CurrentUser currentUser) throws ParseException, OutOfDateException {
         model.addAttribute("dayForm", new DayForm());
-        model.addAttribute("date", date);
+        model.addAttribute("date", dateStr);
 
-        Optional<Day> isDay = dayRepository.findByCreationDateAndUser(DateTimeUtils.StringDateToDate(date), currentUser.getUser());
+        Date date = DateTimeUtils.getCurrentUTCTime();
+        if (!StringUtils.isEmpty(dateStr)) {
+            date = DateTimeUtils.stringDateToDate(dateStr);
+        }
+        
+        Optional<Day> isDay = dayRepository.findByCreationDateAndUser(DateTimeUtils.stringDateToDate(dateStr), currentUser.getUser());
 
         if (isDay.isPresent()) {
             throw new OutOfDateException("This day is already saved.");
         }
 
-        if (DateTimeUtils.StringDateToDate(date).getTime() > DateTimeUtils.getCurrentUTCTime().getTime()) {
+        if (date.after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
             throw new OutOfDateException("Your date is newer than UTC+0");
         }
 
         model.asMap().put("status", StatusEnum.asMap());
         model.asMap().put("dayForm", new DayForm());
-        model.asMap().put("title", MetadataHelper.title("Save the day"));
+        
+        model = metaService.updateModel(model, "/day/add", new Meta(), null,"");
+        
         model.asMap().put("shareStyles", ShareStyleEnum.asMap());
         return "user/day/add";
     }
@@ -338,7 +366,8 @@ public class UserController {
         prepareDataForModel(model);
 
         model.addAttribute("form", profileForm);
-        model.asMap().put("title", MetadataHelper.title("Your profile"));
+
+        model = metaService.updateModel(model, "/profile", new Meta(), null,"");
         return "user/profile";
     }
 
@@ -387,7 +416,9 @@ public class UserController {
         model.addAttribute("form", profileFormClean);
         saveSuccess = true;
         model.addAttribute("saveSuccess", !result.hasErrors());
-        model.addAttribute("title", MetadataHelper.title("Your profile"));
+
+
+        model = metaService.updateModel(model, "/profile", new Meta(), null,"");
         if (!user.isEnabled()) {
             return "redirect:/logout/userDisabled";
         }
@@ -439,7 +470,10 @@ public class UserController {
 
         model.asMap().put("username", user.get().getUsername());
         model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(currentUser.getUser().getFollowingBy())));
-        model.asMap().put("title", MetadataHelper.title("Followed by you"));
+        
+
+        model = metaService.updateModel(model, "/follow", new Meta(), null,"");
+        
         return "redirect:/user/following";
     }
 
@@ -451,7 +485,8 @@ public class UserController {
             lookFor = new ArrayList<String>();
         }
         model.asMap().put("shares", DayHelper.selectEnabled(userRepository.findAll(lookFor)));
-        model.asMap().put("title", MetadataHelper.title("Users you share days with"));
+
+        model = metaService.updateModel(model, "/share", new Meta(), null,"");
         return "user/share";
     }
 
@@ -467,7 +502,9 @@ public class UserController {
         Boolean isSharing = false;
         ModelAndView model = new ModelAndView("user/share");
         Optional<User> user = userRepository.findByUsername(username);
-        model.getModelMap().addAttribute("title", MetadataHelper.title("Users you share days with"));
+        
+        model = metaService.updateModel(model, "/share", new Meta(), null,"");
+        
         if (!user.isPresent()) {
             throw new NoSuchUserException("You can't share with non existing user");
         }
@@ -511,7 +548,8 @@ public class UserController {
         }
         currentUser.setUser(userByDb);
         model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(lookFor)));
-        model.asMap().put("title", MetadataHelper.title("Followed by you"));
+
+        model = metaService.updateModel(model, "/following", new Meta(), null,"");
         return "user/following";
     }
 
@@ -525,7 +563,8 @@ public class UserController {
         }
         currentUser.setUser(userByDb);
         model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(lookFor)));
-        model.asMap().put("title", MetadataHelper.title("Your followers"));
+
+        model = metaService.updateModel(model, "/followed", new Meta(), null,"");
         return "user/followed";
     }
 
@@ -597,6 +636,9 @@ public class UserController {
         Date dateStart = new GregorianCalendar(year, month - 1, 1).getTime();
         Date dateEnd = new GregorianCalendar(yearEnd, monthEnd, 1).getTime();
         dateEnd = new Date(dateEnd.getTime() - TimeUnit.DAYS.toMillis(1L));
+        if (dateEnd.after(DateTimeUtils.getUTCDate())){
+            dateEnd = DateTimeUtils.getCurrentUTCTime();
+        }
         long dateStartMilis = dateStart.getTime();
         long dateCreatedMilis = u.getCreated().getTime();
         long dateEndMilis = dateEnd.getTime();
@@ -618,6 +660,11 @@ public class UserController {
 
         model.asMap().put("days", daysView);
         model.asMap().put("dateStr", DayHelper.createDateStr(month - 1, year));
+        
+        HashMap<String, String> replacement = new HashMap<String, String>();
+        replacement.put("{dateString}",DayHelper.createDateStr(month - 1, year));
+        model = metaService.updateModel(model, "/archive", new Meta(), replacement,"");
+        
         return "user/day/archive";
     }
 
@@ -647,6 +694,11 @@ public class UserController {
                 result.put("divider" + y, "divider");
             }
         }
+        if (monthStart == m && yearStart == y){
+            String text = DayHelper.createDateStr(m, y);
+            result.put(y + "/" + (m + 1), text);
+        }
+        
         return result;
 
     }
