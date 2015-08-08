@@ -117,7 +117,18 @@ public class ShareController {
         HashMap<String, String> replacement = new HashMap<String, String>();
         replacement.put("{page}",helper.getcPage()+"");
         replacement.put("{user}",username);
-        model = metaService.updateModel(model, "/s{page}", new Meta(), replacement,(!StringUtils.isEmpty(user.get().getAbout()) && user.get().getAbout().length() > 160) ? user.get().getAbout().substring(0, 155) + "..." : "");
+        
+        String desc = "This is "+username+"'s diary on dayinsix.com.";
+        
+        if (!StringUtils.isEmpty(user.get().getAbout())){
+           if (user.get().getAbout().length() > 160) {
+               desc = user.get().getAbout().substring(0, 155) + "..." ;
+           } else {
+               desc = user.get().getAbout();
+           }
+        }
+        
+        model = metaService.updateModel(model, "/s{page}", new Meta(), replacement,desc);
         
         if (currentUser != null){
         
