@@ -207,11 +207,14 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
 
     }
     private void preloadOptions() {
+        WebsiteOptions w1 = new WebsiteOptions(OptionMap.TITLE_SUFFIX, " / Day in six");
+        websiteOptionsRepository.save(w1);
         websiteOptionsRepository.deleteAll();
         WebsiteOptions w = new WebsiteOptions(OptionMap.TITLE_SUFFIX, " / Day in six");
         websiteOptionsRepository.save(w);
     }
     private void preloadMeta() {
+        metaRepository.save(new Meta("/","Welcome","Here you can easily and quickly save every day of your life. You write six words per day, which allows you to simply reconstruct any day you've experienced.",""));
         
         
         metaRepository.deleteAll();
