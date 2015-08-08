@@ -81,10 +81,10 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
             this.prepareTestUserWithData();
             this.prepareNotyficationTest();
         }
-        if (!StringUtils.isEmpty(System.getProperty("preload"))) {
+//        if (!StringUtils.isEmpty(System.getProperty("preload"))) {
             this.preloadOptions();
             this.preloadMeta();
-        }
+//        }
     }
 
     private void cleanUp() {
@@ -207,13 +207,16 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
 
     }
     private void preloadOptions() {
+        System.out.println("preloadOptions - start");
         WebsiteOptions w1 = new WebsiteOptions(OptionMap.TITLE_SUFFIX, " / Day in six");
         websiteOptionsRepository.save(w1);
         websiteOptionsRepository.deleteAll();
         WebsiteOptions w = new WebsiteOptions(OptionMap.TITLE_SUFFIX, " / Day in six");
         websiteOptionsRepository.save(w);
+        System.out.println("preloadOptions - end");
     }
     private void preloadMeta() {
+        System.out.println("preloadMeta - start");
         metaRepository.save(new Meta("/","Welcome","Here you can easily and quickly save every day of your life. You write six words per day, which allows you to simply reconstruct any day you've experienced.",""));
         
         
@@ -244,6 +247,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         
         metaRepository.save(new Meta("/day/list{page}","Your diary / page {page}","Your diary / page {page}",""));
         metaRepository.save(new Meta("/s{page}","{user}'s diary / page {page}","{user}'s diary / page {page}",""));
+        System.out.println("preloadMeta - end");
     }
 
     private void prepareNotyficationTest() {
