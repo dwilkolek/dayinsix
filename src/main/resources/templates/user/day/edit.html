@@ -31,7 +31,7 @@
                             <form th:if="${dayForm.sentence != null}" th:object="${dayForm}" method="post">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h2>Type in sentence and choose how do You feel about it</h2>
+                                        <h2>Type in sentence and choose how you feel about it</h2>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -74,7 +74,7 @@
                                 <div class="form-group">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                 </div>
-                                <h2>Type in six words and choose how do You feel about them</h2>
+                                <h2>Type in six words and choose how you feel about them</h2>
 
                                 <div class="form-group" th:each="i : ${#numbers.sequence( 0, 5)}">
 
