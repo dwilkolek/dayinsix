@@ -202,8 +202,10 @@ public class UserController {
             dayRepository.save(dayToDelete.get());
         }
         if (!partialEdit) {
+            Day toSave = new Day( dayForm, user);
+            toSave.setStoreDate(dayToDelete.get().getStoreDate());
             dayRepository.delete(dayToDelete.get());
-            dayRepository.save(new Day(dayForm, user));
+            dayRepository.save(toSave);
         }
 
         return new ModelAndView("redirect:/user/day/list");

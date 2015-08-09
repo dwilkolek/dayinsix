@@ -47,6 +47,40 @@ public class Day {
 		this.creationDate = dayForm.getDayDate();
 	}
 
+	   public Day(Day parent,DayForm dayForm, User user) {
+	        
+	       this.storeDate = parent.getStoreDate();
+	      
+	       
+	        this.user = user;
+	        
+	        this.shareStyle = dayForm.getShareStyle();
+	        
+	        if (!StringUtils.isEmpty(dayForm.getSentence())){
+	            this.sentence = new Sentence();
+	            this.sentence.setStatus((StatusEnum.valueOf(dayForm.getSentenceStatus())).toString());
+	            this.sentence.setValue(dayForm.getSentence());
+	            
+	        } else {
+	            this.words = new ArrayList<Word>();
+	            int i = 0;
+	            
+	            for (DictionaryWord d : dayForm.getDictionaryWords()){
+	                Word w = new Word();
+	                w.setValue(d);
+	                w.setWord(d.getValue());
+	                w.setStatus((StatusEnum.valueOf(dayForm.getWordsStatuses().get(i))).toString());
+	                i++;
+	                this.words.add(w);
+	            }
+	            
+	        }
+	        
+	        this.note = dayForm.getNote();
+	        this.userProfileVisibility = user.getOptions().get(UserOptions.PROFILE_VISIBILITY);
+	        this.creationDate = dayForm.getDayDate();
+	    }
+	
 	@Id
     private String id;
 	
