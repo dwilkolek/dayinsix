@@ -122,8 +122,9 @@ public class AdminController {
     
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/admin/error/clean", method = {RequestMethod.POST,RequestMethod.GET})
-    public String clean(@PathVariable(value="id")String id){
+    public String clean(){
         errorRepository.deleteAll();
+        System.out.println("Cleaned all errors");
         return "redirect:/admin/error";
     }
     
