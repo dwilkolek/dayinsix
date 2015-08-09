@@ -100,15 +100,8 @@
 		<!-- </dependency> -->
 		<!-- javax.mail:mail:1.4.1 -->
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-velocity</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.8.2</version>
-		</dependency>
+		
+	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-batch</artifactId>
@@ -118,6 +111,7 @@
 			<artifactId>ant</artifactId>
 			<version>1.9.3</version>
 		</dependency>
+	
 	</dependencies>
 
 	<build>

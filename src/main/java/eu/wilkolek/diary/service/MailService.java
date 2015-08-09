@@ -1,30 +1,13 @@
 package eu.wilkolek.diary.service;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import javax.activation.DataHandler;
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
-import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-
 import eu.wilkolek.diary.model.Mail;
-import eu.wilkolek.diary.model.NotificationTypesEnum;
 import eu.wilkolek.diary.model.User;
-import eu.wilkolek.diary.model.UserOptions;
 import eu.wilkolek.diary.repository.ErrorRepository;
 import eu.wilkolek.diary.repository.MailRepository;
 import eu.wilkolek.diary.repository.UserRepository;
