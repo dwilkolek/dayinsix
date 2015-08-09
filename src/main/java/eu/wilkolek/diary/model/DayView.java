@@ -8,6 +8,8 @@ public class DayView {
 
     private ArrayList<Word> words;
 
+    private Date storeDate;
+    
     private Date creationDate;
 
     private boolean empty;
@@ -26,12 +28,13 @@ public class DayView {
 
     private String username;
 
-    public DayView(Sentence sentence, ArrayList<Word> words, Date creationDate, String note, String dayShareStyle, User whosDay, User whoWatches,
+    public DayView(Sentence sentence, ArrayList<Word> words, Date creationDate,Date storeDate, String note, String dayShareStyle, User whosDay, User whoWatches,
             boolean checkUserProfileVisibility) {
         super();
         this.sentence = sentence;
         this.words = words;
         this.creationDate = creationDate;
+        this.storeDate = storeDate;
         this.empty = false;
         this.setUsername(whosDay.getUsername());
         this.setShareStyle(dayShareStyle != null ? dayShareStyle : whosDay.getOptions().get(UserOptions.PROFILE_VISIBILITY));// whosDay.getOptions().get(UserOptions.SHARE_STYLE));
@@ -173,6 +176,14 @@ public class DayView {
 
     public void setPolicy(String policy) {
         this.policy = ShareStyleEnum.asMap().get(policy).split(" - ")[0];
+    }
+
+    public Date getStoreDate() {
+        return storeDate;
+    }
+
+    public void setStoreDate(Date storeDate) {
+        this.storeDate = storeDate;
     }
 
 }

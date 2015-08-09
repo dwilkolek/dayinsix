@@ -55,7 +55,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             
             int start = x.indexOf("login");
             x = x.substring(0,start);
-            if (redirectTo.contains("thankyou") || redirectTo.contains("userDisabled") || redirectTo.contains("activate") || redirectTo.contains("") || x.equals(redirectTo)) {
+            if (redirectTo.contains("thankyou") || redirectTo.contains("userDisabled") || redirectTo.contains("activate")  || x.equals(redirectTo)) {
                 redirectStrategy.sendRedirect(request, response, "/user/day/list");
                 return;
             }

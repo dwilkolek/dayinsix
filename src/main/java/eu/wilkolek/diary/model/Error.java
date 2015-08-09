@@ -7,50 +7,67 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.gson.Gson;
 
+import eu.wilkolek.diary.exception.ExceptionWithUserInterface;
 import eu.wilkolek.diary.util.DateTimeUtils;
 
 @Document(collection = "errors")
 public class Error {
-    
+
     private String id;
-    
+
     private String stacktrace;
-    
+
     private Date date;
-    
+
     private String exceptionName;
-    
+
     @DBRef
     private User user;
-    
+
     private String message;
-    
-    
+
     @Deprecated
     public Error() {
         this.date = DateTimeUtils.getUTCDate();
     }
-    
-    public Error(Exception ex, CurrentUser cu){
-            Gson gson = new Gson();
-            
-            this.setStacktrace(gson.toJson(ex.getStackTrace()));
-            this.setMessage(ex.getMessage());
-            this.setUser(cu != null ? cu.getUser() : null);
-            this.setExceptionName(ex.getClass().getName());
-            this.date = DateTimeUtils.getUTCDate();
-            
-    }
-    public Error(Exception ex, User cu){
+
+    public Error(Exception ex) {
+        ex.printStackTrace();
         Gson gson = new Gson();
-        
+        if (ex instanceof ExceptionWithUserInterface) {
+            this.setUser((((ExceptionWithUserInterface) ex).getUser() != null) ? ((ExceptionWithUserInterface) ex).getUser().getUser() : null);
+        }
+        this.setStacktrace(gson.toJson(ex.getStackTrace()));
+        this.setMessage(ex.getMessage());
+        this.setExceptionName(ex.getClass().getName());
+        this.date = DateTimeUtils.getUTCDate();
+
+    }
+
+    public Error(Exception ex, CurrentUser cu) {
+        ex.printStackTrace();
+        Gson gson = new Gson();
+
+        this.setStacktrace(gson.toJson(ex.getStackTrace()));
+        this.setMessage(ex.getMessage());
+        this.setUser(cu != null ? cu.getUser() : null);
+        this.setExceptionName(ex.getClass().getName());
+        this.date = DateTimeUtils.getUTCDate();
+
+    }
+
+    public Error(Exception ex, User cu) {
+        ex.printStackTrace();
+        Gson gson = new Gson();
+
         this.setStacktrace(gson.toJson(ex.getStackTrace()));
         this.setMessage(ex.getMessage());
         this.setUser(cu);
         this.setExceptionName(ex.getClass().getName());
         this.date = DateTimeUtils.getUTCDate();
-        
-}
+
+    }
+
     public String getId() {
         return id;
     }
@@ -106,8 +123,5 @@ public class Error {
     public void setExceptionName(String exceptionName) {
         this.exceptionName = exceptionName;
     }
-    
-
-    
 
 }

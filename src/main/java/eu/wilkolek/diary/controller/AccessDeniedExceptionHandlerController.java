@@ -1,9 +1,15 @@
 package eu.wilkolek.diary.controller;
 
+import java.util.Map;
+
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,7 +23,7 @@ import eu.wilkolek.diary.repository.ErrorRepository;
 import eu.wilkolek.diary.service.MetaService;
 
 @ControllerAdvice
-public class MessagingExceptionHandlerController {
+public class AccessDeniedExceptionHandlerController {
 
     public static final String DEFAULT_ERROR_VIEW = "error/messagingException";
 
@@ -27,17 +33,14 @@ public class MessagingExceptionHandlerController {
     @Autowired
     private MetaService metaService;
     
+    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     
-    @ExceptionHandler(value = { MessagingException.class })
-    public ModelAndView defaultErrorHandler(HttpServletRequest request, Exception e) throws Exception {
-        ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
-        metaService.updateModel(mav, "/error", new Meta(), null, null);
-        if (errorRepository != null){
-            
-            eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error(e);
-            errorRepository.save(ex);
-        }
-        
-        return mav;
+    @ExceptionHandler(value = { org.springframework.security.access.AccessDeniedException.class })
+    public void handler(HttpServletRequest request,HttpServletResponse response, Exception e) throws Exception {
+
+           String url = "?redirect="+request.getRequestURI();
+//           System.out.println();
+           redirectStrategy.sendRedirect(request, response, "/login?redirect="+request.getRequestURL()+"");
+
     }
 }

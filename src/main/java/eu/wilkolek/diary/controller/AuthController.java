@@ -265,7 +265,7 @@ public class AuthController {
 
         Optional<User> user = userRepository.findByEmail(email);
         if (!user.isPresent()) {
-            throw new NoSuchUserException("Reset failed for " + email);
+            throw new NoSuchUserException("Reset failed for " + email, null);
         }
 
         // String token = DateTimeUtils.getCurrentUTCTimeAsString() + email +

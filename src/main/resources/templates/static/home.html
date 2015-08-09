@@ -8,9 +8,6 @@
             <div id="header-wrapper" th:replace="fragments/header" />
 
 
-            <!--             <div class="container"> -->
-            <!--                 <div th:replace="fragments/topbar" /> -->
-
             <div class="row">
 
                 <div class="col-md-12">
@@ -42,7 +39,7 @@
             <div class="row">
                 <div class="col-md-12" th:if="${days.size() > 0}" th:each="day : ${days}">
                     <div class="card"  th:with="df=${@environment.getProperty('date.format.add')}">
-                        <!--                         <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4> -->
+<!--                                                 <h4 th:text="${#calendars.format(day.creationDate,df)}"></h4> -->
                         <a th:href="${'/s/'+day.username}" th:text="${day.username}"></a>
                         <div th:if="${day.sentence != null}">
                             <th:block>
@@ -60,23 +57,7 @@
                             </th:block>
                         </div>
 
-                        <!--                         <th:block th:if="${day.note != null}"> -->
-                        <!--                             <th:block th:if="${day.note != ''}"> -->
-                        <!--                                 <div class="note" th:text="${day.note}"></div> -->
-                        <!--                             </th:block> -->
-                        <!--                         </th:block> -->
-
-                        <!--                         <div th:if="${day.canAdd != null and day.canAdd and day.words == null and day.sentence == null}" -->
-                        <!--                             th:with="dfx=${@environment.getProperty('date.format.add')}"> -->
-                        <!--                             <a th:href="${'/user/day/add/'+#calendars.format(day.creationDate,dfx)}">Save THE day</a> -->
-
-                        <!--                         </div> -->
-
-                        <!--                         <a class="edit-list-element" -->
-                        <!--                             th:if="${day.canEdit and !(day.canAdd != null and day.canAdd and day.words == null and day.sentence == null)}" -->
-                        <!--                             th:href="${'/user/day/edit/'+#calendars.format(day.creationDate,dfx)}" th:with="dfx=${@environment.getProperty('date.format.add')}"><i -->
-                        <!--                             class="glyphicon glyphicon-edit"></i> </a> -->
-
+                    
                     </div>
                 </div>
 

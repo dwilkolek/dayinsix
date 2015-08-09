@@ -95,6 +95,15 @@
 
                         <li><a href="/faq">FAQ</a></li>
                         <li><a href="/feedback">FEEDBACK</a></li>
+                        
+                        
+                        <li th:if="${currentUser!=null and #lists.contains(currentUser.user.roles, 'ADMIN')}" class="dropdown"><a data-toggle="dropdown" class="dropdown-toggle" href="#">ADM<strong
+                                class="caret"></strong></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/admin/meta">Meta tags</a></li>
+                               <li><a href="/admin/error">Errors</a></li>
+                            </ul></li>
+                        
                     </ul>
                 </div>
 

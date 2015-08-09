@@ -15,4 +15,5 @@ import eu.wilkolek.diary.model.User;
 public interface MetaRepository extends MongoRepository<Meta, String>{
 
     public Meta findByUrl(String url);
+    public Meta findById(String id);
 }

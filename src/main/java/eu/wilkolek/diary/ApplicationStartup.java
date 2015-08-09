@@ -71,20 +71,62 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (!StringUtils.isEmpty(System.getProperty("clean"))) {
+        if (!StringUtils.isEmpty(System.getProperty("dayinsix.clean"))) {
             this.cleanUp();
         }
-        if (!StringUtils.isEmpty(System.getProperty("dictionary.words"))) {
+        if (!StringUtils.isEmpty(System.getProperty("dayinsix.dictionary.words"))) {
             this.setupDictionaryEN();
         }
-        if (!StringUtils.isEmpty(System.getProperty("debug"))) {
+        if (!StringUtils.isEmpty(System.getProperty("dayinsix.debug"))) {
             this.prepareTestUserWithData();
             this.prepareNotyficationTest();
         }
-//        if (!StringUtils.isEmpty(System.getProperty("preload"))) {
+        if (!StringUtils.isEmpty(System.getProperty("dayinsix.init"))) {
             this.preloadOptions();
             this.preloadMeta();
-//        }
+            createAdministrator();
+        }
+            
+            
+    }
+
+    private void createAdministrator() {
+        Gson gson = new Gson();
+        Collection<String> roles = new ArrayList<String>();
+        roles.add("USER");
+        roles.add("ADMIN");
+       
+
+        User user = new User();
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setUsername("slishu");
+        long milis = TimeUnit.DAYS.toMillis(751L);
+        long mili2 = DateTimeUtils.getCurrentUTCTime().getTime();
+        user.setCreated(new Date(mili2));
+        user.setEmail("d.wilkolek@hotmail.com");
+        user.setPasswordHash("$2a$10$RyTtRjJ0xiebuhaBbjmIbOt6L6kX5d4vZFcljdhNmCXpo2DxJO4ku");
+        user.setLastLogIn(DateTimeUtils.getCurrentUTCTime());
+        user.setRoles(roles);
+
+        user.setOptions(new HashMap<String, String>());
+        user.setOptionsLastUpdate(new HashMap<String, Date>());
+
+        user.getOptions().put(UserOptions.INPUT_TYPE, InputTypeEnum.WORDS.toString());
+        user.getOptionsLastUpdate().put(UserOptions.INPUT_TYPE, DateTimeUtils.getCurrentUTCTime());
+
+        user.getOptions().put(UserOptions.SHARE_STYLE, ShareStyleEnum.PUBLIC.name());
+        user.getOptionsLastUpdate().put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
+
+        user.getOptions().put(UserOptions.PROFILE_VISIBILITY, ShareStyleEnum.PUBLIC.name());
+        user.getOptionsLastUpdate().put(UserOptions.PROFILE_VISIBILITY, DateTimeUtils.getCurrentUTCTime());
+        
+        user.getOptions().put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.NONE.name());
+        user.getOptionsLastUpdate().put(UserOptions.NOTIFICATION_FREQUENCY, DateTimeUtils.getCurrentUTCTime());
+
+        user.setEnabled(true);
+        
+        this.userRepository.save(user);
     }
 
     private void cleanUp() {
@@ -238,6 +280,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         
         metaRepository.save(new Meta("/followed","Your followers","Your followers",""));
         metaRepository.save(new Meta("/following","Followed by you","Followed by you",""));
+     //   metaRepository.save(new Meta("/follow","Followed by you","Followed by you",""));
         metaRepository.save(new Meta("/share","Users you share days with","Users you share days with",""));
         metaRepository.save(new Meta("/profile","Your profile","Your profile",""));
         
@@ -247,6 +290,12 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         
         metaRepository.save(new Meta("/day/list{page}","Your diary / page {page}","Your diary / page {page}",""));
         metaRepository.save(new Meta("/s{page}","{user}'s diary / page {page}","{user}'s diary / page {page}",""));
+        
+        metaRepository.save(new Meta("/error","Error","Error",""));
+        metaRepository.save(new Meta("/thankyou","Thank you","Thank you for registering",""));
+        
+        
+        
         System.out.println("preloadMeta - end");
     }
 

@@ -33,10 +33,10 @@ public class DayHelper {
             DayView d;
             if (days.size() > 0 && days.size() > count && days.get(count) != null && nowProcessed.equals(days.get(count).getCreationDate())) {
                 Day h = days.get(count);
-                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate(), h.getNote(),h.getShareStyle(),  whosDay, whoWatches, true);
+                d = new DayView(h.getSentence(), h.getWords(), h.getCreationDate(),h.getStoreDate(), h.getNote(),h.getShareStyle(),  whosDay, whoWatches, true);
                 count++;
             } else {
-                d = new DayView(null, null, nowProcessed, null, null,  whosDay, whoWatches, true);
+                d = new DayView(null, null, nowProcessed, null, null,null,  whosDay, whoWatches, true);
                 d.setEmpty(true);
             }
 
@@ -74,7 +74,7 @@ public class DayHelper {
             }
         }
 
-        throw new OutOfDateException(errMessage + " " + DateTimeUtils.format(date));
+        throw new OutOfDateException(errMessage + " " + DateTimeUtils.format(date), null);
 
     }
 
@@ -161,7 +161,7 @@ public class DayHelper {
         LinkedList<Day> days = dayRepository.getLatestDays(level, limit);
         
         for (Day d : days){
-            DayView dv = new DayView(d.getSentence(), d.getWords(), d.getCreationDate(), d.getNote(),d.getShareStyle(), d.getUser(), null, true);
+            DayView dv = new DayView(d.getSentence(), d.getWords(), d.getCreationDate(),d.getStoreDate(), d.getNote(),d.getShareStyle(), d.getUser(), null, true);
             dayViews.add(dv);
         }
         

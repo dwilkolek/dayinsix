@@ -3,6 +3,7 @@ package eu.wilkolek.diary.service;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import eu.wilkolek.diary.model.WebsiteOptions;
@@ -39,6 +40,12 @@ public class OptionsService {
         }
         WebsiteOptions o = websiteOptionsRepository.findByOpt(key);
         return o != null ? o.getVal() : null;
+    }
+    
+    @Scheduled(cron = "0 0 */1 * * ?")
+    private void clean(){
+        this.opts = new HashMap<String, String>();
+        System.out.println("OptionsService cleaned");
     }
 
    

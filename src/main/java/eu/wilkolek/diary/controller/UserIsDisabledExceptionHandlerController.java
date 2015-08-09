@@ -17,7 +17,9 @@ import eu.wilkolek.diary.exception.NoSuchUserException;
 import eu.wilkolek.diary.exception.OutOfDateException;
 import eu.wilkolek.diary.exception.UserIsDisabledException;
 import eu.wilkolek.diary.model.CurrentUser;
+import eu.wilkolek.diary.model.Meta;
 import eu.wilkolek.diary.repository.ErrorRepository;
+import eu.wilkolek.diary.service.MetaService;
 
 @ControllerAdvice
 public class UserIsDisabledExceptionHandlerController {
@@ -25,12 +27,19 @@ public class UserIsDisabledExceptionHandlerController {
     public static final String DEFAULT_ERROR_VIEW = "error/userIsDisabled";
     @Autowired
     private ErrorRepository errorRepository;
+    
+    @Autowired
+    private MetaService metaService;
+    
     @ExceptionHandler(value = { UserIsDisabledException.class })
-    public ModelAndView defaultErrorHandler(HttpServletRequest request, Exception e, CurrentUser cu) throws Exception {
+    public ModelAndView defaultErrorHandler(HttpServletRequest request, Exception e) throws Exception {
         ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
-
+        
+        metaService.updateModel(mav, "/error", new Meta(), null, null);
+        
+        mav.getModelMap().put("currentUser", ((UserIsDisabledException)e).getUser());
         if (errorRepository != null){
-            eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error(e, cu);
+            eu.wilkolek.diary.model.Error ex = new eu.wilkolek.diary.model.Error(e);
             errorRepository.save(ex);
         }
         

@@ -63,7 +63,7 @@ private MongoOperations operation;
         
         
         Query query = new Query(c);
-        query.with(new Sort(Sort.Direction.ASC, "storeDate"));
+        query.with(new Sort(Sort.Direction.DESC, "storeDate"));
         query.limit(limit);
         LinkedList<Day> lList = new LinkedList<Day>();
         ArrayList<Day> reOp = (ArrayList<Day>)operation.find(query, Day.class);

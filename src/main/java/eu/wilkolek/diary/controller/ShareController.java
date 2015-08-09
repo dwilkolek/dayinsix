@@ -62,10 +62,10 @@ public class ShareController {
         Optional<User> user = userRepository.findByUsername(username);
         
         if (!user.isPresent()){
-            throw new NoSuchUserException("Looking for user ["+username+"] failed.");
+            throw new NoSuchUserException("[ShareController.sharePage] Looking for user ["+username+"] failed.", currentUser);
         }
         if (!user.get().isEnabled()){
-            throw new UserIsDisabledException("User ["+username+"] is disabled.");
+            throw new UserIsDisabledException("[ShareController.sharePage] User ["+username+"] is disabled.", currentUser);
         }
         if (user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY).equals(ShareStyleEnum.PRIVATE.name())){
             if (currentUser == null){

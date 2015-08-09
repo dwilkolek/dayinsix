@@ -72,7 +72,6 @@ public class UserController {
     private final DictionaryWordRepository dictionaryWordRepository;
     private final DayFormValidator dayFormValidator;
     private final ProfileFormValidator profileFormValidator;
-    private CurrentUser currentUser;
 
     private MetaService metaService;
 
@@ -110,7 +109,7 @@ public class UserController {
 
         Optional<User> user = userRepository.findById(currentUser.getId());
         if (!user.isPresent()) {
-            throw new NoSuchUserException("CurrentUser not found id=" + currentUser.getId());
+            throw new NoSuchUserException("[UserController.days] CurrentUser not found id=" + currentUser.getId(), currentUser);
         }
 
         ModelAndView model = new ModelAndView("user/day/list");
@@ -160,21 +159,20 @@ public class UserController {
             date = DateTimeUtils.stringDateToDate(dateStr);
         }
         if (date.after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
-            throw new OutOfDateException("Your date is newer than UTC+0");
+            throw new OutOfDateException("[UserController.editDaySave] Date is wrong", currentUser);
         }
         Optional<Day> isDay = dayRepository.findByCreationDateAndUser(date, user);
 
         if (!isDay.isPresent()) {
-            throw new OutOfDateException("This day is already saved.");
+            throw new OutOfDateException("[UserController.editDaySave] Can't edit ghost day.", currentUser);
         }
 
         if (date.getTime() > DateTimeUtils.getCurrentUTCTime().getTime()) {
-            throw new OutOfDateException("Your date is newer than UTC+0");
+            throw new OutOfDateException("[UserController.editDaySave] Date is wrong", currentUser);
         }
 
         dayForm.setDayDate(date);
 
-        System.out.println("User id:" + user.getId());
         if (dayForm.getWords() != null && dayForm.getWords().size() > 0) {
             ArrayList<DictionaryWord> resultList = new ArrayList<DictionaryWord>();
             for (int i = 0; i < dayForm.getWords().size(); i++) {
@@ -222,7 +220,7 @@ public class UserController {
         }
 
         if (date.after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
-            throw new OutOfDateException("Your date is newer than UTC+0");
+            throw new OutOfDateException("[UserController.editDay] Date is wrong", currentUser);
         }
         User user = currentUser.getUser();
         Optional<Day> day = dayRepository.findByCreationDateAndUser(date, user);
@@ -236,7 +234,7 @@ public class UserController {
         if (day.get().getSentence() != null || day.get().getWords() != null) {
             dayForm.assignDay(day.get());
         } else {
-            throw new OutOfDateException("Propably it's a wrong day...");
+            throw new OutOfDateException("[UserController.editDay] Propably it's a wrong day (no sentence nor words)", currentUser);
         }
         boolean partialEdit = false;
         try {
@@ -284,21 +282,21 @@ public class UserController {
             date = DateTimeUtils.stringDateToDate(dateStr);
         }
         if (date.after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
-            throw new OutOfDateException("Your date is newer than UTC+0");
+            throw new OutOfDateException("[UserController.saveDay] Date is wrong", currentUser);
         }
         Optional<Day> isDay = dayRepository.findByCreationDateAndUser(date, user);
 
         if (isDay.isPresent()) {
-            throw new OutOfDateException("This day is already saved.");
+            throw new OutOfDateException("[UserController.saveDay] This day is already saved.",currentUser);
         }
 
         if (date.getTime() > DateTimeUtils.getCurrentUTCTime().getTime()) {
-            throw new OutOfDateException("Your date is newer than UTC+0");
+            throw new OutOfDateException("[UserController.saveDay] Date is wrong",currentUser);
         }
 
         dayForm.setDayDate(date);
 
-        System.out.println("User id:" + user.getId());
+//        System.out.println("User id:" + user.getId());
         if (dayForm.getWords() != null && dayForm.getWords().size() > 0) {
             ArrayList<DictionaryWord> resultList = new ArrayList<DictionaryWord>();
             for (int i = 0; i < dayForm.getWords().size(); i++) {
@@ -318,7 +316,7 @@ public class UserController {
             dayForm.setDictionaryWords(resultList);
         }
         Day dayToSave = new Day(dayForm, user);
-        dayToSave.setStoreDate(DateTimeUtils.getCurrentUTCTime());
+        dayToSave.setStoreDate(DateTimeUtils.getUTCDate());
         dayRepository.save(dayToSave);
         LOGGER.debug("User " + user.getEmail() + " added new day");
 
@@ -339,11 +337,11 @@ public class UserController {
         Optional<Day> isDay = dayRepository.findByCreationDateAndUser(DateTimeUtils.stringDateToDate(dateStr), currentUser.getUser());
 
         if (isDay.isPresent()) {
-            throw new OutOfDateException("This day is already saved.");
+            throw new OutOfDateException("[UserController.add] This day is already saved.", currentUser);
         }
 
         if (date.after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
-            throw new OutOfDateException("Your date is newer than UTC+0");
+            throw new OutOfDateException("[UserController.add] Date is wrong", currentUser);
         }
 
         model.asMap().put("status", StatusEnum.asMap());
@@ -472,7 +470,7 @@ public class UserController {
         model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(currentUser.getUser().getFollowingBy())));
         
 
-        model = metaService.updateModel(model, "/follow", new Meta(), null,"");
+        model = metaService.updateModel(model, "/following", new Meta(), null,"");
         
         return "redirect:/user/following";
     }
@@ -506,7 +504,7 @@ public class UserController {
         model = metaService.updateModel(model, "/share", new Meta(), null,"");
         
         if (!user.isPresent()) {
-            throw new NoSuchUserException("You can't share with non existing user");
+            throw new NoSuchUserException("[UserController.shareWith] You can't share with non existing user", currentUser);
         }
 
         if (currentUser.getUser().getSharingWith() == null) {
@@ -623,9 +621,9 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/archive/{year}/{month}", method = RequestMethod.GET)
-    public String archive(Model model, CurrentUser currentUser, @PathVariable(value = "year") Integer year, @PathVariable(value = "month") Integer month) {
+    public String archive(Model model, CurrentUser currentUser, @PathVariable(value = "year") Integer year, @PathVariable(value = "month") Integer month) throws OutOfDateException {
         User u = userRepository.findById(currentUser.getUser().getId()).get();
-
+        this.dateCheckForArchive(currentUser,year,month);
         int monthEnd = month - 1;
         int yearEnd = year;
         monthEnd++;
@@ -646,15 +644,19 @@ public class UserController {
         Calendar nowCal = new GregorianCalendar();
         nowCal.setTime(new Date(DateTimeUtils.getCurrentUTCTime().getTime() + TimeUnit.DAYS.toMillis(31L)));
 
+        
+        
         if (dateCreatedMilis > dateStartMilis) {
             dateStart = new Date(dateCreatedMilis);
         }
-        if (nowCal.getTimeInMillis() <= dateEndMilis || dateEndMilis < dateCreatedMilis) {
-
-            Calendar cal = new GregorianCalendar();
-            cal.setTime(u.getCreated());
-            return "redirect:/user/archive/" + (cal.get(Calendar.YEAR)) + "/" + (cal.get(Calendar.MONTH) + 1);
-        }
+//        if (cal..after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
+//            
+//        }
+        
+//            Calendar cal = new GregorianCalendar();
+//            cal.setTime(u.getCreated());
+//            return "redirect:/user/archive/" + (cal.get(Calendar.YEAR)) + "/" + (cal.get(Calendar.MONTH) + 1);
+      
         ArrayList<Day> days = dayRepository.getDaysFromDateToDate(u, dateStart, dateEnd);
         ArrayList<DayView> daysView = DayHelper.fillDates(days, dateStart, dateEnd, "e msg", u, u);
 
@@ -666,6 +668,16 @@ public class UserController {
         model = metaService.updateModel(model, "/archive", new Meta(), replacement,"");
         
         return "user/day/archive";
+    }
+
+    private void dateCheckForArchive(CurrentUser u, Integer y, Integer m) throws OutOfDateException {
+        LinkedHashMap<String,String> dateChaeck = UserController.createArchiveMenu(u.getUser());
+               for (String date : dateChaeck.keySet()){
+                   if (date.equals(y+"/"+m)){
+                       return;
+                   }
+               }
+        throw new OutOfDateException("[UserController.dateCheckForArchive] Date is wrong",u);
     }
 
     public static LinkedHashMap<String, String> createArchiveMenu(User u) {
