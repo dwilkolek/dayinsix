@@ -293,6 +293,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         
         metaRepository.save(new Meta("/error","Error","Error",""));
         metaRepository.save(new Meta("/thankyou","Thank you","Thank you for registering",""));
+        metaRepository.save(new Meta("/activate","Activate your account","Activate your account at DayInSIx.com and start your journey",""));
         
         
         
