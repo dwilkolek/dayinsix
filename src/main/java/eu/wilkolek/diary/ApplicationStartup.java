@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 
 import ch.qos.logback.core.util.TimeUtil;
+import eu.wilkolek.diary.controller.SitemapController;
 import eu.wilkolek.diary.model.Day;
 import eu.wilkolek.diary.model.DictionaryWord;
 import eu.wilkolek.diary.model.InputTypeEnum;
@@ -39,8 +40,10 @@ import eu.wilkolek.diary.repository.DictionaryWordRepository;
 import eu.wilkolek.diary.repository.ErrorRepository;
 import eu.wilkolek.diary.repository.MailRepository;
 import eu.wilkolek.diary.repository.MetaRepository;
+import eu.wilkolek.diary.repository.SitemapRepository;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.repository.WebsiteOptionsRepository;
+import eu.wilkolek.diary.service.SitemapService;
 import eu.wilkolek.diary.util.DateTimeUtils;
 import eu.wilkolek.diary.util.OptionMap;
 
@@ -56,10 +59,14 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
     private ErrorRepository errorRepository;
     private MetaRepository metaRepository;
     private WebsiteOptionsRepository websiteOptionsRepository;
+    private SitemapRepository sitemapRepository;
 
     @Autowired
+    private SitemapService sitemapService;
+    
+    @Autowired
     public ApplicationStartup(DictionaryWordRepository dictionaryWordRepository, UserRepository userRepository, DayRepository dayRepository,
-            ErrorRepository errorRepository, MailRepository mailRepository, MetaRepository metaRepository, WebsiteOptionsRepository websiteOptionsRepository) {
+            ErrorRepository errorRepository, MailRepository mailRepository, MetaRepository metaRepository, WebsiteOptionsRepository websiteOptionsRepository, SitemapRepository sitemapRepository) {
         this.dictionaryWordRepository = dictionaryWordRepository;
         this.dayRepository = dayRepository;
         this.userRepository = userRepository;
@@ -67,6 +74,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         this.errorRepository = errorRepository;
         this.metaRepository = metaRepository;
         this.websiteOptionsRepository = websiteOptionsRepository;
+        this.sitemapRepository = sitemapRepository;
     }
 
     @Override
@@ -86,6 +94,11 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
             this.preloadMeta();
             createAdministrator();
         }
+//        if (!StringUtils.isEmpty(System.getProperty("dayinsix.sitemap"))) {
+            
+           sitemapService.generateSitemap();
+            
+//        }
             
             
     }
@@ -137,6 +150,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         this.errorRepository.deleteAll();
         this.metaRepository.deleteAll();
         this.websiteOptionsRepository.deleteAll();
+        this.sitemapRepository.deleteAll();
         
     }
 

@@ -29,7 +29,7 @@
 
                             <th:block th:if="${follows != null}">
                                 <th:block th:if="${follows.size() > 0}">
-                                    <h2>You're following those users:</h2>
+                                    <h2>You are followed by:</h2>
                                     <div class="card" th:each="u : ${follows}">
                                         <a th:href="${'/s/'+u.username}" th:text="${u.username}"> </a>
 
