@@ -60,11 +60,11 @@ public class SitemapService {
         }
         
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">";
-        
+        String websites = "<url><loc>http://dayinsix.com/</loc><priority>1.00</priority></url><url>  <loc>http://dayinsix.com/remind</loc>  <priority>0.80</priority></url><url>  <loc>http://dayinsix.com/register</loc>  <priority>0.80</priority></url><url>  <loc>http://dayinsix.com/stats</loc>  <priority>0.80</priority></url><url>  <loc>http://dayinsix.com/explore</loc>  <priority>0.80</priority></url><url>  <loc>http://dayinsix.com/faq</loc>  <priority>0.80</priority></url><url>  <loc>http://dayinsix.com/feedback</loc>  <priority>0.80</priority></url>";
         String footer = "</urlset>";
         
         
-        String compact = header + usersString + usersSubpagesString + footer;
+        String compact = header + websites + usersString + usersSubpagesString + footer;
         
         Sitemap sitemap = new Sitemap();
         sitemap.setDate(DateTimeUtils.getUTCDate());
