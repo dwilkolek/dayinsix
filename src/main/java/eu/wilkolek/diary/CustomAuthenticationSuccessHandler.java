@@ -42,7 +42,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             ServletException {
 
         CurrentUser currentUser = (CurrentUser) authentication.getPrincipal();
-        User user = userRepository.findOne(currentUser.getId());
+        User user = userRepository.findById(currentUser.getId()).orElseThrow(() -> new ServletException("Missing user after auth"));
         Date date = DateTimeUtils.getUTCDate();
         user.setLastLogIn(date);
 

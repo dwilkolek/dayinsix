@@ -53,7 +53,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
     public List<User> findAllByPartUserName(String search, int limit) {
         Criteria c = Criteria.where("username").regex("^"+search+"(.*)$","i").and("enabled").is(true);
         Query query = new Query(c);
-        query.with(new Sort(Sort.Direction.DESC, "username"));
+        query.with(Sort.by(Sort.Direction.DESC, "username"));
         
         return operation.find(query.limit(limit), User.class);
     }

@@ -137,7 +137,7 @@ public class DayHelper {
         if (chosenEarlier.getTime() < created.getTime()){
             chosenEarlier = created;
         }
-       // System.out.println(chosenEarlier + " , "+chosenThen + " > " + milisThen);
+       // logger.info(chosenEarlier + " , "+chosenThen + " > " + milisThen);
         
 //        if (milisEarlier < mCreated) {
 //            chosenEarlier = new Date(mCreated);

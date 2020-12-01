@@ -1,22 +1,23 @@
 package eu.wilkolek.diary.util;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-
 import eu.wilkolek.diary.model.NotificationTypesEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.model.UserOptions;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.service.MailService;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class MailUtil {
+
+    private static final Logger logger = Logger.getLogger(MailUtil.class.getName());
 
     public final static String NAME = "DayInSix crew";
     public final static String FROM = "dayinsix@dayinsix.com";
@@ -60,7 +61,7 @@ public class MailUtil {
         
         helper.setText(text, true);
         helper.setSubject("Absence notification / DayInSix.com");
-        System.out.println("Message sent: " + u.getUsername());
+        logger.info("Message sent: " + u.getUsername());
         u.setLastNotification(DateTimeUtils.getUTCDate());
         userRepository.save(u);
         mailService.sendMessage(helper.getMimeMessage(),text, null,false);

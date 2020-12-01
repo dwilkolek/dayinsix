@@ -1,29 +1,22 @@
 package eu.wilkolek.diary.service;
 
-import java.util.List;
-
-import javax.mail.internet.MimeMessage;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-
-import eu.wilkolek.diary.model.Mail;
 import eu.wilkolek.diary.model.Sitemap;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.DayRepository;
-import eu.wilkolek.diary.repository.ErrorRepository;
-import eu.wilkolek.diary.repository.MailRepository;
 import eu.wilkolek.diary.repository.SitemapRepository;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.util.DateTimeUtils;
-import eu.wilkolek.diary.util.MailUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class SitemapService {
 
-    
+    private static final Logger logger = Logger.getLogger(SitemapService.class.getName());
     
     @Autowired
     private UserRepository userRepository;
@@ -38,7 +31,7 @@ public class SitemapService {
     
     @Scheduled(cron = "0 0 */6 * * ?")
     public void generateSitemap(){
-        System.out.println("Generating sitemap");
+        logger.info("Generating sitemap");
         String usersString = "";
         String usersSubpagesString = "";
         List<User> users = userRepository.findAll();
@@ -71,7 +64,7 @@ public class SitemapService {
         sitemap.setSitemap(compact);
         
         sitemap = sitemapRepository.save(sitemap);
-        System.out.println("Generating sitemap ("+sitemap.getId()+") - finished " + sitemap.getDate());
+        logger.info("Generating sitemap ("+sitemap.getId()+") - finished " + sitemap.getDate());
         
     }
     

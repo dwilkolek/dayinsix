@@ -3,8 +3,9 @@ package eu.wilkolek.diary.dto;
 import java.util.HashMap;
 import java.util.List;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.validation.ObjectError;
+
+import javax.validation.constraints.NotEmpty;
 
 public class UserCreateForm {
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import eu.wilkolek.diary.model.User;
 
 @Component
-public interface UserRepository extends MongoRepository<User, String>, UserRepositoryCustom{
+public interface UserRepository extends MongoRepository<User, String>, UserRepositoryCustom {
 
 	Optional<User> findByEmail(String email);
 	

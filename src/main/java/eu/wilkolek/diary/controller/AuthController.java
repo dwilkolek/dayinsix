@@ -1,39 +1,5 @@
 package eu.wilkolek.diary.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Optional;
-
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-import javax.validation.Valid;
-
-import org.apache.commons.io.Charsets;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
-import scala.util.control.Exception;
 import eu.wilkolek.diary.dto.UserCreateForm;
 import eu.wilkolek.diary.dto.UserCreateFormValidator;
 import eu.wilkolek.diary.exception.NoSuchUserException;
@@ -44,9 +10,29 @@ import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.repository.UserRepository;
 import eu.wilkolek.diary.service.MailService;
 import eu.wilkolek.diary.service.MetaService;
-import eu.wilkolek.diary.util.DateTimeUtils;
-import eu.wilkolek.diary.util.Email;
 import eu.wilkolek.diary.util.MailUtil;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Optional;
 //import eu.wilkolek.diary.util.TimezoneUtils;
 
 

@@ -30,7 +30,7 @@ private MongoOperations operation;
 	@Override
 	public ArrayList<Day> getDaysFromDateToDate(User user, Date dateStart, Date dateEnd) {
 		Query query = new Query(Criteria.where("user").is(user).andOperator(Criteria.where("creationDate").gte(dateStart).andOperator(Criteria.where("creationDate").lte(dateEnd))));
-		query.with(new Sort(Sort.Direction.DESC, "creationDate"));
+		query.with(Sort.by(Sort.Direction.DESC, "creationDate"));
 		
 		ArrayList<Day> result = new ArrayList<Day>(operation.find(query, Day.class));
 		return result;
@@ -63,7 +63,7 @@ private MongoOperations operation;
         
         
         Query query = new Query(c);
-        query.with(new Sort(Sort.Direction.DESC, "storeDate"));
+        query.with(Sort.by(Sort.Direction.DESC, "storeDate"));
         query.limit(limit);
         LinkedList<Day> lList = new LinkedList<Day>();
         ArrayList<Day> reOp = (ArrayList<Day>)operation.find(query, Day.class);

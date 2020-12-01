@@ -51,8 +51,8 @@ public class CurrentUserDetailsService implements UserDetailsService {
                 storedDay.setUserProfileVisibility(user.get().getOptions().get(UserOptions.PROFILE_VISIBILITY));
             }
             
-            dayRepository.save(storedDays);
-//            System.out.println("Stored : "+storedDays.size());
+            dayRepository.saveAll(storedDays);
+//            logger.info("Stored : "+storedDays.size());
             return new CurrentUser(userRepository.save(user.get()));
         }
         

@@ -1,21 +1,15 @@
 package eu.wilkolek.diary.controller;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
-
-import javax.validation.Valid;
-
+import eu.wilkolek.diary.dto.*;
+import eu.wilkolek.diary.exception.NoSuchUserException;
+import eu.wilkolek.diary.exception.OutOfDateException;
+import eu.wilkolek.diary.model.*;
+import eu.wilkolek.diary.repository.DayRepository;
+import eu.wilkolek.diary.repository.DictionaryWordRepository;
+import eu.wilkolek.diary.repository.UserRepository;
+import eu.wilkolek.diary.service.MetaService;
+import eu.wilkolek.diary.util.DateTimeUtils;
+import eu.wilkolek.diary.util.DayHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,41 +19,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.gs.collections.impl.list.Interval;
+import javax.validation.Valid;
+import java.text.ParseException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
-import eu.wilkolek.diary.dto.DayForm;
-import eu.wilkolek.diary.dto.DayFormValidator;
-import eu.wilkolek.diary.dto.ProfileForm;
-import eu.wilkolek.diary.dto.ProfileFormCustomValidator;
-import eu.wilkolek.diary.dto.ProfileFormValidator;
-import eu.wilkolek.diary.exception.NoSuchUserException;
-import eu.wilkolek.diary.exception.OutOfDateException;
-import eu.wilkolek.diary.model.CurrentUser;
-import eu.wilkolek.diary.model.Day;
-import eu.wilkolek.diary.model.DayView;
-import eu.wilkolek.diary.model.DayViewData;
-import eu.wilkolek.diary.model.DictionaryWord;
-import eu.wilkolek.diary.model.InputTypeEnum;
-import eu.wilkolek.diary.model.Meta;
-import eu.wilkolek.diary.model.NotificationTypesEnum;
-import eu.wilkolek.diary.model.ShareStyleEnum;
-import eu.wilkolek.diary.model.StatusEnum;
-import eu.wilkolek.diary.model.User;
-import eu.wilkolek.diary.model.UserOptions;
-import eu.wilkolek.diary.repository.DayRepository;
-import eu.wilkolek.diary.repository.DictionaryWordRepository;
-import eu.wilkolek.diary.repository.UserRepository;
-import eu.wilkolek.diary.service.MetaService;
-import eu.wilkolek.diary.util.DateTimeUtils;
 //import eu.wilkolek.diary.util.TimezoneUtils;
-import eu.wilkolek.diary.util.DayHelper;
 
 
 @Controller
@@ -94,12 +62,6 @@ public class UserController {
         this.profileFormValidator = new ProfileFormValidator(userRepository);
         this.metaService = metaService;
     }
-
-    // @PreAuthorize("hasAuthority('USER')")
-    // @RequestMapping(value = "/user/details")
-    // public ModelAndView details() {
-    // return new ModelAndView("/user/details");
-    // }
 
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/day/list")
@@ -298,7 +260,7 @@ public class UserController {
 
         dayForm.setDayDate(date);
 
-//        System.out.println("User id:" + user.getId());
+//        logger.info("User id:" + user.getId());
         if (dayForm.getWords() != null && dayForm.getWords().size() > 0) {
             ArrayList<DictionaryWord> resultList = new ArrayList<DictionaryWord>();
             for (int i = 0; i < dayForm.getWords().size(); i++) {
@@ -360,7 +322,7 @@ public class UserController {
     public String profile(CurrentUser currentUser, Model model) {
 
         User user = currentUser.getUser();
-        user = userRepository.findOne(user.getId());
+        user = userRepository.findById(user.getId()).get();
         ProfileForm profileForm = new ProfileForm(user);
 
         prepareDataForModel(model);
@@ -382,12 +344,8 @@ public class UserController {
     @PreAuthorize("hasAuthority('USER')")
     @RequestMapping(value = "/user/profile", method = RequestMethod.POST)
     public String profileSave(CurrentUser currentUser, Model model, ProfileForm profileForm, BindingResult result) {
-        boolean saveSuccess = false;
-        User user = userRepository.findOne(currentUser.getId());
+        User user = userRepository.findById(currentUser.getId()).get();
         profileForm.setEmail(profileForm.getEmail().toLowerCase());
-        // ProfileFormCustomValidator validator = new
-        // ProfileFormCustomValidator();
-        // validator.validate(user, userRepository, profileForm, result);
 
         ProfileFormCustomValidator.validate(user, userRepository, profileForm, result);
 
@@ -404,7 +362,7 @@ public class UserController {
                     storedDay.setUserProfileVisibility(user.getOptions().get(UserOptions.PROFILE_VISIBILITY));
                 }
             }
-            storedDays = dayRepository.save(storedDays);
+            dayRepository.saveAll(storedDays);
         } else {
             model.addAttribute("errors", profileForm.createMessages(result.getAllErrors()));
         }
@@ -414,11 +372,11 @@ public class UserController {
         prepareDataForModel(model);
 
         model.addAttribute("form", profileFormClean);
-        saveSuccess = true;
         model.addAttribute("saveSuccess", !result.hasErrors());
 
 
-        model = metaService.updateModel(model, "/profile", new Meta(), null,"");
+        metaService.updateModel(model, "/profile", new Meta(), null,"");
+
         if (!user.isEnabled()) {
             return "redirect:/logout/userDisabled";
         }
@@ -469,7 +427,7 @@ public class UserController {
         }
 
         model.asMap().put("username", user.get().getUsername());
-        model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(currentUser.getUser().getFollowingBy())));
+        model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAllById(currentUser.getUser().getFollowingBy())));
         
 
         model = metaService.updateModel(model, "/following", new Meta(), null,"");
@@ -484,7 +442,7 @@ public class UserController {
         if (lookFor == null) {
             lookFor = new ArrayList<String>();
         }
-        model.asMap().put("shares", DayHelper.selectEnabled(userRepository.findAll(lookFor)));
+        model.asMap().put("shares", DayHelper.selectEnabled(userRepository.findAllById(lookFor)));
 
         model = metaService.updateModel(model, "/share", new Meta(), null,"");
         return "user/share";
@@ -534,7 +492,7 @@ public class UserController {
         }
 
         model.getModelMap().put("username", user.get().getUsername());
-        model.getModelMap().put("shares", DayHelper.selectEnabled(userRepository.findAll(currentUser.getUser().getSharingWith())));
+        model.getModelMap().put("shares", DayHelper.selectEnabled(userRepository.findAllById(currentUser.getUser().getSharingWith())));
         return model;
     }
 
@@ -547,7 +505,7 @@ public class UserController {
             lookFor = new ArrayList<String>();
         }
         currentUser.setUser(userByDb);
-        model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(lookFor)));
+        model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAllById(lookFor)));
 
         model = metaService.updateModel(model, "/following", new Meta(), null,"");
         return "user/following";
@@ -562,7 +520,7 @@ public class UserController {
             lookFor = new ArrayList<String>();
         }
         currentUser.setUser(userByDb);
-        model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAll(lookFor)));
+        model.asMap().put("follows", DayHelper.selectEnabled(userRepository.findAllById(lookFor)));
 
         model = metaService.updateModel(model, "/followed", new Meta(), null,"");
         return "user/followed";
@@ -651,13 +609,6 @@ public class UserController {
         if (dateCreatedMilis > dateStartMilis) {
             dateStart = new Date(dateCreatedMilis);
         }
-//        if (cal..after(DateTimeUtils.getCurrentUTCTime()) || date.before(currentUser.getUser().getCreated())) {
-//            
-//        }
-        
-//            Calendar cal = new GregorianCalendar();
-//            cal.setTime(u.getCreated());
-//            return "redirect:/user/archive/" + (cal.get(Calendar.YEAR)) + "/" + (cal.get(Calendar.MONTH) + 1);
       
         ArrayList<Day> days = dayRepository.getDaysFromDateToDate(u, dateStart, dateEnd);
         ArrayList<DayView> daysView = DayHelper.fillDates(days, dateStart, dateEnd, "e msg", u, u);

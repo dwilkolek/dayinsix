@@ -1,24 +1,24 @@
 package eu.wilkolek.diary.service;
 
-import java.util.HashMap;
-
+import eu.wilkolek.diary.model.Meta;
+import eu.wilkolek.diary.repository.ErrorRepository;
+import eu.wilkolek.diary.repository.MetaRepository;
+import eu.wilkolek.diary.util.OptionMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
-import eu.wilkolek.diary.model.Meta;
-import eu.wilkolek.diary.model.WebsiteOptions;
-import eu.wilkolek.diary.repository.ErrorRepository;
-import eu.wilkolek.diary.repository.MetaRepository;
-import eu.wilkolek.diary.repository.WebsiteOptionsRepository;
-import eu.wilkolek.diary.util.OptionMap;
+import java.util.HashMap;
+import java.util.logging.Logger;
 
 @Service
 public class MetaService {
+
+
+    private static final Logger logger = Logger.getLogger(MetaService.class.getName());
 
     @Autowired
     private OptionsService optionsService;
@@ -98,7 +98,7 @@ public class MetaService {
     @Scheduled(cron = "0 0 1 * * ?")
     private void clean() {
         this.map = new HashMap<String, Meta>();
-        System.out.println("OptionsService cleaned");
+        logger.info("OptionsService cleaned");
     }
 
     public void updateMeta(Meta meta) {

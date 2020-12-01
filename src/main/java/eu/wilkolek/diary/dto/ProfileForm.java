@@ -3,15 +3,14 @@ package eu.wilkolek.diary.dto;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.validation.ObjectError;
 
 import eu.wilkolek.diary.model.NotificationTypesEnum;
 import eu.wilkolek.diary.model.User;
 import eu.wilkolek.diary.model.UserOptions;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class ProfileForm{
 

@@ -2,12 +2,8 @@ package eu.wilkolek.diary;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.ErrorPage;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +17,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+@Order(SecurityProperties.IGNORED_ORDER)
 class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -29,13 +25,13 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationSuccessHandler successHandler;
-    
+
     @Autowired
     private AuthenticationFailureHandler failureHandler;
 
     @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
-    
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -47,8 +43,9 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .anyRequest().fullyAuthenticated().and().formLogin()
                 .loginPage("/login").failureHandler(failureHandler).successHandler(successHandler).usernameParameter("email")
-                .permitAll().and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout/**")).deleteCookies("remember-me").logoutSuccessHandler(logoutSuccessHandler).permitAll()
-                
+                .permitAll().and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout/**"))
+                .deleteCookies("remember-me").logoutSuccessHandler(logoutSuccessHandler).permitAll()
+
                 .and().rememberMe();
 
     }
@@ -59,5 +56,4 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    
 }

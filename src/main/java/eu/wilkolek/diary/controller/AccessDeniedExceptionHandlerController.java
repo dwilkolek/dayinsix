@@ -39,7 +39,7 @@ public class AccessDeniedExceptionHandlerController {
     public void handler(HttpServletRequest request,HttpServletResponse response, Exception e) throws Exception {
 
            String url = "?redirect="+request.getRequestURI();
-//           System.out.println();
+//           logger.info();
            redirectStrategy.sendRedirect(request, response, "/login?redirect="+request.getRequestURL()+"");
 
     }

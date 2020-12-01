@@ -22,7 +22,7 @@ public class SitemapRepositoryImpl implements SitemapRepositoryCustom{
     @Override
     public Sitemap getLatest() {
         Query query = new Query();
-        query.with(new Sort(Sort.Direction.DESC, "date"));
+        query.with(Sort.by(Sort.Direction.DESC, "date"));
         query.limit(1);
      
         
