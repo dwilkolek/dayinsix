@@ -59,46 +59,10 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         if (!StringUtils.isEmpty(System.getProperty("dayinsix.init"))) {
             this.preloadOptions();
             this.preloadMeta();
-            createAdministrator();
         }
 
         sitemapService.generateSitemap();
 
-    }
-
-    private void createAdministrator() {
-        Collection<String> roles = new ArrayList<String>();
-        roles.add("USER");
-        roles.add("ADMIN");
-
-        User user = new User();
-
-        user.setUsername("slishu");
-        long millis = DateTimeUtils.getCurrentUTCTime().getTime();
-        user.setCreated(new Date(millis));
-        user.setEmail("dwilkolek@protonmail.com");
-        user.setPasswordHash("$2a$10$RyTtRjJ0xiebuhaBbjmIbOt6L6kX5d4vZFcljdhNmCXpo2DxJO4ku");
-        user.setLastLogIn(DateTimeUtils.getCurrentUTCTime());
-        user.setRoles(roles);
-
-        user.setOptions(new HashMap<String, String>());
-        user.setOptionsLastUpdate(new HashMap<String, Date>());
-
-        user.getOptions().put(UserOptions.INPUT_TYPE, InputTypeEnum.WORDS.toString());
-        user.getOptionsLastUpdate().put(UserOptions.INPUT_TYPE, DateTimeUtils.getCurrentUTCTime());
-
-        user.getOptions().put(UserOptions.SHARE_STYLE, ShareStyleEnum.PUBLIC.name());
-        user.getOptionsLastUpdate().put(UserOptions.SHARE_STYLE, DateTimeUtils.getCurrentUTCTime());
-
-        user.getOptions().put(UserOptions.PROFILE_VISIBILITY, ShareStyleEnum.PUBLIC.name());
-        user.getOptionsLastUpdate().put(UserOptions.PROFILE_VISIBILITY, DateTimeUtils.getCurrentUTCTime());
-
-        user.getOptions().put(UserOptions.NOTIFICATION_FREQUENCY, NotificationTypesEnum.NONE.name());
-        user.getOptionsLastUpdate().put(UserOptions.NOTIFICATION_FREQUENCY, DateTimeUtils.getCurrentUTCTime());
-
-        user.setEnabled(true);
-
-        this.userRepository.save(user);
     }
 
     private void cleanUp() {
