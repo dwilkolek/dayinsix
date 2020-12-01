@@ -6,3 +6,5 @@
 /nbactions.xml
 /src/main/resources/static/node_modules
 /.idea
+/deploy/*.properties
+/deploy/*.jar
